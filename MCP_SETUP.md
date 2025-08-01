@@ -1,5 +1,11 @@
 # Supabase MCP Server Setup Guide
 
+## ✅ Installation Status
+- **Global Installation**: ✅ COMPLETE
+- **Local Installation**: ✅ COMPLETE  
+- **Server Startup Test**: ✅ VERIFIED
+- **Configuration Files**: ✅ READY
+
 ## Overview
 The Model Context Protocol (MCP) server allows AI assistants to interact directly with your Supabase database, enabling features like:
 - Reading database schemas
@@ -65,9 +71,23 @@ If connection fails:
 3. Ensure you've saved the configuration file
 4. Try restarting your AI tool
 
+## Quick Commands
+
+```bash
+# Start MCP server manually
+npm run mcp:start
+
+# Verify installation
+node scripts/verify-mcp.js
+
+# Reinstall globally if needed
+npm run mcp:install
+```
+
 ## Important Notes
 
 - This is configured for **development use only**
 - The MCP server has read-only access to prevent accidental data modifications
 - Always use development/test data, not production data
 - The access token should not be shared publicly in production scenarios
+- MCP server is installed both globally and locally for maximum compatibility

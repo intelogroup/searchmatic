@@ -11,7 +11,9 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "mcp:start": "SUPABASE_ACCESS_TOKEN=sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337 npx @supabase/mcp-server-supabase --read-only --project-ref=qzvfufadiqmizrozejci",
+    "mcp:install": "npm install -g @supabase/mcp-server-supabase"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
@@ -33,6 +35,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
+    "@supabase/mcp-server-supabase": "^0.4.5",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/jest-dom": "^6.6.4",
