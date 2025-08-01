@@ -49,6 +49,7 @@ The project includes MCP (Model Context Protocol) configuration for AI-assisted 
 3. Make sure you use appwrite mcp and use other mcp like chadcn and Superclaude to manage our context usage.
 4. Use on first intentions exa search to check for developers curated and uptodate informations and help you fix bugs better.
 5. Any time user prompt you to change or implement something you have to always get the latest full context of the database , its data and schema etc.. before making changes even if there is nothing to do with the db.
+6. Make sure you add error loggers and handlers on every breakpoints and bottleneck to know what happen in runtime , add error logger anywhere that can feedback loop to you ( terminal,console,sentry or any mcp that help catch errors and more...) 
 
 ## Development Principles
 
