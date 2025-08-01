@@ -42,6 +42,13 @@ The project includes MCP (Model Context Protocol) configuration for AI-assisted 
 - **React Testing Library**: Component testing
 - **Playwright**: E2E testing for critical user journeys
 - **MSW**: Mock Service Worker for API testing
+  
+### Important Instructions
+1. We need to test or unit after big changes to make sure everything work before moving forward.
+2. Make sure you MCP on first intention and then ClI tools.
+3. Make sure you use appwrite mcp and use other mcp like chadcn and Superclaude to manage our context usage.
+4. Use on first intentions exa search to check for developers curated and uptodate informations and help you fix bugs better.
+5. Any time user prompt you to change or implement something you have to always get the latest full context of the database , its data and schema etc.. before making changes even if there is nothing to do with the db.
 
 ## Development Principles
 
