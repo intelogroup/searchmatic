@@ -1,7 +1,11 @@
--- Set search path to include extensions schema
+-- Searchmatic Database Schema - Supabase Compatible Version
+-- This migration sets up the complete database schema for the Searchmatic MVP
+
+-- IMPORTANT: Set search path to include extensions schema for Supabase
 SET search_path TO public, extensions;
 
--- Enable required extensions
+-- Enable required extensions in the extensions schema (Supabase requirement)
+-- Note: In Supabase, use "vector" instead of "pgvector"
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA extensions;
 CREATE EXTENSION IF NOT EXISTS "vector" SCHEMA extensions;
 CREATE EXTENSION IF NOT EXISTS "pg_trgm" SCHEMA extensions;
@@ -50,7 +54,7 @@ CREATE TABLE IF NOT EXISTS public.search_queries (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Articles table
+-- Articles table with vector embeddings
 CREATE TABLE IF NOT EXISTS public.articles (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     project_id UUID NOT NULL REFERENCES public.projects(id) ON DELETE CASCADE,
@@ -68,7 +72,7 @@ CREATE TABLE IF NOT EXISTS public.articles (
     pdf_storage_path TEXT,
     full_text TEXT,
     extracted_data JSONB,
-    embedding extensions.vector(1536),
+    embedding extensions.vector(1536), -- Supabase vector type with dimension
     status article_status DEFAULT 'pending',
     screening_decision screening_decision,
     screening_notes TEXT,
@@ -129,14 +133,18 @@ CREATE INDEX idx_articles_status ON public.articles(status);
 CREATE INDEX idx_articles_screening_decision ON public.articles(screening_decision);
 CREATE INDEX idx_articles_title_trgm ON public.articles USING gin(title gin_trgm_ops);
 CREATE INDEX idx_articles_abstract_trgm ON public.articles USING gin(abstract gin_trgm_ops);
-CREATE INDEX idx_articles_embedding ON public.articles USING hnsw(embedding extensions.vector_cosine_ops);
+
+-- Vector similarity search index (using HNSW for Supabase)
+CREATE INDEX idx_articles_embedding ON public.articles 
+    USING hnsw (embedding extensions.vector_cosine_ops);
+
 CREATE INDEX idx_projects_user_id ON public.projects(user_id);
 CREATE INDEX idx_projects_status ON public.projects(status);
 CREATE INDEX idx_conversations_project_id ON public.conversations(project_id);
 CREATE INDEX idx_messages_conversation_id ON public.messages(conversation_id);
 CREATE INDEX idx_messages_created_at ON public.messages(created_at);
 
--- Row Level Security (RLS) Policies
+-- Enable Row Level Security (RLS) on all tables
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.search_queries ENABLE ROW LEVEL SECURITY;
@@ -146,7 +154,7 @@ ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.extraction_templates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.export_logs ENABLE ROW LEVEL SECURITY;
 
--- Profiles policies
+-- RLS Policies for profiles table
 CREATE POLICY "Users can view their own profile" ON public.profiles
     FOR SELECT USING (auth.uid() = id);
 
@@ -156,7 +164,7 @@ CREATE POLICY "Users can update their own profile" ON public.profiles
 CREATE POLICY "Users can insert their own profile" ON public.profiles
     FOR INSERT WITH CHECK (auth.uid() = id);
 
--- Projects policies
+-- RLS Policies for projects table
 CREATE POLICY "Users can view their own projects" ON public.projects
     FOR SELECT USING (auth.uid() = user_id);
 
@@ -169,7 +177,7 @@ CREATE POLICY "Users can update their own projects" ON public.projects
 CREATE POLICY "Users can delete their own projects" ON public.projects
     FOR DELETE USING (auth.uid() = user_id);
 
--- Search queries policies
+-- RLS Policies for search_queries table
 CREATE POLICY "Users can view search queries for their projects" ON public.search_queries
     FOR SELECT USING (
         EXISTS (
@@ -188,7 +196,7 @@ CREATE POLICY "Users can create search queries for their projects" ON public.sea
         )
     );
 
--- Articles policies
+-- RLS Policies for articles table
 CREATE POLICY "Users can view articles in their projects" ON public.articles
     FOR SELECT USING (
         EXISTS (
@@ -225,7 +233,7 @@ CREATE POLICY "Users can delete articles in their projects" ON public.articles
         )
     );
 
--- Conversations policies
+-- RLS Policies for conversations table
 CREATE POLICY "Users can view their own conversations" ON public.conversations
     FOR SELECT USING (auth.uid() = user_id);
 
@@ -238,7 +246,7 @@ CREATE POLICY "Users can update their own conversations" ON public.conversations
 CREATE POLICY "Users can delete their own conversations" ON public.conversations
     FOR DELETE USING (auth.uid() = user_id);
 
--- Messages policies
+-- RLS Policies for messages table
 CREATE POLICY "Users can view messages in their conversations" ON public.messages
     FOR SELECT USING (
         EXISTS (
@@ -257,7 +265,7 @@ CREATE POLICY "Users can create messages in their conversations" ON public.messa
         )
     );
 
--- Extraction templates policies
+-- RLS Policies for extraction_templates table
 CREATE POLICY "Users can manage extraction templates for their projects" ON public.extraction_templates
     FOR ALL USING (
         EXISTS (
@@ -267,14 +275,14 @@ CREATE POLICY "Users can manage extraction templates for their projects" ON publ
         )
     );
 
--- Export logs policies
+-- RLS Policies for export_logs table
 CREATE POLICY "Users can view their own export logs" ON public.export_logs
     FOR SELECT USING (auth.uid() = user_id);
 
 CREATE POLICY "Users can create their own export logs" ON public.export_logs
     FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- Functions and triggers
+-- Utility functions
 CREATE OR REPLACE FUNCTION public.handle_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -317,19 +325,67 @@ CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- Storage buckets configuration (to be run in Supabase dashboard)
--- CREATE BUCKET pdfs;
--- CREATE BUCKET exports;
+-- Vector similarity search function (optional helper)
+CREATE OR REPLACE FUNCTION match_articles(
+    query_embedding extensions.vector(1536),
+    match_threshold float,
+    match_count int,
+    project_id_filter uuid
+)
+RETURNS TABLE (
+    id uuid,
+    title text,
+    abstract text,
+    similarity float
+)
+LANGUAGE sql STABLE
+AS $$
+    SELECT
+        articles.id,
+        articles.title,
+        articles.abstract,
+        1 - (articles.embedding <=> query_embedding) AS similarity
+    FROM articles
+    WHERE 
+        articles.project_id = project_id_filter
+        AND articles.embedding IS NOT NULL
+        AND 1 - (articles.embedding <=> query_embedding) > match_threshold
+    ORDER BY articles.embedding <=> query_embedding
+    LIMIT match_count;
+$$;
 
--- Storage policies (to be run in Supabase dashboard)
--- CREATE POLICY "Users can upload PDFs to their projects" ON storage.objects
---     FOR INSERT WITH CHECK (bucket_id = 'pdfs' AND auth.uid()::text = (storage.foldername(name))[1]);
+-- Note: Storage bucket creation and policies must be done via Supabase Dashboard
+-- The following are SQL comments showing what needs to be configured:
 
--- CREATE POLICY "Users can view PDFs in their projects" ON storage.objects
---     FOR SELECT USING (bucket_id = 'pdfs' AND auth.uid()::text = (storage.foldername(name))[1]);
+-- Storage buckets to create in Dashboard:
+-- 1. 'pdfs' - for PDF file uploads
+-- 2. 'exports' - for export files
 
--- CREATE POLICY "Users can delete PDFs from their projects" ON storage.objects
---     FOR DELETE USING (bucket_id = 'pdfs' AND auth.uid()::text = (storage.foldername(name))[1]);
+-- Example storage policies (apply in Dashboard after bucket creation):
+/*
+-- PDFs bucket policies
+CREATE POLICY "Users can upload PDFs to their projects" ON storage.objects
+    FOR INSERT WITH CHECK (
+        bucket_id = 'pdfs' 
+        AND auth.uid()::text = (storage.foldername(name))[1]
+    );
 
--- CREATE POLICY "Users can download their exports" ON storage.objects
---     FOR SELECT USING (bucket_id = 'exports' AND auth.uid()::text = (storage.foldername(name))[1]);
+CREATE POLICY "Users can view PDFs in their projects" ON storage.objects
+    FOR SELECT USING (
+        bucket_id = 'pdfs' 
+        AND auth.uid()::text = (storage.foldername(name))[1]
+    );
+
+CREATE POLICY "Users can delete PDFs from their projects" ON storage.objects
+    FOR DELETE USING (
+        bucket_id = 'pdfs' 
+        AND auth.uid()::text = (storage.foldername(name))[1]
+    );
+
+-- Exports bucket policies
+CREATE POLICY "Users can download their exports" ON storage.objects
+    FOR SELECT USING (
+        bucket_id = 'exports' 
+        AND auth.uid()::text = (storage.foldername(name))[1]
+    );
+*/
