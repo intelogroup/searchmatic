@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { Login } from '@/pages/Login'
 import { Dashboard } from '@/pages/Dashboard'
+import { NewProject } from '@/pages/NewProject'
+import { ProjectDemo } from '@/pages/ProjectDemo'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,6 +56,14 @@ function App() {
           <Route 
             path="/dashboard" 
             element={session ? <Dashboard /> : <Navigate to="/login" replace />} 
+          />
+          <Route 
+            path="/projects/new" 
+            element={session ? <NewProject /> : <Navigate to="/login" replace />} 
+          />
+          <Route 
+            path="/projects/:projectId" 
+            element={session ? <ProjectDemo /> : <Navigate to="/login" replace />} 
           />
           <Route 
             path="/" 
