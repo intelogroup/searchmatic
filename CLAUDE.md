@@ -8,8 +8,17 @@ Searchmatic is an AI-powered systematic literature review tool that helps resear
 ### Supabase Configuration
 - **Project URL**: https://qzvfufadiqmizrozejci.supabase.co
 - **Publishable Key**: sb_publishable_mzJORjzXGOboCWSdwDJPkw__LX9UgLS
+- **Project Reference ID**: qzvfufadiqmizrozejci
+- **Access Token (for MCP)**: sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337
 
 **Important**: The publishable key above is safe to use in the browser because we have enabled Row Level Security (RLS) for all tables and configured proper policies. This key can be safely shared publicly and is already configured in the `.env.local` file.
+
+### MCP Server Setup
+The project includes MCP (Model Context Protocol) configuration for AI-assisted database operations:
+- **VS Code/Cursor**: Configuration in `.vscode/mcp.json`
+- **Claude Desktop**: Use `claude-desktop-mcp-config.json`
+- **Setup Guide**: See `MCP_SETUP.md` for detailed instructions
+- **Mode**: Read-only access for safety
 
 ## Core Architecture Decisions
 

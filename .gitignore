@@ -20,6 +20,7 @@ dist-ssr
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/mcp.json
 .idea
 .DS_Store
 *.suo
@@ -35,3 +36,6 @@ coverage
 # Temporary files
 *.tmp
 *.temp
+
+# MCP configuration with sensitive tokens
+claude-desktop-mcp-config.json
