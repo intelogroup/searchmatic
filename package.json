@@ -11,6 +11,13 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:headed": "playwright test --headed",
+    "test:login": "playwright test login-comprehensive.spec.ts --timeout=60000",
+    "test:login:chrome": "playwright test login-comprehensive.spec.ts --project=chromium --timeout=60000",
+    "test:login:headed": "playwright test login-comprehensive.spec.ts --headed --timeout=60000",
     "type-check": "tsc --noEmit",
     "mcp:start": "SUPABASE_ACCESS_TOKEN=sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337 npx @supabase/mcp-server-supabase --read-only --project-ref=qzvfufadiqmizrozejci",
     "mcp:install": "npm install -g @supabase/mcp-server-supabase"
@@ -36,6 +43,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
+    "@playwright/test": "^1.54.2",
     "@supabase/mcp-server-supabase": "^0.4.5",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/postcss": "^4.1.11",
