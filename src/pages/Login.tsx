@@ -10,11 +10,13 @@ export const Login: React.FC = () => {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
+    setSuccess(null)
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -32,6 +34,7 @@ export const Login: React.FC = () => {
   const handleSignUp = async () => {
     setIsLoading(true)
     setError(null)
+    setSuccess(null)
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -42,7 +45,9 @@ export const Login: React.FC = () => {
       setError(error.message)
       setIsLoading(false)
     } else {
-      navigate('/dashboard')
+      // Show success message for email confirmation
+      setSuccess('Please check your email for a confirmation link, then sign in.')
+      setIsLoading(false)
     }
   }
 
@@ -89,6 +94,10 @@ export const Login: React.FC = () => {
 
             {error && (
               <p className="text-sm text-destructive">{error}</p>
+            )}
+            
+            {success && (
+              <p className="text-sm text-green-600">{success}</p>
             )}
 
             <div className="flex gap-2">
