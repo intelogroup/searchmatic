@@ -218,7 +218,7 @@ test.describe('Searchmatic Login Functionality - Comprehensive Tests', () => {
     await captureScreenshot(page, 'comprehensive-07-back-navigation');
   });
 
-  test('Mobile viewport compatibility', async ({ page, browserName }) => {
+  test('Mobile viewport compatibility', async ({ page }) => {
     console.log('📱 Testing mobile viewport compatibility...');
 
     // Set mobile viewport
