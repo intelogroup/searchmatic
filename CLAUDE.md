@@ -454,9 +454,12 @@ VITE_OPENAI_API_KEY=sk-proj-37yFICy3TYR3MK6L0Qcb...
 
 #### **Project Files**:
 - `MVP_STATUS_FINAL.md`: Complete technical overview
+- `DEVELOPER_HANDOFF.md`: Latest testing report and deployment status (2025-08-02)
 - `test-mvp-functionality.js`: MVP verification script
 - `REALISTIC_ROADMAP_2025.md`: Long-term development plan
 - `MCP_ADVANCED_SETUP.md`: AI development tools guide
+- `tests/login-comprehensive.spec.ts`: Comprehensive login testing with Playwright
+- `src/pages/__tests__/Landing.accessibility.test.tsx`: Complete accessibility test suite
 
 ### ⚡ **PERFORMANCE & MONITORING**
 

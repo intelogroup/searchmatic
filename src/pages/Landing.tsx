@@ -124,10 +124,10 @@ export const Landing: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="border-b bg-background/95 backdrop-blur supports-backdrop-blur:bg-background/60 sticky top-0 z-50">
+      <nav className="border-b bg-background/95 backdrop-blur supports-backdrop-blur:bg-background/60 sticky top-0 z-50" role="navigation" aria-label="Main navigation">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+            <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center" aria-hidden="true">
               <Sparkles className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="font-bold text-xl">Searchmatic</span>
@@ -147,8 +147,9 @@ export const Landing: React.FC = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="py-20 lg:py-32">
+      <main role="main">
+        {/* Hero Section */}
+        <section className="py-20 lg:py-32" aria-labelledby="hero-heading">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
             <Badge variant="secondary" className="mb-4">
@@ -156,7 +157,7 @@ export const Landing: React.FC = () => {
               Now with GPT-4 Integration
             </Badge>
             
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+            <h1 id="hero-heading" className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
               Systematic Reviews
               <br />
               <span className="text-primary">Made Simple</span>
@@ -168,11 +169,11 @@ export const Landing: React.FC = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button size="lg" onClick={() => navigate('/login')} className="text-lg px-8">
+              <Button size="lg" onClick={() => navigate('/login')} className="text-lg px-8" aria-label="Start your free trial of Searchmatic">
                 Start Free Trial
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8">
+              <Button size="lg" variant="outline" className="text-lg px-8" aria-label="Watch product demonstration video">
                 Watch Demo
               </Button>
             </div>
@@ -192,11 +193,11 @@ export const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-muted/30">
+        {/* Features Section */}
+        <section id="features" className="py-20 bg-muted/30" aria-labelledby="features-heading">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 id="features-heading" className="text-3xl md:text-4xl font-bold mb-4">
               Everything you need for world-class research
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -208,7 +209,7 @@ export const Landing: React.FC = () => {
             {features.map((feature, index) => (
               <Card key={index} className="border-0 shadow-md hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
+                  <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4" aria-hidden="true">
                     {feature.icon}
                   </div>
                   <CardTitle className="text-xl">{feature.title}</CardTitle>
@@ -379,14 +380,15 @@ export const Landing: React.FC = () => {
           </div>
         </div>
       </section>
+      </main>
 
       {/* Footer */}
-      <footer className="py-12 border-t">
+      <footer className="py-12 border-t" role="contentinfo">
         <div className="container mx-auto px-4">
           <div className="grid gap-8 md:grid-cols-4">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+                <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center" aria-hidden="true">
                   <Sparkles className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <span className="font-bold text-xl">Searchmatic</span>
