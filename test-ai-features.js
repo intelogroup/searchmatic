@@ -1,8 +1,20 @@
 import { createClient } from '@supabase/supabase-js'
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 
 const supabaseUrl = 'https://qzvfufadiqmizrozejci.supabase.co'
-const supabaseAnonKey = 'sb_publishable_mzJORjzXGOboCWSdwDJPkw__LX9UgLS'
-const openaiApiKey = 'sk-proj-37yFICy3TYR3MK6L0Qcb'
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
+const openaiApiKey = process.env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY
+
+if (!openaiApiKey) {
+  console.error('❌ No OpenAI API key found. Set VITE_OPENAI_API_KEY in .env.local');
+  process.exit(1);
+}
+
+if (!supabaseAnonKey) {
+  console.error('❌ No Supabase anon key found. Set VITE_SUPABASE_ANON_KEY in .env.local');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
@@ -77,8 +89,7 @@ async function testDatabaseOperations() {
       .insert([{
         title: 'Test Project - AI Features',
         description: 'Testing AI chat and protocol features',
-        user_id: userId,
-        status: 'active'
+        user_id: userId
       }])
       .select()
       .single()
