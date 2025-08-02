@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import type { Session } from '@supabase/supabase-js'
+import { Landing } from '@/pages/Landing'
 import { Login } from '@/pages/Login'
 import { Dashboard } from '@/pages/Dashboard'
 import { NewProject } from '@/pages/NewProject'
@@ -51,6 +52,10 @@ function App() {
       <Router>
         <Routes>
           <Route 
+            path="/" 
+            element={<Landing />} 
+          />
+          <Route 
             path="/login" 
             element={session ? <Navigate to="/dashboard" replace /> : <Login />} 
           />
@@ -65,10 +70,6 @@ function App() {
           <Route 
             path="/projects/:projectId" 
             element={session ? <ProjectDemo /> : <Navigate to="/login" replace />} 
-          />
-          <Route 
-            path="/" 
-            element={<Navigate to="/dashboard" replace />} 
           />
         </Routes>
       </Router>
