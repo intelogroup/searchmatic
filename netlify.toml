@@ -4,17 +4,82 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # Optimize build performance
+  NODE_OPTIONS = "--max-old-space-size=4096"
+  # Enable Netlify build optimizations
+  NETLIFY_USE_YARN = "false"
+  NETLIFY_USE_PNPM = "false"
 
+# SPA redirects
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Cache static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache images
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/*.jpeg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# Environment-specific settings
 [context.production.environment]
   VITE_ENABLE_DEV_TOOLS = "false"
+  NODE_ENV = "production"
 
 [context.deploy-preview.environment]
   VITE_ENABLE_DEV_TOOLS = "true"
+  NODE_ENV = "development"
 
 [context.branch-deploy.environment]
   VITE_ENABLE_DEV_TOOLS = "true"
+  NODE_ENV = "development"
+
+# Build optimizations
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+[build.processing.images]
+  compress = true

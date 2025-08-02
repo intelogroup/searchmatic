@@ -4,10 +4,67 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Searchmatic - AI-Powered Literature Review</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>Searchmatic - AI-Powered Systematic Literature Reviews</title>
+    <meta name="title" content="Searchmatic - AI-Powered Systematic Literature Reviews" />
+    <meta name="description" content="Transform your research process with AI-powered systematic literature reviews. From question formulation to final export in 30 minutes, not 30 weeks." />
+    <meta name="keywords" content="systematic literature review, AI research, meta-analysis, evidence synthesis, PubMed search, research assistant" />
+    <meta name="author" content="Searchmatic" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://searchmatic.app/" />
+    <meta property="og:title" content="Searchmatic - AI-Powered Systematic Literature Reviews" />
+    <meta property="og:description" content="Transform your research process with AI-powered systematic literature reviews. From question formulation to final export in 30 minutes, not 30 weeks." />
+    <meta property="og:image" content="https://searchmatic.app/og-image.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://searchmatic.app/" />
+    <meta property="twitter:title" content="Searchmatic - AI-Powered Systematic Literature Reviews" />
+    <meta property="twitter:description" content="Transform your research process with AI-powered systematic literature reviews. From question formulation to final export in 30 minutes, not 30 weeks." />
+    <meta property="twitter:image" content="https://searchmatic.app/twitter-image.png" />
+    
+    <!-- Performance optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://qzvfufadiqmizrozejci.supabase.co" />
+    
+    <!-- Security -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' https: data:; connect-src 'self' https: wss:;" />
+    
+    <!-- Prevent FOUC with loading state -->
+    <style>
+      #root {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f4f6;
+        border-top: 4px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      /* Hide loading once React takes over */
+      .app-loaded .loading-spinner {
+        display: none;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Loading state shown until React loads -->
+      <div class="loading-spinner"></div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

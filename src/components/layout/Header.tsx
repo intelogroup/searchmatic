@@ -2,6 +2,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import { Settings } from 'lucide-react'
 
 export const Header: React.FC = () => {
   const navigate = useNavigate()
@@ -38,6 +39,15 @@ export const Header: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/settings')}
+            className="hidden sm:flex"
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </Button>
           <Button variant="outline" size="sm" onClick={handleSignOut}>
             Sign Out
           </Button>

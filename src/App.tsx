@@ -8,6 +8,8 @@ import { Login } from '@/pages/Login'
 import { Dashboard } from '@/pages/Dashboard'
 import { NewProject } from '@/pages/NewProject'
 import { ProjectDemo } from '@/pages/ProjectDemo'
+import { Settings } from '@/pages/Settings'
+import { NotFound } from '@/pages/NotFound'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,6 +72,14 @@ function App() {
           <Route 
             path="/projects/:projectId" 
             element={session ? <ProjectDemo /> : <Navigate to="/login" replace />} 
+          />
+          <Route 
+            path="/settings" 
+            element={session ? <Settings /> : <Navigate to="/login" replace />} 
+          />
+          <Route 
+            path="*" 
+            element={<NotFound />} 
           />
         </Routes>
       </Router>
