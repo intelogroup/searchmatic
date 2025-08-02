@@ -39,3 +39,6 @@ coverage
 
 # MCP configuration with sensitive tokens
 claude-desktop-mcp-config.json
+
+# Local Netlify folder
+.netlify
