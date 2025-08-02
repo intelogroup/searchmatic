@@ -307,6 +307,107 @@ export interface Database {
           created_at?: string
         }
       }
+      protocols: {
+        Row: {
+          id: string
+          project_id: string
+          user_id: string
+          title: string
+          description: string | null
+          research_question: string
+          framework_type: 'pico' | 'spider' | 'other'
+          population: string | null
+          intervention: string | null
+          comparison: string | null
+          outcome: string | null
+          sample: string | null
+          phenomenon: string | null
+          design: string | null
+          evaluation: string | null
+          research_type: string | null
+          inclusion_criteria: string[]
+          exclusion_criteria: string[]
+          search_strategy: Json
+          databases: string[]
+          keywords: string[]
+          date_range: Json | null
+          study_types: string[]
+          status: 'draft' | 'active' | 'completed' | 'archived'
+          is_locked: boolean
+          locked_at: string | null
+          version: number
+          ai_generated: boolean
+          ai_guidance_used: Json | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          user_id: string
+          title: string
+          description?: string | null
+          research_question: string
+          framework_type: 'pico' | 'spider' | 'other'
+          population?: string | null
+          intervention?: string | null
+          comparison?: string | null
+          outcome?: string | null
+          sample?: string | null
+          phenomenon?: string | null
+          design?: string | null
+          evaluation?: string | null
+          research_type?: string | null
+          inclusion_criteria?: string[]
+          exclusion_criteria?: string[]
+          search_strategy?: Json
+          databases?: string[]
+          keywords?: string[]
+          date_range?: Json | null
+          study_types?: string[]
+          status?: 'draft' | 'active' | 'completed' | 'archived'
+          is_locked?: boolean
+          locked_at?: string | null
+          version?: number
+          ai_generated?: boolean
+          ai_guidance_used?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          user_id?: string
+          title?: string
+          description?: string | null
+          research_question?: string
+          framework_type?: 'pico' | 'spider' | 'other'
+          population?: string | null
+          intervention?: string | null
+          comparison?: string | null
+          outcome?: string | null
+          sample?: string | null
+          phenomenon?: string | null
+          design?: string | null
+          evaluation?: string | null
+          research_type?: string | null
+          inclusion_criteria?: string[]
+          exclusion_criteria?: string[]
+          search_strategy?: Json
+          databases?: string[]
+          keywords?: string[]
+          date_range?: Json | null
+          study_types?: string[]
+          status?: 'draft' | 'active' | 'completed' | 'archived'
+          is_locked?: boolean
+          locked_at?: string | null
+          version?: number
+          ai_generated?: boolean
+          ai_guidance_used?: Json | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -319,6 +420,8 @@ export interface Database {
       article_status: 'pending' | 'processing' | 'completed' | 'error'
       project_status: 'active' | 'completed' | 'archived'
       screening_decision: 'include' | 'exclude' | 'maybe'
+      protocol_framework_type: 'pico' | 'spider' | 'other'
+      protocol_status: 'draft' | 'active' | 'completed' | 'archived'
     }
   }
 }

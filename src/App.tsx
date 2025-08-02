@@ -7,7 +7,7 @@ import { Landing } from '@/pages/Landing'
 import { Login } from '@/pages/Login'
 import { Dashboard } from '@/pages/Dashboard'
 import { NewProject } from '@/pages/NewProject'
-import { ProjectDemo } from '@/pages/ProjectDemo'
+import { ProjectView } from '@/pages/ProjectView'
 import { Settings } from '@/pages/Settings'
 import { NotFound } from '@/pages/NotFound'
 
@@ -71,7 +71,7 @@ function App() {
           />
           <Route 
             path="/projects/:projectId" 
-            element={session ? <ProjectDemo /> : <Navigate to="/login" replace />} 
+            element={session ? <ProjectView /> : <Navigate to="/login" replace />} 
           />
           <Route 
             path="/settings" 

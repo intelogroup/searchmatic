@@ -32,7 +32,7 @@ export const ThreePanelLayout: React.FC<ThreePanelLayoutProps> = ({
 
       {/* AI Chat Panel - Fixed width */}
       <div className="w-96 border-l border-border flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto p-6">
           {aiChatPanel}
         </div>
       </div>
