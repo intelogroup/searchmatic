@@ -1,37 +1,98 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
+ * VCT-Enhanced Playwright Configuration
+ * Supports environment-specific testing with VCT framework integration
  * @see https://playwright.dev/docs/test-configuration
  */
+
+// Environment-specific configuration
+const ENV = process.env.TEST_ENV || process.env.VCT_ENVIRONMENT || 'local';
+const BASE_URLS = {
+  local: 'http://localhost:5175',
+  staging: process.env.STAGING_URL || 'https://staging.searchmatic.app',
+  prod: process.env.PROD_URL || 'https://searchmatic.app'
+};
+
+const VCT_CONFIG = {
+  // Headless mode: false for local debugging, true for CI/staging/prod
+  headless: ENV === 'local' ? false : true,
+  
+  // Screenshot mode based on environment
+  screenshot: ENV === 'local' ? 'only-on-failure' : 'always',
+  
+  // Video recording
+  video: ENV === 'prod' ? 'retain-on-failure' : 'off',
+  
+  // Trace collection for debugging
+  trace: ENV === 'local' ? 'on-first-retry' : 'retain-on-failure'
+};
+
 export default defineConfig({
   testDir: './tests',
+  
+  /* VCT Framework Integration */
+  outputDir: `./artifacts/${ENV}/test-results`,
+  
   /* Run tests in files in parallel */
   fullyParallel: true,
+  
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  
+  /* Retry configuration based on environment */
+  retries: process.env.CI ? 2 : ENV === 'prod' ? 3 : 0,
+  
+  /* Worker configuration */
+  workers: process.env.CI ? 1 : ENV === 'local' ? 2 : 4,
+  
+  /* Timeout configuration */
+  timeout: ENV === 'local' ? 30000 : 60000,
+  
+  /* Reporter configuration with VCT integration */
   reporter: [
-    ['html'],
-    ['json', { outputFile: 'test-results/results.json' }],
-    ['line']
+    ['html', { outputFolder: `./artifacts/${ENV}/playwright-report` }],
+    ['json', { outputFile: `./artifacts/${ENV}/results.json` }],
+    ['line'],
+    // Custom VCT reporter for integration with DocAgent
+    ['./vct/reporters/VCTReporter.ts']
   ],
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  
+  /* Global setup and teardown */
+  globalSetup: './vct/setup/global-setup.ts',
+  globalTeardown: './vct/setup/global-teardown.ts',
+  
+  /* Shared settings for all projects */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:5175',
+    /* Environment-specific base URL */
+    baseURL: BASE_URLS[ENV as keyof typeof BASE_URLS],
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    /* VCT-enhanced trace collection */
+    trace: VCT_CONFIG.trace,
 
-    /* Take screenshots on failure */
-    screenshot: 'only-on-failure',
+    /* VCT-enhanced screenshots */
+    screenshot: VCT_CONFIG.screenshot as any,
 
-    /* Record video on failure */
-    video: 'retain-on-failure',
+    /* Video recording */
+    video: VCT_CONFIG.video as any,
+    
+    /* Headless mode */
+    headless: VCT_CONFIG.headless,
+    
+    /* Action timeout */
+    actionTimeout: 10000,
+    
+    /* Navigation timeout */
+    navigationTimeout: 30000,
+    
+    /* Ignore HTTPS errors in staging/local */
+    ignoreHTTPSErrors: ENV !== 'prod',
+    
+    /* Extra HTTP headers for API testing */
+    extraHTTPHeaders: {
+      'X-VCT-Environment': ENV,
+      'X-VCT-Test-Run': new Date().toISOString()
+    }
   },
 
   /* Configure projects for major browsers */
