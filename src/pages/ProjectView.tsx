@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ThreePanelLayout } from '@/components/layout/ThreePanelLayout'
 import { ChatPanel } from '@/components/chat/ChatPanel'
 import { ProtocolPanel } from '@/components/protocol/ProtocolPanel'
+import { StudiesList } from '@/components/studies/StudiesList'
+import { StudyForm } from '@/components/studies/StudyForm'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -15,73 +17,49 @@ import {
   Filter,
   Download,
   Settings,
-  MoreHorizontal
+  MoreHorizontal,
+  Loader2,
+  AlertCircle,
+  Plus
 } from 'lucide-react'
-import { baseSupabaseClient as supabase } from '@/lib/supabase'
-import { errorLogger } from '@/lib/error-logger'
-import type { Database } from '@/types/database'
-
-type Project = Database['public']['Tables']['projects']['Row']
+import { useProjectContext } from '@/contexts/ProjectContext'
+import { useStudyStatusCounts } from '@/hooks/useStudies'
+import { formatDistanceToNow } from 'date-fns'
+import type { Study } from '@/services/studyService'
 
 export const ProjectView: React.FC = () => {
-  const { projectId } = useParams<{ projectId: string }>()
   const navigate = useNavigate()
-  const [project, setProject] = useState<Project | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { currentProject, isLoading, error } = useProjectContext()
+  const [showStudyForm, setShowStudyForm] = useState(false)
+  const [editingStudy, setEditingStudy] = useState<Study | null>(null)
+  
+  // Get real-time study counts
+  const { data: studyCounts } = useStudyStatusCounts(currentProject?.id || '')
 
-  useEffect(() => {
-    if (projectId) {
-      loadProject(projectId)
-    }
-  }, [projectId])
-
-  const loadProject = async (id: string) => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
-
-      const { data: project, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('id', id)
-        .eq('user_id', user.id)
-        .single()
-
-      if (error) throw error
-      setProject(project)
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to load project')
-      errorLogger.logError((error as Error).message, { action: 'Load Project', metadata: { projectId: id } })
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
+  // Loading state
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="space-y-2 text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
           <p className="text-sm text-muted-foreground">Loading project...</p>
         </div>
       </div>
     )
   }
 
-  if (error || !project) {
+  // Error state
+  if (error || !currentProject) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center space-y-4">
           <div className="h-16 w-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
-            <FileText className="h-8 w-8 text-destructive" />
+            <AlertCircle className="h-8 w-8 text-destructive" />
           </div>
           <div>
             <h2 className="text-lg font-semibold">Project Not Found</h2>
             <p className="text-sm text-muted-foreground">
-              {error || 'The project you are looking for does not exist.'}
+              {error?.message || 'The project you are looking for does not exist or you do not have access to it.'}
             </p>
           </div>
           <Button onClick={() => navigate('/dashboard')}>
@@ -98,6 +76,8 @@ export const ProjectView: React.FC = () => {
       case 'active': return 'bg-green-100 text-green-800'
       case 'completed': return 'bg-blue-100 text-blue-800'
       case 'archived': return 'bg-gray-100 text-gray-800'
+      case 'draft': return 'bg-gray-100 text-gray-800'
+      case 'review': return 'bg-yellow-100 text-yellow-800'
       default: return 'bg-yellow-100 text-yellow-800'
     }
   }
@@ -116,15 +96,23 @@ export const ProjectView: React.FC = () => {
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <h1 className="text-2xl font-bold">{project.title}</h1>
-            <Badge className={getStatusColor(project.status)}>
-              {project.status}
+            <h1 className="text-2xl font-bold">{currentProject.title}</h1>
+            <Badge className={getStatusColor(currentProject.status)}>
+              {currentProject.status}
             </Badge>
           </div>
-          {project.description && (
+          {currentProject.description && (
             <p className="text-muted-foreground max-w-2xl">
-              {project.description}
+              {currentProject.description}
             </p>
+          )}
+          {currentProject.research_domain && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Research Domain:</span>
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-50 text-blue-700">
+                {currentProject.research_domain}
+              </span>
+            </div>
           )}
         </div>
         
@@ -144,36 +132,40 @@ export const ProjectView: React.FC = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Articles
+              Studies
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">Total articles</p>
+            <div className="text-2xl font-bold">{studyCounts?.total || currentProject.total_studies}</div>
+            <p className="text-xs text-muted-foreground">
+              {studyCounts?.pending || currentProject.pending_studies} pending, {studyCounts?.included || currentProject.included_studies} included
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Protocols
+              Stage
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">Active protocols</p>
+            <div className="text-lg font-bold">{currentProject.current_stage}</div>
+            <p className="text-xs text-muted-foreground">Current phase</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Searches
+              Type
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">Search queries</p>
+            <div className="text-sm font-bold capitalize">
+              {currentProject.project_type.replace('_', ' ')}
+            </div>
+            <p className="text-xs text-muted-foreground">Review type</p>
           </CardContent>
         </Card>
 
@@ -184,8 +176,13 @@ export const ProjectView: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold">15%</div>
-            <p className="text-xs text-muted-foreground">Complete</p>
+            <div className="text-2xl font-bold">{currentProject.progress_percentage}%</div>
+            <div className="w-full bg-secondary rounded-full h-1 mt-2">
+              <div 
+                className="bg-primary h-1 rounded-full transition-all" 
+                style={{ width: `${currentProject.progress_percentage}%` }}
+              />
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -238,10 +235,24 @@ export const ProjectView: React.FC = () => {
               <div className="flex-1">
                 <p className="text-sm font-medium">Project created</p>
                 <p className="text-xs text-muted-foreground">
-                  {new Date(project.created_at).toLocaleDateString()}
+                  {formatDistanceToNow(new Date(currentProject.created_at), { addSuffix: true })}
                 </p>
               </div>
             </div>
+            
+            {currentProject.last_activity_at !== currentProject.created_at && (
+              <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+                <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
+                  <MessageCircle className="h-4 w-4 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Last activity</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatDistanceToNow(new Date(currentProject.last_activity_at), { addSuffix: true })}
+                  </p>
+                </div>
+              </div>
+            )}
             
             <div className="text-center py-8 text-muted-foreground">
               <MessageCircle className="h-8 w-8 mx-auto mb-2" />
@@ -251,59 +262,94 @@ export const ProjectView: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Getting Started Guide */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bot className="h-5 w-5 text-primary" />
-            Getting Started
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 p-3 border rounded-lg">
-              <div className="h-6 w-6 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-xs font-bold">
-                1
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Create a research protocol</p>
-                <p className="text-xs text-muted-foreground">
-                  Define your research question and methodology using the Protocol panel →
-                </p>
-              </div>
-            </div>
+      {/* Studies Management */}
+      {showStudyForm ? (
+        <StudyForm
+          projectId={currentProject.id}
+          study={editingStudy || undefined}
+          onSuccess={() => {
+            setShowStudyForm(false)
+            setEditingStudy(null)
+          }}
+          onCancel={() => {
+            setShowStudyForm(false)
+            setEditingStudy(null)
+          }}
+        />
+      ) : (
+        <StudiesList
+          projectId={currentProject.id}
+          onCreateStudy={() => setShowStudyForm(true)}
+          onEditStudy={(study) => {
+            setEditingStudy(study)
+            setShowStudyForm(true)
+          }}
+        />
+      )}
 
-            <div className="flex items-center gap-3 p-3 border rounded-lg">
-              <div className="h-6 w-6 bg-muted rounded-full flex items-center justify-center text-muted-foreground text-xs font-bold">
-                2
+      {/* Getting Started Guide - Show only if no studies */}
+      {(!studyCounts || studyCounts.total === 0) && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Bot className="h-5 w-5 text-primary" />
+              Getting Started
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 border rounded-lg">
+                <div className="h-6 w-6 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-xs font-bold">
+                  1
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Create a research protocol</p>
+                  <p className="text-xs text-muted-foreground">
+                    Define your research question and methodology using the Protocol panel →
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Get AI assistance</p>
-                <p className="text-xs text-muted-foreground">
-                  Chat with the AI assistant for guidance and methodology help →
-                </p>
-              </div>
-            </div>
 
-            <div className="flex items-center gap-3 p-3 border rounded-lg">
-              <div className="h-6 w-6 bg-muted rounded-full flex items-center justify-center text-muted-foreground text-xs font-bold">
-                3
+              <div className="flex items-center gap-3 p-3 border rounded-lg">
+                <div className="h-6 w-6 bg-muted rounded-full flex items-center justify-center text-muted-foreground text-xs font-bold">
+                  2
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Add your first study</p>
+                  <p className="text-xs text-muted-foreground">
+                    Start by adding articles, theses, or other research materials
+                  </p>
+                </div>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => setShowStudyForm(true)}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Study
+                </Button>
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Search and collect articles</p>
-                <p className="text-xs text-muted-foreground">
-                  Use the search tools to find relevant research articles
-                </p>
+
+              <div className="flex items-center gap-3 p-3 border rounded-lg">
+                <div className="h-6 w-6 bg-muted rounded-full flex items-center justify-center text-muted-foreground text-xs font-bold">
+                  3
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Get AI assistance</p>
+                  <p className="text-xs text-muted-foreground">
+                    Chat with the AI assistant for guidance and methodology help →
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 
-  const protocolPanel = <ProtocolPanel projectId={project.id} />
-  const aiChatPanel = <ChatPanel projectId={project.id} />
+  const protocolPanel = <ProtocolPanel projectId={currentProject.id} />
+  const aiChatPanel = <ChatPanel projectId={currentProject.id} />
 
   return (
     <ThreePanelLayout
