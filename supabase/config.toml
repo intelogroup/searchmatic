@@ -17,9 +17,6 @@ max_rows = 1000
 [db]
 # Port to use for the local database URL.
 port = 54322
-# External port is the database port used when connecting to the local database from outside the Docker container.
-# It can be different from the internal port as long as the host port is not already occupied.
-external_port = 54322
 # The database major version to use. This has to be the same as your remote database's. Run `SHOW server_version;` on the remote database to check.
 major_version = 15
 

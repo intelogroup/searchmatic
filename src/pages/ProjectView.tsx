@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ThreePanelLayout } from '@/components/layout/ThreePanelLayout'
 import { ChatPanel } from '@/components/chat/ChatPanel'
+import { AIAnalysisPanel } from '@/components/ai/AIAnalysisPanel'
 import { ProtocolPanel } from '@/components/protocol/ProtocolPanel'
 import { StudiesList } from '@/components/studies/StudiesList'
 import { StudyForm } from '@/components/studies/StudyForm'
@@ -32,6 +33,7 @@ export const ProjectView: React.FC = () => {
   const { currentProject, isLoading, error } = useProjectContext()
   const [showStudyForm, setShowStudyForm] = useState(false)
   const [editingStudy, setEditingStudy] = useState<Study | null>(null)
+  const [activePanel, setActivePanel] = useState<'protocol' | 'chat' | 'analysis'>('protocol')
   
   // Get real-time study counts
   const { data: studyCounts } = useStudyStatusCounts(currentProject?.id || '')
@@ -206,10 +208,14 @@ export const ProjectView: React.FC = () => {
               <span className="text-xs text-muted-foreground">Review and filter</span>
             </Button>
 
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
-              <FileText className="h-6 w-6 text-primary" />
-              <span className="text-sm font-medium">Extract Data</span>
-              <span className="text-xs text-muted-foreground">Structured extraction</span>
+            <Button 
+              variant="outline" 
+              className="h-auto p-4 flex flex-col items-center gap-2"
+              onClick={() => setActivePanel('analysis')}
+            >
+              <Bot className="h-6 w-6 text-primary" />
+              <span className="text-sm font-medium">AI Analysis</span>
+              <span className="text-xs text-muted-foreground">Literature analysis</span>
             </Button>
 
             <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
@@ -348,14 +354,68 @@ export const ProjectView: React.FC = () => {
     </div>
   )
 
-  const protocolPanel = <ProtocolPanel projectId={currentProject.id} />
-  const aiChatPanel = <ChatPanel projectId={currentProject.id} />
+  // Dynamic right panel based on active selection
+  const getRightPanel = () => {
+    switch (activePanel) {
+      case 'protocol':
+        return <ProtocolPanel projectId={currentProject.id} />
+      case 'chat':
+        return <ChatPanel projectId={currentProject.id} />
+      case 'analysis':
+        return <AIAnalysisPanel projectId={currentProject.id} />
+      default:
+        return <ProtocolPanel projectId={currentProject.id} />
+    }
+  }
+
+  const protocolPanel = (
+    <div className="h-full flex flex-col">
+      {/* Panel Tabs */}
+      <div className="flex border-b mb-4">
+        <button
+          onClick={() => setActivePanel('protocol')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activePanel === 'protocol' 
+              ? 'border-primary text-primary' 
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Protocol
+        </button>
+        <button
+          onClick={() => setActivePanel('chat')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activePanel === 'chat' 
+              ? 'border-primary text-primary' 
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          AI Chat
+        </button>
+        <button
+          onClick={() => setActivePanel('analysis')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activePanel === 'analysis' 
+              ? 'border-primary text-primary' 
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          AI Analysis
+        </button>
+      </div>
+      
+      {/* Panel Content */}
+      <div className="flex-1 overflow-hidden">
+        {getRightPanel()}
+      </div>
+    </div>
+  )
 
   return (
     <ThreePanelLayout
       mainContent={mainContent}
       protocolPanel={protocolPanel}
-      aiChatPanel={aiChatPanel}
+      aiChatPanel={null} // Using unified right panel now
     />
   )
 }
