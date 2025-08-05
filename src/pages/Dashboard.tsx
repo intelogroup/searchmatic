@@ -2,61 +2,85 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Header } from '@/components/layout/Header'
-import { Plus, BookOpen, Clock, CheckCircle2, BarChart3 } from 'lucide-react'
+import { Plus, BookOpen, Clock, CheckCircle2, BarChart3, AlertCircle, Loader2, RefreshCw } from 'lucide-react'
+import { useProjects, useDashboardStats } from '@/hooks/useProjects'
+import { formatDistanceToNow } from 'date-fns'
 
 export const Dashboard = () => {
   const navigate = useNavigate()
+  
+  // Use real data from Supabase
+  const { data: projects, isLoading: projectsLoading, error: projectsError, refetch: refetchProjects } = useProjects()
+  const { data: stats, isLoading: statsLoading, error: statsError } = useDashboardStats()
 
-  // Sample data to make the dashboard look more populated
-  const sampleProjects = [
-    {
-      id: 'covid-treatments',
-      title: 'COVID-19 Treatment Efficacy',
-      description: 'Systematic review of COVID-19 therapeutic interventions',
-      status: 'Active',
-      articles: 156,
-      progress: 65,
-      lastUpdated: '2 hours ago',
-      stage: 'Data Extraction'
-    },
-    {
-      id: 'ai-healthcare',
-      title: 'AI in Healthcare Diagnostics',
-      description: 'Machine learning applications in medical diagnosis',
-      status: 'Review',
-      articles: 89,
-      progress: 45,
-      lastUpdated: '1 day ago',
-      stage: 'Screening'
-    },
-    {
-      id: 'mental-health',
-      title: 'Digital Mental Health Interventions',
-      description: 'Effectiveness of app-based mental health treatments',
-      status: 'Completed',
-      articles: 234,
-      progress: 100,
-      lastUpdated: '3 days ago',
-      stage: 'Export Ready'
+  // Map database status to display values
+  const getStatusDisplay = (status: string) => {
+    const statusMap = {
+      'draft': { label: 'Draft', color: 'text-gray-600 bg-gray-50', icon: <BookOpen className="h-4 w-4" /> },
+      'active': { label: 'Active', color: 'text-green-600 bg-green-50', icon: <Clock className="h-4 w-4" /> },
+      'review': { label: 'Review', color: 'text-yellow-600 bg-yellow-50', icon: <BarChart3 className="h-4 w-4" /> },
+      'completed': { label: 'Completed', color: 'text-blue-600 bg-blue-50', icon: <CheckCircle2 className="h-4 w-4" /> },
+      'archived': { label: 'Archived', color: 'text-purple-600 bg-purple-50', icon: <BookOpen className="h-4 w-4" /> }
     }
-  ]
+    return statusMap[status as keyof typeof statusMap] || statusMap.draft
+  }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Active': return 'text-green-600 bg-green-50'
-      case 'Review': return 'text-yellow-600 bg-yellow-50'
-      case 'Completed': return 'text-blue-600 bg-blue-50'
-      default: return 'text-gray-600 bg-gray-50'
+  // Format time ago helper
+  const formatTimeAgo = (dateString: string) => {
+    try {
+      return formatDistanceToNow(new Date(dateString), { addSuffix: true })
+    } catch {
+      return 'Unknown'
     }
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'Active': return <Clock className="h-4 w-4" />
-      case 'Review': return <BarChart3 className="h-4 w-4" />
-      case 'Completed': return <CheckCircle2 className="h-4 w-4" />
-      default: return <BookOpen className="h-4 w-4" />
-    }
+  // Loading state
+  if (projectsLoading || statsLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>Loading your projects...</span>
+            </div>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
+  // Error state
+  if (projectsError || statsError) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center h-64">
+            <Card className="p-6 max-w-md">
+              <div className="flex items-center gap-3 text-destructive mb-4">
+                <AlertCircle className="h-5 w-5" />
+                <span className="font-medium">Failed to load projects</span>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                {projectsError?.message || statsError?.message || 'An unexpected error occurred.'}
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  refetchProjects()
+                }}
+                className="w-full"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Try Again
+              </Button>
+            </Card>
+          </div>
+        </main>
+      </div>
+    )
   }
 
   return (
@@ -79,7 +103,7 @@ export const Dashboard = () => {
                 <BookOpen className="h-8 w-8 text-primary" />
                 <div className="ml-4">
                   <p className="text-sm font-medium text-muted-foreground">Total Projects</p>
-                  <p className="text-2xl font-bold">3</p>
+                  <p className="text-2xl font-bold">{stats?.totalProjects || 0}</p>
                 </div>
               </div>
             </CardContent>
@@ -89,8 +113,10 @@ export const Dashboard = () => {
               <div className="flex items-center">
                 <BarChart3 className="h-8 w-8 text-green-600" />
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-muted-foreground">Articles Processed</p>
-                  <p className="text-2xl font-bold">479</p>
+                  <p className="text-sm font-medium text-muted-foreground">Total Studies</p>
+                  <p className="text-2xl font-bold">
+                    {projects?.reduce((total, project) => total + project.total_studies, 0) || 0}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -100,8 +126,8 @@ export const Dashboard = () => {
               <div className="flex items-center">
                 <Clock className="h-8 w-8 text-yellow-600" />
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-muted-foreground">Active Reviews</p>
-                  <p className="text-2xl font-bold">2</p>
+                  <p className="text-sm font-medium text-muted-foreground">Active Projects</p>
+                  <p className="text-2xl font-bold">{stats?.activeProjects || 0}</p>
                 </div>
               </div>
             </CardContent>
@@ -112,7 +138,7 @@ export const Dashboard = () => {
                 <CheckCircle2 className="h-8 w-8 text-blue-600" />
                 <div className="ml-4">
                   <p className="text-sm font-medium text-muted-foreground">Completed</p>
-                  <p className="text-2xl font-bold">1</p>
+                  <p className="text-2xl font-bold">{stats?.completedProjects || 0}</p>
                 </div>
               </div>
             </CardContent>
@@ -141,57 +167,86 @@ export const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Sample Project Cards */}
-          {sampleProjects.map((project) => (
-            <Card key={project.id} className="hover:shadow-md transition-all cursor-pointer">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg">{project.title}</CardTitle>
-                    <CardDescription className="mt-1">
-                      {project.description}
-                    </CardDescription>
-                  </div>
-                  <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
-                    {getStatusIcon(project.status)}
-                    {project.status}
-                  </div>
+          {/* Real Project Cards */}
+          {projects && projects.length > 0 ? (
+            projects.map((project) => {
+              const statusDisplay = getStatusDisplay(project.status)
+              return (
+                <Card key={project.id} className="hover:shadow-md transition-all cursor-pointer">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-lg">{project.title}</CardTitle>
+                        <CardDescription className="mt-1">
+                          {project.description || 'No description provided'}
+                        </CardDescription>
+                        {project.research_domain && (
+                          <div className="mt-2">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-50 text-blue-700">
+                              {project.research_domain}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${statusDisplay.color}`}>
+                        {statusDisplay.icon}
+                        {statusDisplay.label}
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Studies:</span>
+                        <span className="font-medium">{project.total_studies}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Stage:</span>
+                        <span className="font-medium">{project.current_stage}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Progress:</span>
+                        <span className="font-medium">{project.progress_percentage}%</span>
+                      </div>
+                      <div className="w-full bg-secondary rounded-full h-2">
+                        <div 
+                          className="bg-primary h-2 rounded-full transition-all" 
+                          style={{ width: `${project.progress_percentage}%` }}
+                        ></div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Updated {formatTimeAgo(project.last_activity_at)}
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        className="w-full mt-4"
+                        onClick={() => navigate(`/projects/${project.id}`)}
+                      >
+                        Open Project
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })
+          ) : (
+            // Empty state when no projects exist
+            <div className="col-span-full">
+              <Card className="p-8 text-center">
+                <div className="mx-auto mb-4 p-3 bg-muted rounded-full w-16 h-16 flex items-center justify-center">
+                  <BookOpen className="h-8 w-8 text-muted-foreground" />
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Articles:</span>
-                    <span className="font-medium">{project.articles}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Stage:</span>
-                    <span className="font-medium">{project.stage}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Progress:</span>
-                    <span className="font-medium">{project.progress}%</span>
-                  </div>
-                  <div className="w-full bg-secondary rounded-full h-2">
-                    <div 
-                      className="bg-primary h-2 rounded-full transition-all" 
-                      style={{ width: `${project.progress}%` }}
-                    ></div>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Updated {project.lastUpdated}
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    className="w-full mt-4"
-                    onClick={() => navigate(`/projects/${project.id}`)}
-                  >
-                    Open Project
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                <h3 className="text-lg font-semibold mb-2">No projects yet</h3>
+                <p className="text-muted-foreground mb-4">
+                  Create your first systematic literature review to get started
+                </p>
+                <Button onClick={() => navigate('/projects/new')}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Your First Project
+                </Button>
+              </Card>
+            </div>
+          )}
         </div>
 
         {/* Getting Started Section */}

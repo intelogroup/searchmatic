@@ -1,18 +1,58 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Header } from '@/components/layout/Header'
-import { ArrowLeft, Sparkles, Upload } from 'lucide-react'
+import { ArrowLeft, Sparkles, Upload, Loader2 } from 'lucide-react'
+import { useCreateProject } from '@/hooks/useProjects'
+import { logInfo } from '@/lib/error-logger'
 
 export const NewProject = () => {
   const navigate = useNavigate()
+  const [isCreating, setIsCreating] = useState(false)
+  const createProjectMutation = useCreateProject()
 
-  const handleCreateProject = (type: 'guided' | 'upload') => {
-    // For demo purposes, navigate to a sample project
-    if (type === 'guided') {
-      navigate('/projects/demo-guided')
-    } else {
-      navigate('/projects/demo-upload')
+  const handleCreateProject = async (type: 'guided' | 'upload') => {
+    setIsCreating(true)
+    
+    logInfo(`Starting project creation: ${type}`, {
+      feature: 'projects',
+      action: 'create-project-initiated',
+      metadata: { type }
+    })
+
+    try {
+      // Create a new project based on the type
+      const projectData = {
+        title: type === 'guided' 
+          ? 'New Systematic Review' 
+          : 'Document Collection Review',
+        description: type === 'guided'
+          ? 'AI-guided systematic literature review'
+          : 'Review of uploaded document collection',
+        project_type: 'systematic_review' as const,
+        research_domain: undefined
+      }
+
+      const newProject = await createProjectMutation.mutateAsync(projectData)
+      
+      logInfo('Project created successfully, navigating to project', {
+        feature: 'projects',
+        action: 'create-project-success',
+        metadata: { 
+          projectId: newProject.id,
+          title: newProject.title,
+          type 
+        }
+      })
+
+      // Navigate to the newly created project
+      navigate(`/projects/${newProject.id}`)
+      
+    } catch (error) {
+      console.error('Failed to create project:', error)
+      // Error is already logged by the mutation
+      setIsCreating(false)
     }
   }
 
@@ -73,8 +113,16 @@ export const NewProject = () => {
                 <Button 
                   className="w-full mt-6" 
                   onClick={() => handleCreateProject('guided')}
+                  disabled={isCreating}
                 >
-                  Start Guided Setup
+                  {isCreating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Creating Project...
+                    </>
+                  ) : (
+                    'Start Guided Setup'
+                  )}
                 </Button>
               </CardContent>
             </Card>
@@ -115,8 +163,16 @@ export const NewProject = () => {
                   variant="outline" 
                   className="w-full mt-6"
                   onClick={() => handleCreateProject('upload')}
+                  disabled={isCreating}
                 >
-                  Upload Documents
+                  {isCreating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Creating Project...
+                    </>
+                  ) : (
+                    'Upload Documents'
+                  )}
                 </Button>
               </CardContent>
             </Card>
