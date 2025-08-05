@@ -1,0 +1,30 @@
+{
+  "timestamp": "2025-08-05T20:51:03.428Z",
+  "mcpConfigPath": "/root/repo/mcp-enhanced.json",
+  "supabaseUrl": "https://qzvfufadiqmizrozejci.supabase.co",
+  "projectRef": "qzvfufadiqmizrozejci",
+  "capabilities": {
+    "adminAccess": true,
+    "edgeFunctions": true,
+    "cliIntegration": true,
+    "databaseAccess": true,
+    "typeScriptSupport": true,
+    "denoRuntime": true
+  },
+  "servers": [
+    "postgres",
+    "playwright",
+    "brave-search",
+    "memory",
+    "fetch",
+    "filesystem",
+    "sentry",
+    "github",
+    "supabase-admin",
+    "supabase-cli",
+    "deno",
+    "typescript",
+    "supabase-functions",
+    "supabase-db"
+  ]
+}

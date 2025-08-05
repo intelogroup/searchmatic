@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Eye, EyeOff, Sparkles, CheckCircle2, Shield, Users } from 'lucide-react'
+import { errorLogger, logInfo, logSupabaseError, logPerformance } from '@/lib/error-logger'
 
 export const Login: React.FC = () => {
   const navigate = useNavigate()
@@ -23,32 +24,123 @@ export const Login: React.FC = () => {
     setError(null)
     setSuccess(null)
 
-    if (isSignUp) {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      })
-
-      if (error) {
-        setError(error.message)
-        setIsLoading(false)
-      } else {
-        // Show success message for email confirmation
-        setSuccess('Please check your email for a confirmation link, then sign in.')
-        setIsLoading(false)
+    const startTime = performance.now()
+    const operation = isSignUp ? 'signup' : 'signin'
+    
+    // Log authentication attempt (with privacy protection)
+    logInfo(`Authentication attempt: ${operation}`, {
+      feature: 'authentication',
+      action: operation,
+      metadata: {
+        email: email.replace(/(.{2})(.*)(@.*)/, '$1***$3'), // Mask email for privacy
+        hasPassword: !!password,
+        passwordLength: password.length
       }
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+    })
 
-      if (error) {
-        setError(error.message)
-        setIsLoading(false)
+    try {
+      if (isSignUp) {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+        })
+
+        const duration = performance.now() - startTime
+        logPerformance(`Supabase signup`, duration)
+
+        if (error) {
+          logSupabaseError('signup', error, {
+            feature: 'authentication',
+            action: 'signup',
+            metadata: {
+              email: email.replace(/(.{2})(.*)(@.*)/, '$1***$3'),
+              errorCode: error.code || 'UNKNOWN',
+              errorMessage: error.message
+            }
+          })
+          setError(error.message)
+          setIsLoading(false)
+        } else {
+          logInfo('User signup successful', {
+            feature: 'authentication',
+            action: 'signup-success',
+            metadata: {
+              userId: data.user?.id,
+              email: email.replace(/(.{2})(.*)(@.*)/, '$1***$3'),
+              emailConfirmed: data.user?.email_confirmed_at ? 'yes' : 'no'
+            }
+          })
+          
+          // Set user ID for future error logging
+          if (data.user?.id) {
+            errorLogger.setUserId(data.user.id)
+          }
+          
+          // Show success message for email confirmation
+          setSuccess('Please check your email for a confirmation link, then sign in.')
+          setIsLoading(false)
+        }
       } else {
-        navigate('/dashboard')
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+
+        const duration = performance.now() - startTime
+        logPerformance(`Supabase signin`, duration)
+
+        if (error) {
+          logSupabaseError('signin', error, {
+            feature: 'authentication',
+            action: 'signin',
+            metadata: {
+              email: email.replace(/(.{2})(.*)(@.*)/, '$1***$3'),
+              errorCode: error.code || 'UNKNOWN',
+              errorMessage: error.message
+            }
+          })
+          setError(error.message)
+          setIsLoading(false)
+        } else {
+          logInfo('User signin successful', {
+            feature: 'authentication',
+            action: 'signin-success',
+            metadata: {
+              userId: data.user?.id,
+              email: email.replace(/(.{2})(.*)(@.*)/, '$1***$3'),
+              sessionId: data.session?.access_token ? 'present' : 'missing'
+            }
+          })
+          
+          // Set user ID for future error logging
+          if (data.user?.id) {
+            errorLogger.setUserId(data.user.id)
+          }
+          
+          logInfo('Navigating to dashboard', {
+            feature: 'navigation',
+            action: 'redirect-to-dashboard'
+          })
+          
+          navigate('/dashboard')
+        }
       }
+    } catch (unexpectedError) {
+      const duration = performance.now() - startTime
+      logPerformance(`Failed ${operation}`, duration)
+      
+      logSupabaseError(`${operation}-unexpected`, unexpectedError, {
+        feature: 'authentication',
+        action: `${operation}-unexpected-error`,
+        metadata: {
+          email: email.replace(/(.{2})(.*)(@.*)/, '$1***$3'),
+          errorType: 'unexpected',
+          error: String(unexpectedError)
+        }
+      })
+      
+      setError('An unexpected error occurred. Please try again.')
+      setIsLoading(false)
     }
   }
 
