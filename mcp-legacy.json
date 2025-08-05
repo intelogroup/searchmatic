@@ -89,10 +89,7 @@
         "SUPABASE_ACCESS_TOKEN": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
         "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
         "SUPABASE_ADMIN_MODE": "true",
-        "SUPABASE_READ_ONLY": "false",
-        "SUPABASE_ENABLE_FUNCTIONS": "true",
-        "SUPABASE_ENABLE_MIGRATIONS": "true",
-        "SUPABASE_ENABLE_STORAGE": "true"
+        "SUPABASE_READ_ONLY": "false"
       }
     },
     "supabase-cli": {
@@ -107,52 +104,6 @@
         "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co",
         "SUPABASE_SERVICE_ROLE_KEY": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
         "SUPABASE_ANON_KEY": "sb_publishable_mzJORjzXGOboCWSdwDJPkw__LX9UgLS"
-      }
-    },
-    "deno": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@deno/shim-deno@latest"
-      ],
-      "env": {
-        "DENO_DEPLOY_TOKEN": "YOUR_DENO_DEPLOY_TOKEN",
-        "SUPABASE_ACCESS_TOKEN": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
-        "DENO_DIR": "/tmp/deno_cache"
-      }
-    },
-    "typescript": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-typescript@latest"
-      ],
-      "args_extra": [
-        "/root/repo"
-      ]
-    },
-    "supabase-functions": {
-      "command": "node",
-      "args": [
-        "-e",
-        "const { spawn } = require('child_process'); const args = process.argv.slice(2); const child = spawn('npx', ['supabase', 'functions', ...args], { stdio: 'inherit', env: { ...process.env, SUPABASE_ACCESS_TOKEN: 'sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337', SUPABASE_PROJECT_REF: 'qzvfufadiqmizrozejci' } }); child.on('exit', process.exit);"
-      ],
-      "env": {
-        "SUPABASE_ACCESS_TOKEN": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
-        "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
-        "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co"
-      }
-    },
-    "supabase-db": {
-      "command": "node",
-      "args": [
-        "-e",
-        "const { spawn } = require('child_process'); const args = process.argv.slice(2); const child = spawn('npx', ['supabase', 'db', ...args], { stdio: 'inherit', env: { ...process.env, SUPABASE_ACCESS_TOKEN: 'sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337', SUPABASE_PROJECT_REF: 'qzvfufadiqmizrozejci' } }); child.on('exit', process.exit);"
-      ],
-      "env": {
-        "SUPABASE_ACCESS_TOKEN": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
-        "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
-        "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co"
       }
     }
   }
