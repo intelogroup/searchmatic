@@ -85,7 +85,7 @@ class StudyService {
 
     try {
       const { data: studies, error } = await supabase
-        .from('studies')
+        .from('articles')
         .select('*')
         .eq('project_id', projectId)
         .order('created_at', { ascending: false })
@@ -141,7 +141,7 @@ class StudyService {
 
     try {
       const { data: study, error } = await supabase
-        .from('studies')
+        .from('articles')
         .select('*')
         .eq('id', studyId)
         .single()
@@ -209,7 +209,7 @@ class StudyService {
       }
 
       const { data: study, error } = await supabase
-        .from('studies')
+        .from('articles')
         .insert({
           project_id: projectId,
           user_id: user.user.id,
@@ -288,7 +288,7 @@ class StudyService {
 
     try {
       const { data: study, error } = await supabase
-        .from('studies')
+        .from('articles')
         .update({
           ...updates,
           updated_at: new Date().toISOString()
@@ -348,7 +348,7 @@ class StudyService {
 
     try {
       const { error } = await supabase
-        .from('studies')
+        .from('articles')
         .delete()
         .eq('id', studyId)
 
@@ -419,7 +419,7 @@ class StudyService {
 
     try {
       const { error } = await supabase
-        .from('studies')
+        .from('articles')
         .update({ 
           status,
           updated_at: new Date().toISOString()

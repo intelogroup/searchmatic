@@ -6,6 +6,8 @@ import { AIAnalysisPanel } from '@/components/ai/AIAnalysisPanel'
 import { ProtocolPanel } from '@/components/protocol/ProtocolPanel'
 import { StudiesList } from '@/components/studies/StudiesList'
 import { StudyForm } from '@/components/studies/StudyForm'
+import { SearchPanel } from '@/components/search/SearchPanel'
+import { ExportPanel } from '@/components/export/ExportPanel'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -33,7 +35,7 @@ export const ProjectView: React.FC = () => {
   const { currentProject, isLoading, error } = useProjectContext()
   const [showStudyForm, setShowStudyForm] = useState(false)
   const [editingStudy, setEditingStudy] = useState<Study | null>(null)
-  const [activePanel, setActivePanel] = useState<'protocol' | 'chat' | 'analysis'>('protocol')
+  const [activePanel, setActivePanel] = useState<'protocol' | 'chat' | 'analysis' | 'search' | 'export'>('protocol')
   
   // Get real-time study counts
   const { data: studyCounts } = useStudyStatusCounts(currentProject?.id || '')
@@ -196,7 +198,11 @@ export const ProjectView: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="h-auto p-4 flex flex-col items-center gap-2"
+              onClick={() => setActivePanel('search')}
+            >
               <Search className="h-6 w-6 text-primary" />
               <span className="text-sm font-medium">Search Databases</span>
               <span className="text-xs text-muted-foreground">PubMed, Scopus, etc.</span>
@@ -218,7 +224,11 @@ export const ProjectView: React.FC = () => {
               <span className="text-xs text-muted-foreground">Literature analysis</span>
             </Button>
 
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="h-auto p-4 flex flex-col items-center gap-2"
+              onClick={() => setActivePanel('export')}
+            >
               <Download className="h-6 w-6 text-primary" />
               <span className="text-sm font-medium">Export Results</span>
               <span className="text-xs text-muted-foreground">Multiple formats</span>
@@ -363,6 +373,10 @@ export const ProjectView: React.FC = () => {
         return <ChatPanel projectId={currentProject.id} />
       case 'analysis':
         return <AIAnalysisPanel projectId={currentProject.id} />
+      case 'search':
+        return <SearchPanel projectId={currentProject.id} />
+      case 'export':
+        return <ExportPanel projectId={currentProject.id} />
       default:
         return <ProtocolPanel projectId={currentProject.id} />
     }
@@ -401,6 +415,26 @@ export const ProjectView: React.FC = () => {
           }`}
         >
           AI Analysis
+        </button>
+        <button
+          onClick={() => setActivePanel('search')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activePanel === 'search' 
+              ? 'border-primary text-primary' 
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Search
+        </button>
+        <button
+          onClick={() => setActivePanel('export')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+            activePanel === 'export' 
+              ? 'border-primary text-primary' 
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Export
         </button>
       </div>
       
