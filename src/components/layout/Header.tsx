@@ -35,6 +35,12 @@ export const Header: React.FC = () => {
             >
               Projects
             </a>
+            <a 
+              href="/vct-demo" 
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              VCT Demo
+            </a>
           </nav>
         </div>
         

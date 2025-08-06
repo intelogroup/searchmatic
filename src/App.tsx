@@ -11,6 +11,7 @@ import { NewProject } from '@/pages/NewProject'
 import { ProjectView } from '@/pages/ProjectView'
 import { Settings } from '@/pages/Settings'
 import { NotFound } from '@/pages/NotFound'
+import VCTDemoSimple from '@/pages/VCTDemoSimple'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,6 +79,10 @@ function App() {
             <Route 
               path="/settings" 
               element={session ? <Settings /> : <Navigate to="/login" replace />} 
+            />
+            <Route 
+              path="/vct-demo" 
+              element={<VCTDemoSimple />} 
             />
             <Route 
               path="*" 
