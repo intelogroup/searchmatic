@@ -1,10 +1,14 @@
+/**
+ * Search Panel Component
+ * Comprehensive academic database search interface with QueryBuilder integration
+ */
+
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { 
   Search, 
   Database, 
@@ -13,107 +17,90 @@ import {
   AlertCircle,
   ExternalLink,
   BookOpen,
-  Clock
+  Clock,
+  CheckCircle,
+  X,
+  Download,
+  Eye,
+  Users,
+  Calendar
 } from 'lucide-react'
+import { QueryBuilder } from './QueryBuilder'
+import { searchService, type SearchQuery, type SearchResult, type SearchResponse, type DatabaseCount } from '@/services/searchService'
+import { studyService } from '@/services/studyService'
+import { errorLogger } from '@/lib/error-logger'
 
 interface SearchPanelProps {
   projectId: string
+  protocolId?: string
   className?: string
 }
 
-interface SearchQuery {
-  keywords: string
-  database: 'pubmed' | 'scopus' | 'web_of_science' | 'cochrane' | 'all'
-  yearFrom: string
-  yearTo: string
-  studyTypes: string[]
-  limitResults: number
-}
-
-interface SearchResult {
-  id: string
-  title: string
-  authors: string
-  journal: string
-  year: number
-  abstract: string
-  doi?: string
-  pmid?: string
-  url?: string
-}
-
 export const SearchPanel: React.FC<SearchPanelProps> = ({ 
+  projectId,
+  protocolId,
   className = ''
 }) => {
-  const [searchQuery, setSearchQuery] = useState<SearchQuery>({
-    keywords: '',
-    database: 'pubmed',
-    yearFrom: '',
-    yearTo: '',
-    studyTypes: ['article'],
-    limitResults: 100
-  })
-
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([])
+  const [searchResponses, setSearchResponses] = useState<SearchResponse[]>([])
   const [selectedResults, setSelectedResults] = useState<string[]>([])
   const [isSearching, setIsSearching] = useState(false)
+  const [isImporting, setIsImporting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [hasSearched, setHasSearched] = useState(false)
+  const [currentQuery, setCurrentQuery] = useState<SearchQuery | null>(null)
+  const [activeTab, setActiveTab] = useState('query-builder')
 
-  const handleSearch = async () => {
-    if (!searchQuery.keywords.trim()) {
-      setError('Please enter search keywords')
-      return
-    }
-
+  const handleQueryExecute = async (query: SearchQuery, estimatedCounts: DatabaseCount[]) => {
     setIsSearching(true)
     setError(null)
-    setHasSearched(false)
+    setCurrentQuery(query)
 
     try {
-      // For MVP, we'll simulate a search with demo data
-      // In production, this would call external APIs like PubMed, Scopus, etc.
-      
-      await new Promise(resolve => setTimeout(resolve, 2000)) // Simulate API delay
-      
-      const mockResults: SearchResult[] = [
-        {
-          id: 'mock-1',
-          title: 'Systematic review methodology in medical research: A comprehensive overview',
-          authors: 'Smith, J.A., Johnson, B.C., Williams, D.E.',
-          journal: 'Medical Research Methods',
-          year: 2023,
-          abstract: 'This systematic review provides a comprehensive overview of methodology best practices in medical research. The study examines various approaches to systematic literature review and meta-analysis...',
-          doi: '10.1001/example.2023.001',
-          pmid: '12345678',
-          url: 'https://example.com/article/1'
-        },
-        {
-          id: 'mock-2', 
-          title: 'Evidence-based approaches to literature synthesis in healthcare',
-          authors: 'Brown, K.L., Davis, M.R.',
-          journal: 'Healthcare Evidence Review',
-          year: 2022,
-          abstract: 'An examination of evidence-based methodologies for conducting comprehensive literature synthesis in healthcare research domains...',
-          doi: '10.1002/example.2022.002',
-          url: 'https://example.com/article/2'
-        },
-        {
-          id: 'mock-3',
-          title: 'Quality assessment frameworks for systematic reviews',
-          authors: 'Wilson, A.B., Taylor, C.D., Anderson, F.G.',
-          journal: 'Review Methodology Quarterly',
-          year: 2023,
-          abstract: 'This paper presents comprehensive quality assessment frameworks specifically designed for systematic review evaluation...',
-          pmid: '87654321'
+      errorLogger.logInfo('Starting database search', {
+        feature: 'search-panel',
+        action: 'execute-search',
+        metadata: { 
+          databases: query.databases.length,
+          keywords: query.keywords.length,
+          estimatedTotal: estimatedCounts.reduce((sum, c) => sum + Math.max(0, c.count), 0)
         }
-      ]
+      })
 
-      setSearchResults(mockResults)
-      setHasSearched(true)
+      // Search all selected databases concurrently
+      const responses = await searchService.searchMultipleDatabases(
+        query.databases, 
+        query, 
+        { limit: 50 } // Start with 50 results per database
+      )
 
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Search failed')
+      setSearchResponses(responses)
+      setActiveTab('results')
+
+      const totalResults = responses.reduce((sum, r) => sum + r.results.length, 0)
+      const totalCount = responses.reduce((sum, r) => sum + r.totalCount, 0)
+
+      errorLogger.logInfo('Database search completed', {
+        feature: 'search-panel',
+        action: 'search-completed',
+        metadata: { 
+          databases: responses.length,
+          retrievedResults: totalResults,
+          totalAvailable: totalCount,
+          avgSearchTime: responses.reduce((sum, r) => sum + r.searchTime, 0) / responses.length
+        }
+      })
+
+    } catch (searchError) {
+      const errorMessage = searchError instanceof Error ? searchError.message : 'Search failed'
+      setError(errorMessage)
+      
+      errorLogger.logError('Database search failed', {
+        feature: 'search-panel',
+        action: 'search-error',
+        metadata: { 
+          databases: query.databases,
+          error: errorMessage
+        }
+      })
     } finally {
       setIsSearching(false)
     }
@@ -125,12 +112,87 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
       return
     }
 
-    // TODO: Implement actual import functionality
-    // This would create studies in the project using the study service
-    console.log('Importing articles:', selectedResults)
+    setIsImporting(true)
+    setError(null)
+
+    try {
+      // Get selected result objects
+      const allResults = searchResponses.flatMap(response => response.results)
+      const selectedResultObjects = allResults.filter(result => 
+        selectedResults.includes(result.id)
+      )
+
+      errorLogger.logInfo(`Importing ${selectedResults.length} articles`, {
+        feature: 'search-panel',
+        action: 'import-articles',
+        metadata: { 
+          projectId,
+          count: selectedResults.length,
+          databases: [...new Set(selectedResultObjects.map(r => r.database))]
+        }
+      })
+
+      // Import each selected result as a study
+      const importPromises = selectedResultObjects.map(result => 
+        studyService.createStudy(projectId, {
+          title: result.title,
+          authors: result.authors.join(', '),
+          publication_year: result.publicationDate ? new Date(result.publicationDate).getFullYear() : undefined,
+          journal: result.journal,
+          doi: result.doi,
+          pmid: result.pmid,
+          url: result.url,
+          study_type: result.studyType as any || 'article',
+          abstract: result.abstract,
+          keywords: result.keywords,
+          citation: formatCitation(result)
+        })
+      )
+
+      await Promise.all(importPromises)
+
+      // Reset selection after successful import
+      setSelectedResults([])
+      
+      errorLogger.logInfo('Articles imported successfully', {
+        feature: 'search-panel',
+        action: 'import-success',
+        metadata: { 
+          projectId,
+          importedCount: selectedResults.length
+        }
+      })
+
+      // Show success message
+      setError(`✅ Successfully imported ${selectedResultObjects.length} articles to your project`)
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setError(null), 3000)
+
+    } catch (importError) {
+      const errorMessage = importError instanceof Error ? importError.message : 'Import failed'
+      setError(`Import failed: ${errorMessage}`)
+      
+      errorLogger.logError('Article import failed', {
+        feature: 'search-panel',
+        action: 'import-error',
+        metadata: { 
+          projectId,
+          selectedCount: selectedResults.length,
+          error: errorMessage
+        }
+      })
+    } finally {
+      setIsImporting(false)
+    }
+  }
+
+  const formatCitation = (result: SearchResult): string => {
+    const year = result.publicationDate ? new Date(result.publicationDate).getFullYear() : 'n.d.'
+    const authors = result.authors.length > 0 ? result.authors.slice(0, 3).join(', ') : 'Unknown'
+    const journal = result.journal ? `${result.journal}. ` : ''
     
-    // Reset selection after import
-    setSelectedResults([])
+    return `${authors} (${year}). ${result.title}. ${journal}${result.doi ? `https://doi.org/${result.doi}` : result.url || ''}`
   }
 
   const toggleResultSelection = (resultId: string) => {
@@ -142,11 +204,28 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
   }
 
   const selectAllResults = () => {
-    if (selectedResults.length === searchResults.length) {
+    const allResultIds = searchResponses.flatMap(response => 
+      response.results.map(result => result.id)
+    )
+    
+    if (selectedResults.length === allResultIds.length) {
       setSelectedResults([])
     } else {
-      setSelectedResults(searchResults.map(r => r.id))
+      setSelectedResults(allResultIds)
     }
+  }
+
+  const getTotalResults = () => {
+    return searchResponses.reduce((sum, response) => sum + response.results.length, 0)
+  }
+
+  const getTotalAvailableResults = () => {
+    return searchResponses.reduce((sum, response) => sum + response.totalCount, 0)
+  }
+
+  const getAverageSearchTime = () => {
+    if (searchResponses.length === 0) return 0
+    return searchResponses.reduce((sum, response) => sum + response.searchTime, 0) / searchResponses.length
   }
 
   return (
@@ -155,148 +234,114 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Search className="h-5 w-5 text-primary" />
-            <CardTitle className="text-lg">Database Search</CardTitle>
+            <CardTitle className="text-lg">Academic Database Search</CardTitle>
           </div>
-          {searchResults.length > 0 && (
-            <Badge variant="secondary" className="text-xs">
-              {searchResults.length} results
-            </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            {getTotalResults() > 0 && (
+              <Badge variant="secondary" className="text-xs">
+                {getTotalResults()} of {getTotalAvailableResults().toLocaleString()} results
+              </Badge>
+            )}
+            {currentQuery && (
+              <Badge variant="outline" className="text-xs">
+                {currentQuery.databases.length} database{currentQuery.databases.length !== 1 ? 's' : ''}
+              </Badge>
+            )}
+          </div>
         </div>
 
         {error && (
-          <div className="bg-destructive/10 text-destructive text-sm p-2 rounded flex items-center gap-2">
-            <AlertCircle className="h-4 w-4" />
-            <span>{error}</span>
+          <div className={`text-sm p-3 rounded-lg flex items-start gap-2 ${
+            error.startsWith('✅') 
+              ? 'bg-green-50 text-green-800 border border-green-200' 
+              : 'bg-destructive/10 text-destructive border border-destructive/20'
+          }`}>
+            {error.startsWith('✅') ? (
+              <CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            ) : (
+              <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            )}
+            <span className="flex-1">{error}</span>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={() => setError(null)}
-              className="ml-auto h-6 w-6 p-0"
+              className="h-6 w-6 p-0 hover:bg-transparent"
             >
-              ×
+              <X className="h-3 w-3" />
             </Button>
           </div>
         )}
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col gap-4 p-4 pt-0">
-        {/* Search Form */}
-        <div className="space-y-4 pb-4 border-b">
-          <div>
-            <label className="text-sm font-medium mb-2 block">Keywords *</label>
-            <Textarea
-              value={searchQuery.keywords}
-              onChange={(e) => setSearchQuery(prev => ({ ...prev, keywords: e.target.value }))}
-              placeholder="Enter search terms (e.g., systematic review AND methodology)"
-              rows={3}
-              className="resize-none"
+      <CardContent className="flex-1 p-4 pt-0">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="query-builder">Query Builder</TabsTrigger>
+            <TabsTrigger value="results" disabled={searchResponses.length === 0}>
+              Results ({getTotalResults()})
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Query Builder Tab */}
+          <TabsContent value="query-builder" className="flex-1 mt-4">
+            <QueryBuilder 
+              projectId={projectId}
+              protocolId={protocolId}
+              onQueryExecute={handleQueryExecute}
+              className="h-full"
             />
-          </div>
+          </TabsContent>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">Database</label>
-              <Select
-                value={searchQuery.database}
-                onValueChange={(value) => setSearchQuery(prev => ({ 
-                  ...prev, 
-                  database: value as SearchQuery['database'] 
-                }))}
-              >
-                <SelectTrigger>
-                  <Database className="h-4 w-4 mr-2" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pubmed">PubMed</SelectItem>
-                  <SelectItem value="scopus">Scopus</SelectItem>
-                  <SelectItem value="web_of_science">Web of Science</SelectItem>
-                  <SelectItem value="cochrane">Cochrane Library</SelectItem>
-                  <SelectItem value="all">All Databases</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium mb-2 block">Limit Results</label>
-              <Select
-                value={searchQuery.limitResults.toString()}
-                onValueChange={(value) => setSearchQuery(prev => ({ 
-                  ...prev, 
-                  limitResults: parseInt(value) 
-                }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="50">50 results</SelectItem>
-                  <SelectItem value="100">100 results</SelectItem>
-                  <SelectItem value="250">250 results</SelectItem>
-                  <SelectItem value="500">500 results</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">Year From</label>
-              <Input
-                type="number"
-                value={searchQuery.yearFrom}
-                onChange={(e) => setSearchQuery(prev => ({ ...prev, yearFrom: e.target.value }))}
-                placeholder="2020"
-                min="1900"
-                max={new Date().getFullYear()}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-2 block">Year To</label>
-              <Input
-                type="number"
-                value={searchQuery.yearTo}
-                onChange={(e) => setSearchQuery(prev => ({ ...prev, yearTo: e.target.value }))}
-                placeholder="2024"
-                min="1900"
-                max={new Date().getFullYear()}
-              />
-            </div>
-          </div>
-
-          <Button
-            onClick={handleSearch}
-            disabled={isSearching || !searchQuery.keywords.trim()}
-            className="w-full"
-          >
+          {/* Results Tab */}
+          <TabsContent value="results" className="flex-1 mt-4 flex flex-col">
             {isSearching ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Searching {searchQuery.database}...
-              </>
-            ) : (
-              <>
-                <Search className="h-4 w-4 mr-2" />
-                Search Database
-              </>
-            )}
-          </Button>
-        </div>
-
-        {/* Search Results */}
-        {hasSearched && (
-          <div className="flex-1 flex flex-col">
-            {searchResults.length === 0 ? (
-              <div className="flex-1 flex items-center justify-center text-center">
-                <div className="space-y-2">
-                  <Search className="h-8 w-8 mx-auto text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">No results found</p>
-                  <p className="text-xs text-muted-foreground">Try different keywords or adjust filters</p>
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center space-y-3">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+                  <div>
+                    <h3 className="font-medium">Searching databases...</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {currentQuery?.databases.join(', ')} • {currentQuery?.keywords.join(', ')}
+                    </p>
+                  </div>
                 </div>
               </div>
-            ) : (
+            ) : searchResponses.length > 0 ? (
               <>
+                {/* Search Summary */}
+                <div className="bg-muted/30 rounded-lg p-4 mb-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-medium">Search Results Summary</h3>
+                    <Badge variant="secondary">
+                      Query: {currentQuery?.keywords.join(` ${currentQuery.booleanOperator} `)}
+                    </Badge>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="space-y-1">
+                      <div className="text-muted-foreground">Total Retrieved</div>
+                      <div className="font-medium">{getTotalResults().toLocaleString()} articles</div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-muted-foreground">Available</div>
+                      <div className="font-medium">{getTotalAvailableResults().toLocaleString()} total</div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-muted-foreground">Search Time</div>
+                      <div className="font-medium">{Math.round(getAverageSearchTime())}ms avg</div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {searchResponses.map(response => (
+                      <Badge key={response.database} variant="outline" className="text-xs">
+                        {response.database}: {response.results.length}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Bulk Actions */}
                 <div className="flex items-center justify-between mb-4 p-3 bg-muted/30 rounded-lg">
                   <div className="flex items-center gap-4">
@@ -304,11 +349,12 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
                       variant="outline"
                       size="sm"
                       onClick={selectAllResults}
+                      disabled={isImporting}
                     >
-                      {selectedResults.length === searchResults.length ? 'Deselect All' : 'Select All'}
+                      {selectedResults.length === getTotalResults() ? 'Deselect All' : 'Select All'}
                     </Button>
                     <span className="text-sm text-muted-foreground">
-                      {selectedResults.length} of {searchResults.length} selected
+                      {selectedResults.length} of {getTotalResults()} selected
                     </span>
                   </div>
                   
@@ -316,103 +362,161 @@ export const SearchPanel: React.FC<SearchPanelProps> = ({
                     <Button
                       size="sm"
                       onClick={handleImportSelected}
+                      disabled={isImporting}
                     >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Import Selected
+                      {isImporting ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Importing...
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="h-4 w-4 mr-2" />
+                          Import Selected ({selectedResults.length})
+                        </>
+                      )}
                     </Button>
                   )}
                 </div>
 
-                {/* Results List */}
-                <div className="flex-1 space-y-3 overflow-y-auto">
-                  {searchResults.map((result) => (
-                    <div 
-                      key={result.id}
-                      className={`border rounded-lg p-4 space-y-2 transition-colors ${
-                        selectedResults.includes(result.id) ? 'bg-primary/5 border-primary' : 'hover:bg-muted/30'
-                      }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        <input
-                          type="checkbox"
-                          checked={selectedResults.includes(result.id)}
-                          onChange={() => toggleResultSelection(result.id)}
-                          className="mt-1"
-                        />
-                        
-                        <div className="flex-1 space-y-2">
-                          <h4 className="font-medium text-sm leading-tight">{result.title}</h4>
-                          
-                          <div className="text-xs text-muted-foreground space-y-1">
-                            <p>{result.authors}</p>
-                            <div className="flex items-center gap-4">
-                              <span className="flex items-center gap-1">
-                                <BookOpen className="h-3 w-3" />
-                                {result.journal}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                {result.year}
-                              </span>
-                            </div>
-                          </div>
-
-                          <p className="text-xs text-muted-foreground line-clamp-2">
-                            {result.abstract}
-                          </p>
-
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              {result.doi && (
-                                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
-                                  DOI: {result.doi}
-                                </span>
-                              )}
-                              {result.pmid && (
-                                <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">
-                                  PMID: {result.pmid}
-                                </span>
-                              )}
-                            </div>
-
-                            {result.url && (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-6 w-6 p-0"
-                                onClick={() => window.open(result.url, '_blank')}
-                              >
-                                <ExternalLink className="h-3 w-3" />
-                              </Button>
-                            )}
+                {/* Results by Database */}
+                <ScrollArea className="flex-1">
+                  <div className="space-y-6">
+                    {searchResponses.map((response) => (
+                      <div key={response.database} className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-medium flex items-center gap-2">
+                            <Database className="h-4 w-4" />
+                            {response.database}
+                          </h4>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <span>{response.results.length} of {response.totalCount.toLocaleString()}</span>
+                            <span>•</span>
+                            <span>{Math.round(response.searchTime)}ms</span>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        )}
 
-        {/* Empty State for No Search */}
-        {!hasSearched && !isSearching && searchResults.length === 0 && (
-          <div className="flex-1 flex items-center justify-center text-center">
-            <div className="space-y-4">
-              <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mx-auto">
-                <Search className="h-8 w-8 text-muted-foreground" />
+                        <div className="space-y-3">
+                          {response.results.map((result) => (
+                            <div 
+                              key={result.id}
+                              className={`border rounded-lg p-4 space-y-3 transition-colors ${
+                                selectedResults.includes(result.id) 
+                                  ? 'bg-primary/5 border-primary/30' 
+                                  : 'hover:bg-muted/30'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedResults.includes(result.id)}
+                                  onChange={() => toggleResultSelection(result.id)}
+                                  className="mt-1 flex-shrink-0"
+                                  disabled={isImporting}
+                                />
+                                
+                                <div className="flex-1 space-y-2 min-w-0">
+                                  <h5 className="font-medium text-sm leading-tight">
+                                    {result.title}
+                                  </h5>
+                                  
+                                  <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                                    {result.authors.length > 0 && (
+                                      <span className="flex items-center gap-1">
+                                        <Users className="h-3 w-3 flex-shrink-0" />
+                                        {result.authors.slice(0, 3).join(', ')}
+                                        {result.authors.length > 3 && ` +${result.authors.length - 3} more`}
+                                      </span>
+                                    )}
+                                    
+                                    {result.journal && (
+                                      <span className="flex items-center gap-1">
+                                        <BookOpen className="h-3 w-3 flex-shrink-0" />
+                                        {result.journal}
+                                      </span>
+                                    )}
+                                    
+                                    {result.publicationDate && (
+                                      <span className="flex items-center gap-1">
+                                        <Calendar className="h-3 w-3 flex-shrink-0" />
+                                        {new Date(result.publicationDate).getFullYear()}
+                                      </span>
+                                    )}
+
+                                    {result.citationCount && (
+                                      <span className="flex items-center gap-1">
+                                        📖 {result.citationCount} citations
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  {result.abstract && (
+                                    <p className="text-xs text-muted-foreground line-clamp-2">
+                                      {result.abstract}
+                                    </p>
+                                  )}
+
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                      <Badge variant="secondary" className="text-xs">
+                                        {result.database}
+                                      </Badge>
+                                      
+                                      {result.doi && (
+                                        <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+                                          DOI: {result.doi}
+                                        </span>
+                                      )}
+                                      
+                                      {result.pmid && (
+                                        <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded">
+                                          PMID: {result.pmid}
+                                        </span>
+                                      )}
+
+                                      {result.studyType && (
+                                        <span className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded">
+                                          {result.studyType}
+                                        </span>
+                                      )}
+                                    </div>
+
+                                    {result.url && (
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-8 w-8 p-0"
+                                        onClick={() => window.open(result.url, '_blank')}
+                                      >
+                                        <ExternalLink className="h-3 w-3" />
+                                      </Button>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center space-y-3">
+                  <Search className="h-8 w-8 text-muted-foreground mx-auto" />
+                  <div>
+                    <h3 className="font-medium">No search results yet</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Use the Query Builder to search academic databases
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-2">
-                <h3 className="font-medium">Search Academic Databases</h3>
-                <p className="text-sm text-muted-foreground max-w-[300px]">
-                  Search PubMed, Scopus, and other databases to find relevant articles 
-                  for your systematic review.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+            )}
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   )
