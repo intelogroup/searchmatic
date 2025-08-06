@@ -468,7 +468,7 @@ export const createVCTJourney = (config: {
     description: config.description,
     steps: config.steps.map((step, index) => ({
       ...step,
-      id: `step_${index + 1}_${Date.now()}`
+      id: `step_${index + 1}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`
     })),
     currentStep: 0,
     status: 'pending',

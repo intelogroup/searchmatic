@@ -2,16 +2,24 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Header } from '@/components/layout/Header'
-import { Plus, BookOpen, Clock, CheckCircle2, BarChart3, AlertCircle, Loader2, RefreshCw } from 'lucide-react'
-import { useProjects, useDashboardStats } from '@/hooks/useProjects'
+import { Plus, BookOpen, Clock, CheckCircle2, AlertCircle, Loader2, RefreshCw, Sparkles, BarChart3 } from 'lucide-react'
+import { useProjects } from '@/hooks/useProjects'
 import { formatDistanceToNow } from 'date-fns'
+import { logInfo } from '@/lib/error-logger'
 
 export const Dashboard = () => {
   const navigate = useNavigate()
   
   // Use real data from Supabase
   const { data: projects, isLoading: projectsLoading, error: projectsError, refetch: refetchProjects } = useProjects()
-  const { data: stats, isLoading: statsLoading, error: statsError } = useDashboardStats()
+
+  const handleCreateProject = () => {
+    logInfo('User clicked create project from dashboard', {
+      feature: 'dashboard',
+      action: 'create-project-click'
+    })
+    navigate('/projects/new')
+  }
 
   // Map database status to display values
   const getStatusDisplay = (status: string) => {
@@ -35,7 +43,7 @@ export const Dashboard = () => {
   }
 
   // Loading state
-  if (projectsLoading || statsLoading) {
+  if (projectsLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -52,7 +60,7 @@ export const Dashboard = () => {
   }
 
   // Error state
-  if (projectsError || statsError) {
+  if (projectsError) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -64,7 +72,7 @@ export const Dashboard = () => {
                 <span className="font-medium">Failed to load projects</span>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                {projectsError?.message || statsError?.message || 'An unexpected error occurred.'}
+                {projectsError?.message || 'An unexpected error occurred.'}
               </p>
               <Button 
                 variant="outline" 
@@ -95,74 +103,67 @@ export const Dashboard = () => {
           </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid gap-4 md:grid-cols-4 mb-8">
-          <Card>
+        {/* Simple Stats */}
+        {projects && projects.length > 0 && (
+          <Card className="mb-8">
             <CardContent className="p-6">
-              <div className="flex items-center">
-                <BookOpen className="h-8 w-8 text-primary" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-muted-foreground">Total Projects</p>
-                  <p className="text-2xl font-bold">{stats?.totalProjects || 0}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <BookOpen className="h-8 w-8 text-primary" />
+                  <div>
+                    <p className="text-2xl font-bold">{projects.length}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {projects.length === 1 ? 'Project' : 'Projects'}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <BarChart3 className="h-8 w-8 text-green-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-muted-foreground">Total Studies</p>
-                  <p className="text-2xl font-bold">
-                    {projects?.reduce((total, project) => total + project.total_studies, 0) || 0}
+                <div className="text-right">
+                  <p className="text-sm text-muted-foreground">
+                    Most recent: {formatTimeAgo(projects[0]?.last_activity_at || projects[0]?.updated_at)}
                   </p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Clock className="h-8 w-8 text-yellow-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-muted-foreground">Active Projects</p>
-                  <p className="text-2xl font-bold">{stats?.activeProjects || 0}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <CheckCircle2 className="h-8 w-8 text-blue-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-muted-foreground">Completed</p>
-                  <p className="text-2xl font-bold">{stats?.completedProjects || 0}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        )}
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* New Project Card */}
-          <Card className="border-dashed hover:border-solid transition-all cursor-pointer group hover:shadow-md">
+          <Card className="border-dashed border-primary/20 hover:border-primary/40 transition-all cursor-pointer group hover:shadow-md" 
+                onClick={handleCreateProject}>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Plus className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <Sparkles className="h-5 w-5" />
                 Start New Review
               </CardTitle>
               <CardDescription>
-                Create a new systematic literature review with AI assistance
+                Create a systematic literature review with AI guidance
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-primary/60 rounded-full" />
+                  <span>AI-powered protocol creation</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-primary/60 rounded-full" />
+                  <span>Smart search & deduplication</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-primary/60 rounded-full" />
+                  <span>Export-ready results</span>
+                </div>
+              </div>
               <Button 
-                className="w-full"
-                onClick={() => navigate('/projects/new')}
+                className="w-full mt-4 group-hover:shadow-md"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCreateProject();
+                }}
               >
-                Begin Project
+                <Plus className="h-4 w-4 mr-2" />
+                Create Project
               </Button>
             </CardContent>
           </Card>
@@ -240,7 +241,7 @@ export const Dashboard = () => {
                 <p className="text-muted-foreground mb-4">
                   Create your first systematic literature review to get started
                 </p>
-                <Button onClick={() => navigate('/projects/new')}>
+                <Button onClick={handleCreateProject}>
                   <Plus className="h-4 w-4 mr-2" />
                   Create Your First Project
                 </Button>
@@ -260,7 +261,8 @@ export const Dashboard = () => {
                   from research scoping to final export, making rigorous research accessible to everyone.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button onClick={() => navigate('/projects/new')}>
+                  <Button onClick={handleCreateProject}>
+                    <Sparkles className="h-4 w-4 mr-2" />
                     Start Your First Review
                   </Button>
                   <Button variant="outline">
