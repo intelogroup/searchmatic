@@ -13,6 +13,15 @@ export interface ErrorContext {
   userAgent?: string
   url?: string
   stack?: string
+  // VCT Framework specific context
+  taskId?: string
+  type?: string
+  context?: string
+  component?: string
+  scope?: string
+  agent?: string
+  stepId?: string
+  journey?: string
 }
 
 export interface ErrorLog {

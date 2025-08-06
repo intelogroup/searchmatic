@@ -149,9 +149,10 @@ export const useVCTAgent = (agentType: VCTAgentType) => {
         currentTask: undefined 
       });
 
-      errorLogger.logError(`[${agentType}] Task failed: ${task.type}`, error, {
+      errorLogger.logError(`[${agentType}] Task failed: ${task.type}`, {
         taskId: task.id,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
+        metadata: { error: error instanceof Error ? error.message : String(error) }
       });
 
       return {

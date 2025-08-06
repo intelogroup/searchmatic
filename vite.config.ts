@@ -38,9 +38,13 @@ export default defineConfig({
     // Development server optimization
     hmr: true,
     port: 5173,
+    host: '0.0.0.0', // Allow external access
+    strictPort: true,
   },
   preview: {
     port: 4173,
+    host: '0.0.0.0', // Allow external access
+    strictPort: true,
   },
   // Environment variable handling
   define: {

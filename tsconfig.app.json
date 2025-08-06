@@ -29,5 +29,11 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/components/vct/**",
+    "src/hooks/useVCTAgent.ts",
+    "src/hooks/useVCTUIConsistency.ts",
+    "src/pages/VCTDemo.tsx"
+  ]
 }

@@ -3,7 +3,7 @@
  * Provides UI/UX validation and consistency checking following VCT framework guidelines
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { errorLogger } from '@/lib/error-logger';
 
 // UI Style Standards (VCT Framework Part 5)
