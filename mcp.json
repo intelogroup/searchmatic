@@ -7,7 +7,9 @@
         "@modelcontextprotocol/server-postgres@latest"
       ],
       "env": {
-        "POSTGRES_CONNECTION_STRING": "postgresql://postgres.qzvfufadiqmizrozejci:YOUR_SUPABASE_PASSWORD@aws-0-eu-central-1.pooler.supabase.com:6543/postgres"
+        "POSTGRES_CONNECTION_STRING": "postgresql://postgres.qzvfufadiqmizrozejci:Jimkali90%23@aws-0-us-east-1.pooler.supabase.com:5432/postgres",
+        "POSTGRES_DIRECT_URL": "postgresql://postgres:Jimkali90%23@db.qzvfufadiqmizrozejci.supabase.co:5432/postgres",
+        "POSTGRES_TRANSACTION_URL": "postgresql://postgres.qzvfufadiqmizrozejci:Jimkali90%23@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
       }
     },
     "playwright": {
@@ -85,14 +87,16 @@
       ],
       "env": {
         "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co",
-        "SUPABASE_SERVICE_ROLE_KEY": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzkzMTQwOSwiZXhwIjoyMDY5NTA3NDA5fQ.ThqBa2lzMrm6zADqVIQzqK7-HvYOpfoVvsh_9qdwxgc",
         "SUPABASE_ACCESS_TOKEN": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
         "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
+        "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MzE0MDksImV4cCI6MjA2OTUwNzQwOX0.rPb3Fweylb3SxkHbTelVngXgPK6oZARKRPSH2GtPFEs",
         "SUPABASE_ADMIN_MODE": "true",
         "SUPABASE_READ_ONLY": "false",
         "SUPABASE_ENABLE_FUNCTIONS": "true",
         "SUPABASE_ENABLE_MIGRATIONS": "true",
-        "SUPABASE_ENABLE_STORAGE": "true"
+        "SUPABASE_ENABLE_STORAGE": "true",
+        "SUPABASE_DB_PASSWORD": "Jimkali90#"
       }
     },
     "supabase-cli": {
@@ -104,9 +108,11 @@
       "env": {
         "SUPABASE_ACCESS_TOKEN": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
         "SUPABASE_PROJECT_ID": "qzvfufadiqmizrozejci",
+        "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
         "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co",
-        "SUPABASE_SERVICE_ROLE_KEY": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
-        "SUPABASE_ANON_KEY": "sb_publishable_mzJORjzXGOboCWSdwDJPkw__LX9UgLS"
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzkzMTQwOSwiZXhwIjoyMDY5NTA3NDA5fQ.ThqBa2lzMrm6zADqVIQzqK7-HvYOpfoVvsh_9qdwxgc",
+        "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MzE0MDksImV4cCI6MjA2OTUwNzQwOX0.rPb3Fweylb3SxkHbTelVngXgPK6oZARKRPSH2GtPFEs",
+        "SUPABASE_DB_PASSWORD": "Jimkali90#"
       }
     },
     "deno": {
@@ -135,24 +141,110 @@
       "command": "node",
       "args": [
         "-e",
-        "const { spawn } = require('child_process'); const args = process.argv.slice(2); const child = spawn('npx', ['supabase', 'functions', ...args], { stdio: 'inherit', env: { ...process.env, SUPABASE_ACCESS_TOKEN: 'sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337', SUPABASE_PROJECT_REF: 'qzvfufadiqmizrozejci' } }); child.on('exit', process.exit);"
+        "const { spawn } = require('child_process'); const args = process.argv.slice(2); const child = spawn('npx', ['supabase', 'functions', ...args], { stdio: 'inherit', env: { ...process.env, SUPABASE_ACCESS_TOKEN: 'sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337', SUPABASE_PROJECT_REF: 'qzvfufadiqmizrozejci', SUPABASE_SERVICE_ROLE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzkzMTQwOSwiZXhwIjoyMDY5NTA3NDA5fQ.ThqBa2lzMrm6zADqVIQzqK7-HvYOpfoVvsh_9qdwxgc' } }); child.on('exit', process.exit);"
       ],
       "env": {
         "SUPABASE_ACCESS_TOKEN": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
         "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
-        "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co"
+        "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzkzMTQwOSwiZXhwIjoyMDY5NTA3NDA5fQ.ThqBa2lzMrm6zADqVIQzqK7-HvYOpfoVvsh_9qdwxgc"
       }
     },
     "supabase-db": {
       "command": "node",
       "args": [
         "-e",
-        "const { spawn } = require('child_process'); const args = process.argv.slice(2); const child = spawn('npx', ['supabase', 'db', ...args], { stdio: 'inherit', env: { ...process.env, SUPABASE_ACCESS_TOKEN: 'sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337', SUPABASE_PROJECT_REF: 'qzvfufadiqmizrozejci' } }); child.on('exit', process.exit);"
+        "const { spawn } = require('child_process'); const args = process.argv.slice(2); const child = spawn('npx', ['supabase', 'db', ...args], { stdio: 'inherit', env: { ...process.env, SUPABASE_ACCESS_TOKEN: 'sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337', SUPABASE_PROJECT_REF: 'qzvfufadiqmizrozejci', SUPABASE_SERVICE_ROLE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzkzMTQwOSwiZXhwIjoyMDY5NTA3NDA5fQ.ThqBa2lzMrm6zADqVIQzqK7-HvYOpfoVvsh_9qdwxgc' } }); child.on('exit', process.exit);"
       ],
       "env": {
         "SUPABASE_ACCESS_TOKEN": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
         "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
-        "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co"
+        "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzkzMTQwOSwiZXhwIjoyMDY5NTA3NDA5fQ.ThqBa2lzMrm6zADqVIQzqK7-HvYOpfoVvsh_9qdwxgc",
+        "SUPABASE_DB_PASSWORD": "Jimkali90#"
+      }
+    },
+    "supabase-migrations": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "migrations"
+      ],
+      "env": {
+        "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzkzMTQwOSwiZXhwIjoyMDY5NTA3NDA5fQ.ThqBa2lzMrm6zADqVIQzqK7-HvYOpfoVvsh_9qdwxgc",
+        "SUPABASE_ACCESS_TOKEN": "sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337",
+        "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
+        "SUPABASE_ENABLE_MIGRATIONS": "true",
+        "SUPABASE_MIGRATION_MODE": "auto"
+      }
+    },
+    "supabase-storage": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "storage"
+      ],
+      "env": {
+        "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzkzMTQwOSwiZXhwIjoyMDY5NTA3NDA5fQ.ThqBa2lzMrm6zADqVIQzqK7-HvYOpfoVvsh_9qdwxgc",
+        "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
+        "SUPABASE_ENABLE_STORAGE": "true"
+      }
+    },
+    "supabase-auth": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "auth"
+      ],
+      "env": {
+        "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzkzMTQwOSwiZXhwIjoyMDY5NTA3NDA5fQ.ThqBa2lzMrm6zADqVIQzqK7-HvYOpfoVvsh_9qdwxgc",
+        "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
+        "SUPABASE_ENABLE_AUTH": "true"
+      }
+    },
+    "supabase-realtime": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "realtime"
+      ],
+      "env": {
+        "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzkzMTQwOSwiZXhwIjoyMDY5NTA3NDA5fQ.ThqBa2lzMrm6zADqVIQzqK7-HvYOpfoVvsh_9qdwxgc",
+        "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
+        "SUPABASE_ENABLE_REALTIME": "true"
+      }
+    },
+    "sql-executor": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres@latest"
+      ],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://postgres.qzvfufadiqmizrozejci:Jimkali90%23@aws-0-us-east-1.pooler.supabase.com:5432/postgres",
+        "POSTGRES_ENABLE_MIGRATIONS": "true",
+        "POSTGRES_ALLOW_DDL": "true",
+        "POSTGRES_ALLOW_DML": "true"
+      }
+    },
+    "database-inspector": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres@latest"
+      ],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://postgres.qzvfufadiqmizrozejci:Jimkali90%23@aws-0-us-east-1.pooler.supabase.com:5432/postgres",
+        "POSTGRES_READ_ONLY": "true",
+        "POSTGRES_ENABLE_SCHEMA_INSPECTION": "true"
       }
     }
   }
