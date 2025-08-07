@@ -6,4 +6,5 @@
  - **DEVELOPER_GUIDELINES.md**: Best practices, workflows, and standards for contributors.
  - Other existing guides and reports can be found in the root of the repository.
  - **UI_UX_DESIGN_RECOMMENDATIONS.md**: Visual, UX, and product design specs for the MVP frontend.
- - **SENIOR_ENGINEER_REVIEW.md**: Senior engineer’s end-to-end codebase assessment and refactoring roadmap.
+- **SENIOR_ENGINEER_REVIEW.md**: Senior engineer’s end-to-end codebase assessment and refactoring roadmap.
+- **FUTURE_DEVELOPMENT_GAPS.md**: Analysis of future development bottlenecks, technical gaps, and areas of over-engineering.
