@@ -1,4 +1,4 @@
-import { logInfo, logSupabaseError } from '@/lib/error-logger'
+import { BaseService } from '@/lib/service-wrapper'
 
 interface Migration {
   id: string
@@ -15,73 +15,52 @@ interface MigrationResult {
   error?: unknown
 }
 
-class MigrationEngine {
+class MigrationEngine extends BaseService {
+  constructor() {
+    super('migration')
+  }
   /**
    * Initialize the migration engine by creating the schema_migrations table
    */
   async initialize(): Promise<void> {
-    try {
-      logInfo('Initializing migration engine', {
-        feature: 'migration',
-        action: 'initialize'
-      })
-
-      // Create the schema_migrations table using SQL
-      const createTableSQL = `
-        CREATE TABLE IF NOT EXISTS schema_migrations (
-          id SERIAL PRIMARY KEY,
-          migration_id VARCHAR(255) UNIQUE NOT NULL,
-          migration_name VARCHAR(255) NOT NULL,
-          applied_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          success BOOLEAN NOT NULL DEFAULT true,
-          error_message TEXT
-        );
+    return this.execute(
+      'initialize',
+      async () => {
+        // Create the schema_migrations table using SQL
+        const createTableSQL = `
+          CREATE TABLE IF NOT EXISTS schema_migrations (
+            id SERIAL PRIMARY KEY,
+            migration_id VARCHAR(255) UNIQUE NOT NULL,
+            migration_name VARCHAR(255) NOT NULL,
+            applied_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+            success BOOLEAN NOT NULL DEFAULT true,
+            error_message TEXT
+          );
+          
+          CREATE INDEX IF NOT EXISTS idx_schema_migrations_id ON schema_migrations(migration_id);
+          CREATE INDEX IF NOT EXISTS idx_schema_migrations_applied_at ON schema_migrations(applied_at);
+        `
         
-        CREATE INDEX IF NOT EXISTS idx_schema_migrations_id ON schema_migrations(migration_id);
-        CREATE INDEX IF NOT EXISTS idx_schema_migrations_applied_at ON schema_migrations(applied_at);
-      `
-      
-      // Execute through RPC (edge function would need to be created)
-      // For now, we'll log this as a requirement
-      logInfo('Schema migrations table creation SQL prepared', {
-        feature: 'migration',
-        action: 'prepare-table-sql',
-        metadata: { sql: createTableSQL }
-      })
-
-      logInfo('Migration engine initialized (Note: Manual SQL execution may be required)', {
-        feature: 'migration',
-        action: 'initialize-success'
-      })
-    } catch (error) {
-      logSupabaseError('migration-engine-init', error, {
-        feature: 'migration',
-        action: 'initialize-error'
-      })
-      throw error
-    }
+        // Execute through RPC (edge function would need to be created)
+        // For now, we'll log this as a requirement
+        console.log('Schema migrations table creation SQL prepared:', createTableSQL)
+        console.log('Migration engine initialized (Note: Manual SQL execution may be required)')
+      }
+    )
   }
 
   /**
    * Get all applied migrations (simulated for MVP)
    */
   async getAppliedMigrations(): Promise<string[]> {
-    try {
-      logInfo('Getting applied migrations', {
-        feature: 'migration',
-        action: 'get-applied'
-      })
-
-      // For MVP, we'll return empty array since we don't have the table structure yet
-      // This would need proper implementation with the schema_migrations table
-      return []
-    } catch (error) {
-      logSupabaseError('get-applied-migrations-error', error, {
-        feature: 'migration',
-        action: 'get-applied-error'
-      })
-      return []
-    }
+    return this.execute(
+      'get-applied-migrations',
+      async () => {
+        // For MVP, we'll return empty array since we don't have the table structure yet
+        // This would need proper implementation with the schema_migrations table
+        return []
+      }
+    ).catch(() => [])
   }
 
   /**

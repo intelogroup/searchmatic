@@ -1,5 +1,5 @@
-import { errorLogger } from '@/lib/error-logger'
 import type { Database } from '@/types/database'
+import { BaseService } from '@/lib/service-wrapper'
 
 type Protocol = Database['public']['Tables']['protocols']['Row']
 
@@ -18,11 +18,12 @@ export interface OpenAIResponse {
   }
 }
 
-class OpenAIService {
+class OpenAIService extends BaseService {
   private apiKey: string
   private baseUrl = 'https://api.openai.com/v1'
 
   constructor() {
+    super('openai')
     this.apiKey = import.meta.env.VITE_OPENAI_API_KEY
     if (!this.apiKey) {
       throw new Error('OpenAI API key is not configured')
@@ -45,48 +46,46 @@ class OpenAIService {
       stream = false
     } = options
 
-    try {
-      const response = await fetch(`${this.baseUrl}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          messages: messages.map(msg => ({
-            role: msg.role,
-            content: msg.content
-          })),
-          temperature,
-          max_tokens: maxTokens,
-          stream,
-        }),
-      })
+    return this.execute(
+      'create-chat-completion',
+      async () => {
+        const response = await fetch(`${this.baseUrl}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.apiKey}`,
+          },
+          body: JSON.stringify({
+            model,
+            messages: messages.map(msg => ({
+              role: msg.role,
+              content: msg.content
+            })),
+            temperature,
+            max_tokens: maxTokens,
+            stream,
+          }),
+        })
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`)
-      }
-
-      const data = await response.json()
-      
-      return {
-        content: data.choices[0]?.message?.content || '',
-        usage: data.usage
-      }
-    } catch (error) {
-      errorLogger.logError((error as Error).message, {
-        action: 'OpenAI Chat Completion',
-        metadata: {
-          messages: messages.length,
-          model,
-          temperature,
-          maxTokens
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`)
         }
-      })
-      throw error
-    }
+
+        const data = await response.json()
+        
+        return {
+          content: data.choices[0]?.message?.content || '',
+          usage: data.usage
+        }
+      },
+      {
+        messages: messages.length,
+        model,
+        temperature,
+        maxTokens
+      }
+    )
   }
 
   async createStreamingChatCompletion(
@@ -104,77 +103,75 @@ class OpenAIService {
       maxTokens = 1000
     } = options
 
-    try {
-      const response = await fetch(`${this.baseUrl}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          messages: messages.map(msg => ({
-            role: msg.role,
-            content: msg.content
-          })),
-          temperature,
-          max_tokens: maxTokens,
-          stream: true,
-        }),
-      })
+    return this.execute(
+      'create-streaming-chat-completion',
+      async () => {
+        const response = await fetch(`${this.baseUrl}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.apiKey}`,
+          },
+          body: JSON.stringify({
+            model,
+            messages: messages.map(msg => ({
+              role: msg.role,
+              content: msg.content
+            })),
+            temperature,
+            max_tokens: maxTokens,
+            stream: true,
+          }),
+        })
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`)
-      }
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`)
+        }
 
-      const reader = response.body?.getReader()
-      if (!reader) {
-        throw new Error('Failed to get response reader')
-      }
+        const reader = response.body?.getReader()
+        if (!reader) {
+          throw new Error('Failed to get response reader')
+        }
 
-      const decoder = new TextDecoder()
-      let buffer = ''
+        const decoder = new TextDecoder()
+        let buffer = ''
 
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
 
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop() || ''
+          buffer += decoder.decode(value, { stream: true })
+          const lines = buffer.split('\n')
+          buffer = lines.pop() || ''
 
-        for (const line of lines) {
-          const trimmed = line.trim()
-          if (trimmed.startsWith('data: ')) {
-            const data = trimmed.slice(6)
-            if (data === '[DONE]') return
+          for (const line of lines) {
+            const trimmed = line.trim()
+            if (trimmed.startsWith('data: ')) {
+              const data = trimmed.slice(6)
+              if (data === '[DONE]') return
 
-            try {
-              const parsed = JSON.parse(data)
-              const content = parsed.choices[0]?.delta?.content
-              if (content) {
-                onChunk(content)
+              try {
+                const parsed = JSON.parse(data)
+                const content = parsed.choices[0]?.delta?.content
+                if (content) {
+                  onChunk(content)
+                }
+              } catch {
+                // Ignore parse errors for malformed chunks
+                console.warn('Failed to parse SSE chunk:', data)
               }
-            } catch {
-              // Ignore parse errors for malformed chunks
-              console.warn('Failed to parse SSE chunk:', data)
             }
           }
         }
+      },
+      {
+        messages: messages.length,
+        model,
+        temperature,
+        maxTokens
       }
-    } catch (error) {
-      errorLogger.logError((error as Error).message, {
-        action: 'OpenAI Streaming Chat Completion',
-        metadata: {
-          messages: messages.length,
-          model,
-          temperature,
-          maxTokens
-        }
-      })
-      throw error
-    }
+    )
   }
 
   // Specialized method for research protocol guidance

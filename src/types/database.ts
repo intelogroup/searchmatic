@@ -44,7 +44,12 @@ export interface Database {
           user_id: string
           title: string
           description: string | null
-          status: 'active' | 'completed' | 'archived'
+          project_type: 'systematic_review' | 'meta_analysis' | 'scoping_review' | 'narrative_review' | 'umbrella_review' | 'custom'
+          status: 'draft' | 'active' | 'review' | 'completed' | 'archived'
+          research_domain: string | null
+          progress_percentage: number
+          current_stage: string
+          last_activity_at: string
           protocol: Json | null
           protocol_locked: boolean
           protocol_locked_at: string | null
@@ -57,7 +62,12 @@ export interface Database {
           user_id: string
           title: string
           description?: string | null
-          status?: 'active' | 'completed' | 'archived'
+          project_type?: 'systematic_review' | 'meta_analysis' | 'scoping_review' | 'narrative_review' | 'umbrella_review' | 'custom'
+          status?: 'draft' | 'active' | 'review' | 'completed' | 'archived'
+          research_domain?: string | null
+          progress_percentage?: number
+          current_stage?: string
+          last_activity_at?: string
           protocol?: Json | null
           protocol_locked?: boolean
           protocol_locked_at?: string | null
@@ -70,7 +80,12 @@ export interface Database {
           user_id?: string
           title?: string
           description?: string | null
-          status?: 'active' | 'completed' | 'archived'
+          project_type?: 'systematic_review' | 'meta_analysis' | 'scoping_review' | 'narrative_review' | 'umbrella_review' | 'custom'
+          status?: 'draft' | 'active' | 'review' | 'completed' | 'archived'
+          research_domain?: string | null
+          progress_percentage?: number
+          current_stage?: string
+          last_activity_at?: string
           protocol?: Json | null
           protocol_locked?: boolean
           protocol_locked_at?: string | null
@@ -418,7 +433,8 @@ export interface Database {
     Enums: {
       article_source: 'pubmed' | 'scopus' | 'wos' | 'manual' | 'other'
       article_status: 'pending' | 'processing' | 'completed' | 'error'
-      project_status: 'active' | 'completed' | 'archived'
+      project_status: 'draft' | 'active' | 'review' | 'completed' | 'archived'
+      project_type: 'systematic_review' | 'meta_analysis' | 'scoping_review' | 'narrative_review' | 'umbrella_review' | 'custom'
       screening_decision: 'include' | 'exclude' | 'maybe'
       protocol_framework_type: 'pico' | 'spider' | 'other'
       protocol_status: 'draft' | 'active' | 'completed' | 'archived'
