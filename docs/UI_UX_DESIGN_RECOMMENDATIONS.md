@@ -41,4 +41,4 @@
  2. Revamp auth screens into a unified login/signup component with inline validation.
  3. Implement feedback patterns (toasts/alerts, loading indicators, skeletons).
 4. Review designs with the team and iterate on wireframes or Figma prototypes.
-5. Periodically cross-reference **FUTURE_DEVELOPMENT_GAPS.md** to validate UI patterns and feature scope against known technical and performance constraints.
+5. Periodically cross-reference **PREVENT_DEV_GAPS_GUARDRAILS.md** to validate UI patterns and feature scope against known technical and performance constraints.

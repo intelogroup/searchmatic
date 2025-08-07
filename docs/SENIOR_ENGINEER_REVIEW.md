@@ -65,4 +65,4 @@ Follow DEVELOPER_GUIDELINES.md:
 This roadmap transforms the current codebase “mess” into a clear, maintainable MVP aligned with PM and UI/UX guidance.
 
 ## 7. Future Bottlenecks & Guardrails
-Cross-reference **FUTURE_DEVELOPMENT_GAPS.md** to monitor and prioritize fixes for scalability, observability, and security gaps. Enforce design and scope guardrails via regular reviews against the MVP spec (**MVP_SPECIFICATION.md**) and UI/UX docs (**UI_UX_DESIGN_RECOMMENDATIONS.md**).
+Cross-reference **PREVENT_DEV_GAPS_GUARDRAILS.md** to monitor and prioritize fixes for scalability, observability, and security gaps. Enforce design and scope guardrails via regular reviews against the MVP spec (**MVP_SPECIFICATION.md**) and UI/UX docs (**UI_UX_DESIGN_RECOMMENDATIONS.md**).

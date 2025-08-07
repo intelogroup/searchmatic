@@ -56,4 +56,4 @@
 - Comprehensive end-to-end, performance, and load testing.
 
 ## 7. Future Evolution and Continuous Improvement
-Refer to **FUTURE_DEVELOPMENT_GAPS.md** for detailed analysis of anticipated bottlenecks, technical gaps, and over-engineering risks. Ensure all Phase 2 work aligns with the Senior Engineer roadmap (**SENIOR_ENGINEER_REVIEW.md**) and UI/UX recommendations (**UI_UX_DESIGN_RECOMMENDATIONS.md**) to avoid known pitfalls as the system grows.
+Refer to **PREVENT_DEV_GAPS_GUARDRAILS.md** as an ongoing checklist to avoid known development traps and technical debt. Ensure all Phase 2 work aligns with the Senior Engineer roadmap (**SENIOR_ENGINEER_REVIEW.md**) and UI/UX recommendations (**UI_UX_DESIGN_RECOMMENDATIONS.md**) to maintain long-term health.
