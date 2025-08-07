@@ -6,15 +6,7 @@
 import { baseSupabaseClient as supabase } from '@/lib/supabase'
 import { BaseService } from '@/lib/service-wrapper'
 import { type AuthenticatedUser } from '@/lib/auth-utils'
-
-// Type for project statistics from RPC function
-interface ProjectStats {
-  total_studies: number
-  pending_studies: number
-  included_studies: number
-  excluded_studies: number
-  last_updated: string | null
-}
+import { projectStatsService, type DashboardStats } from './projectStatsService'
 
 // Type definitions matching the enhanced database schema
 export interface Project {
@@ -75,51 +67,10 @@ class ProjectService extends BaseService {
       },
       'projects'
     ).then(async (projects) => {
-
-      // Get statistics for each project
-      const projectsWithStats: ProjectWithStats[] = []
+      if (!projects || projects.length === 0) return []
       
-      for (const project of projects || []) {
-        try {
-          // Use the helper function we created in the migration
-          const { data: stats, error: statsError } = await supabase
-            .rpc('get_project_stats', { project_uuid: project.id })
-            .single()
-
-          if (statsError) {
-            // Continue with default stats if function fails
-            projectsWithStats.push({
-              ...project,
-              total_studies: 0,
-              pending_studies: 0,
-              included_studies: 0,
-              excluded_studies: 0,
-              studies_last_updated: null
-            })
-          } else {
-            projectsWithStats.push({
-              ...project,
-              total_studies: (stats as ProjectStats).total_studies || 0,
-              pending_studies: (stats as ProjectStats).pending_studies || 0,
-              included_studies: (stats as ProjectStats).included_studies || 0,
-              excluded_studies: (stats as ProjectStats).excluded_studies || 0,
-              studies_last_updated: (stats as ProjectStats).last_updated || null
-            })
-          }
-        } catch (error) {
-          // Continue with project but no stats
-          projectsWithStats.push({
-            ...project,
-            total_studies: 0,
-            pending_studies: 0,
-            included_studies: 0,
-            excluded_studies: 0,
-            studies_last_updated: null
-          })
-        }
-      }
-
-      return projectsWithStats
+      // Use stats service to enhance projects with statistics
+      return projectStatsService.enhanceProjectsWithStats(projects)
     })
   }
 
@@ -144,35 +95,8 @@ class ProjectService extends BaseService {
           throw new Error(`Failed to fetch project: ${projectError.message}`)
         }
 
-        // Get project statistics
-        const { data: stats, error: statsError } = await supabase
-          .rpc('get_project_stats', { project_uuid: projectId })
-          .single()
-
-        let projectStats = {
-          total_studies: 0,
-          pending_studies: 0,
-          included_studies: 0,
-          excluded_studies: 0,
-          studies_last_updated: null as string | null
-        }
-
-        if (!statsError) {
-          projectStats = {
-            total_studies: (stats as ProjectStats).total_studies || 0,
-            pending_studies: (stats as ProjectStats).pending_studies || 0,
-            included_studies: (stats as ProjectStats).included_studies || 0,
-            excluded_studies: (stats as ProjectStats).excluded_studies || 0,
-            studies_last_updated: (stats as ProjectStats).last_updated || null
-          }
-        }
-
-        const result: ProjectWithStats = {
-          ...project,
-          ...projectStats
-        }
-
-        return result
+        // Use stats service to enhance project with statistics
+        return projectStatsService.enhanceProjectWithStats(project)
       },
       { projectId }
     )
@@ -253,27 +177,8 @@ class ProjectService extends BaseService {
   /**
    * Get project statistics summary for dashboard
    */
-  async getDashboardStats() {
-    return this.executeSupabase(
-      'get-dashboard-stats',
-      async () => {
-        return supabase
-          .from('projects')
-          .select('status, progress_percentage, created_at')
-      },
-      'projects'
-    ).then((projects) => {
-      const stats = {
-        totalProjects: projects?.length || 0,
-        activeProjects: projects?.filter(p => p.status === 'active').length || 0,
-        completedProjects: projects?.filter(p => p.status === 'completed').length || 0,
-        averageProgress: projects?.length > 0 
-          ? Math.round(projects.reduce((sum, p) => sum + p.progress_percentage, 0) / projects.length)
-          : 0
-      }
-
-      return stats
-    })
+  async getDashboardStats(): Promise<DashboardStats> {
+    return projectStatsService.getDashboardStats()
   }
 }
 

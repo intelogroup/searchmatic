@@ -4,7 +4,12 @@ import { migrationEngine, coreMigrations } from '../migrationService'
 // Mock error logger
 vi.mock('@/lib/error-logger', () => ({
   logInfo: vi.fn(),
-  logSupabaseError: vi.fn()
+  logSupabaseError: vi.fn(),
+  logPerformance: vi.fn(),
+  errorLogger: {
+    logError: vi.fn(),
+    setUserId: vi.fn()
+  }
 }))
 
 // Mock supabase
@@ -118,9 +123,10 @@ describe('MigrationService', () => {
       
       await migrationEngine.initialize()
       
-      expect(logInfo).toHaveBeenCalledWith('Initializing migration engine', {
+      expect(logInfo).toHaveBeenCalledWith('Executing migration.initialize', {
         feature: 'migration',
-        action: 'initialize'
+        action: 'initialize',
+        metadata: undefined
       })
     })
 
@@ -135,9 +141,9 @@ describe('MigrationService', () => {
 
       await migrationEngine.applyMigration(migration)
       
-      expect(logInfo).toHaveBeenCalledWith('Applying migration: Test Migration', {
+      expect(logInfo).toHaveBeenCalledWith('Executing migration.apply-migration', {
         feature: 'migration',
-        action: 'apply-single',
+        action: 'apply-migration',
         metadata: { 
           migrationId: '001_test',
           migrationName: 'Test Migration'

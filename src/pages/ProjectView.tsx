@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, lazy, Suspense } from 'react'
 import { ThreePanelLayout } from '@/components/layout/ThreePanelLayout'
-import { ChatPanel } from '@/components/chat/ChatPanel'
-import { ProtocolPanel } from '@/components/protocol/ProtocolPanel'
+
+// Lazy load heavy components
+const ChatPanel = lazy(() => import('@/components/chat/ChatPanel').then(module => ({ default: module.ChatPanel })))
+const ProtocolPanel = lazy(() => import('@/components/protocol/ProtocolPanel').then(module => ({ default: module.ProtocolPanel })))
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -179,14 +181,23 @@ export const ProjectView: React.FC = () => {
     </div>
   )
 
-  const protocolPanel = <ProtocolPanel projectId={currentProject.id} />
-  const chatPanel = <ChatPanel projectId={currentProject.id} />
+  const protocolPanel = activePanel === 'protocol' ? (
+    <Suspense fallback={<div className="flex items-center justify-center p-8"><p>Loading protocol...</p></div>}>
+      <ProtocolPanel projectId={currentProject.id} />
+    </Suspense>
+  ) : undefined
+
+  const chatPanel = activePanel === 'chat' ? (
+    <Suspense fallback={<div className="flex items-center justify-center p-8"><p>Loading chat...</p></div>}>
+      <ChatPanel projectId={currentProject.id} />
+    </Suspense>
+  ) : undefined
 
   return (
     <ThreePanelLayout
       mainContent={mainContent}
-      protocolPanel={activePanel === 'protocol' ? protocolPanel : undefined}
-      aiChatPanel={activePanel === 'chat' ? chatPanel : undefined}
+      protocolPanel={protocolPanel}
+      aiChatPanel={chatPanel}
     />
   )
 }

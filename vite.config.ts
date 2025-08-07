@@ -13,26 +13,60 @@ export default defineConfig({
   build: {
     // Optimize for production
     minify: 'esbuild',
-    sourcemap: true,
-    // Split chunks for better caching
+    sourcemap: false, // Disable sourcemaps for smaller bundle
+    // Split chunks for better caching and smaller initial load
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Vendor chunk for third-party libraries
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          // UI components chunk
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-label', '@radix-ui/react-slot', '@radix-ui/react-tabs', '@radix-ui/react-tooltip'],
-          // Supabase and data handling
-          data: ['@supabase/supabase-js', '@tanstack/react-query'],
-          // Utilities
-          utils: ['clsx', 'tailwind-merge', 'class-variance-authority', 'zustand']
-        }
+        manualChunks: (id) => {
+          // Core React vendors
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'react-vendor';
+          }
+          // Routing and navigation
+          if (id.includes('react-router')) {
+            return 'router';
+          }
+          // Supabase and database
+          if (id.includes('@supabase') || id.includes('@tanstack/react-query')) {
+            return 'data';
+          }
+          // UI component libraries
+          if (id.includes('@radix-ui') || id.includes('lucide-react')) {
+            return 'ui-components';
+          }
+          // Form handling
+          if (id.includes('react-hook-form') || id.includes('zod') || id.includes('@hookform')) {
+            return 'forms';
+          }
+          // Utilities and styling
+          if (id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority')) {
+            return 'utils';
+          }
+          // State management
+          if (id.includes('zustand')) {
+            return 'state';
+          }
+          // Date handling
+          if (id.includes('date-fns')) {
+            return 'date-utils';
+          }
+          // Other vendor libraries
+          if (id.includes('node_modules')) {
+            return 'vendor-misc';
+          }
+        },
+        // Optimize chunk sizes
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     },
     // Netlify functions compatibility
     target: 'es2020',
-    // Optimize bundle size
-    chunkSizeWarningLimit: 1000,
+    // Reduce chunk size warnings
+    chunkSizeWarningLimit: 500,
+    // Additional optimizations - remove terserOptions since using esbuild
+    // Console logs and debuggers are handled by esbuild minifier automatically
   },
   server: {
     // Development server optimization

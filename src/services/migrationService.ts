@@ -67,166 +67,81 @@ class MigrationEngine extends BaseService {
    * Apply a single migration (simulated for MVP)
    */
   async applyMigration(migration: Migration): Promise<boolean> {
-    const startTime = performance.now()
-    
-    try {
-      logInfo(`Applying migration: ${migration.name}`, {
-        feature: 'migration',
-        action: 'apply-single',
-        metadata: { 
-          migrationId: migration.id,
-          migrationName: migration.name
-        }
-      })
+    return this.execute(
+      'apply-migration',
+      async () => {
+        // For MVP, we'll simulate success and log the SQL
+        console.log('Migration SQL to be executed:', migration.sql.substring(0, 500))
 
-      // For MVP, we'll simulate success and log the SQL
-      logInfo('Migration SQL to be executed', {
-        feature: 'migration',
-        action: 'migration-sql',
-        metadata: {
-          migrationId: migration.id,
-          sql: migration.sql.substring(0, 500) // Log first 500 chars
-        }
-      })
-
-      const duration = performance.now() - startTime
-      logInfo(`Migration applied successfully (simulated): ${migration.name}`, {
-        feature: 'migration',
-        action: 'apply-success',
-        metadata: {
-          migrationId: migration.id,
-          migrationName: migration.name,
-          duration: Math.round(duration)
-        }
-      })
-
-      return true
-    } catch (error) {
-      logSupabaseError(`migration-apply-error-${migration.id}`, error, {
-        feature: 'migration',
-        action: 'apply-error',
-        metadata: {
-          migrationId: migration.id,
-          migrationName: migration.name
-        }
-      })
-      
-      return false
-    }
+        // Simulate migration execution
+        return true
+      },
+      {
+        migrationId: migration.id,
+        migrationName: migration.name
+      }
+    ).catch(() => false)
   }
 
   /**
    * Apply multiple migrations in order
    */
   async applyMigrations(migrations: Migration[]): Promise<MigrationResult> {
-    const startTime = performance.now()
-    const appliedMigrations: string[] = []
-    const failedMigrations: string[] = []
+    return this.execute(
+      'apply-migrations',
+      async () => {
+        const appliedMigrations: string[] = []
+        const failedMigrations: string[] = []
 
-    try {
-      logInfo(`Starting migration batch: ${migrations.length} migrations`, {
-        feature: 'migration',
-        action: 'apply-batch',
-        metadata: { 
-          totalMigrations: migrations.length,
-          migrationIds: migrations.map(m => m.id)
-        }
-      })
-
-      // Get already applied migrations
-      const appliedIds = await this.getAppliedMigrations()
-      
-      // Filter out already applied migrations
-      const pendingMigrations = migrations.filter(m => !appliedIds.includes(m.id))
-      
-      logInfo(`Found ${pendingMigrations.length} pending migrations`, {
-        feature: 'migration',
-        action: 'filter-pending',
-        metadata: { 
-          totalMigrations: migrations.length,
-          appliedCount: appliedIds.length,
-          pendingCount: pendingMigrations.length,
-          pendingIds: pendingMigrations.map(m => m.id)
-        }
-      })
-
-      if (pendingMigrations.length === 0) {
-        return {
-          success: true,
-          message: 'All migrations already applied',
-          appliedMigrations: []
-        }
-      }
-
-      // Apply each pending migration
-      for (const migration of pendingMigrations) {
-        const success = await this.applyMigration(migration)
+        // Get already applied migrations
+        const appliedIds = await this.getAppliedMigrations()
         
-        if (success) {
-          appliedMigrations.push(migration.id)
-        } else {
-          failedMigrations.push(migration.id)
-          // Stop on first failure for safety
-          break
+        // Filter out already applied migrations
+        const pendingMigrations = migrations.filter(m => !appliedIds.includes(m.id))
+
+        if (pendingMigrations.length === 0) {
+          return {
+            success: true,
+            message: 'All migrations already applied',
+            appliedMigrations: []
+          }
         }
-      }
 
-      const duration = performance.now() - startTime
-      const success = failedMigrations.length === 0
-
-      if (success) {
-        logInfo('Migration batch completed successfully', {
-          feature: 'migration',
-          action: 'batch-success',
-          metadata: {
-            appliedCount: appliedMigrations.length,
-            duration: Math.round(duration),
-            appliedMigrations
+        // Apply each pending migration
+        for (const migration of pendingMigrations) {
+          const success = await this.applyMigration(migration)
+          
+          if (success) {
+            appliedMigrations.push(migration.id)
+          } else {
+            failedMigrations.push(migration.id)
+            // Stop on first failure for safety
+            break
           }
-        })
-      } else {
-        logSupabaseError('migration-batch-partial-failure', new Error('Some migrations failed'), {
-          feature: 'migration',
-          action: 'batch-partial-failure',
-          metadata: {
-            appliedCount: appliedMigrations.length,
-            failedCount: failedMigrations.length,
-            duration: Math.round(duration),
-            appliedMigrations,
-            failedMigrations
-          }
-        })
-      }
+        }
 
-      return {
-        success,
-        message: success 
-          ? `Successfully applied ${appliedMigrations.length} migrations`
-          : `Applied ${appliedMigrations.length} migrations, ${failedMigrations.length} failed`,
-        appliedMigrations,
-        failedMigrations
-      }
-    } catch (error) {
-      const duration = performance.now() - startTime
-      
-      logSupabaseError('migration-batch-error', error, {
-        feature: 'migration',
-        action: 'batch-error',
-        metadata: {
-          duration: Math.round(duration),
+        const success = failedMigrations.length === 0
+
+        return {
+          success,
+          message: success 
+            ? `Successfully applied ${appliedMigrations.length} migrations`
+            : `Applied ${appliedMigrations.length} migrations, ${failedMigrations.length} failed`,
           appliedMigrations,
           failedMigrations
         }
-      })
-
-      return {
-        success: false,
-        message: `Migration batch failed: ${String(error)}`,
-        appliedMigrations,
-        failedMigrations,
-        error
+      },
+      { 
+        totalMigrations: migrations.length,
+        migrationIds: migrations.map(m => m.id)
       }
-    }
+    ).catch((error) => ({
+      success: false,
+      message: `Migration batch failed: ${String(error)}`,
+      appliedMigrations: [],
+      failedMigrations: [],
+      error
+    }))
   }
 
   /**
@@ -239,21 +154,13 @@ class MigrationEngine extends BaseService {
     success: boolean
     error_message?: string
   }>> {
-    try {
-      logInfo('Getting migration history', {
-        feature: 'migration',
-        action: 'get-history'
-      })
-
-      // For MVP, return empty array since we don't have the table structure yet
-      return []
-    } catch (error) {
-      logSupabaseError('get-migration-history-error', error, {
-        feature: 'migration',
-        action: 'get-history-error'
-      })
-      return []
-    }
+    return this.execute(
+      'get-migration-history',
+      async () => {
+        // For MVP, return empty array since we don't have the table structure yet
+        return []
+      }
+    ).catch(() => [])
   }
 }
 

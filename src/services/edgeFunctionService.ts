@@ -161,38 +161,6 @@ class EdgeFunctionService extends BaseService {
     )
   }
 
-/**
- * Get available analysis types with descriptions
- */
-export function getAnalysisTypes(): Array<{
-  value: AnalysisRequest['analysisType']
-  label: string
-  description: string
-}> {
-  return [
-    {
-      value: 'summary',
-      label: 'Article Summary',
-      description: 'Generate a structured summary with key findings, methodology, and conclusions'
-    },
-    {
-      value: 'extraction',
-      label: 'Data Extraction',
-      description: 'Extract specific data points according to your extraction template'
-    },
-    {
-      value: 'quality',
-      label: 'Quality Assessment',
-      description: 'Evaluate methodological quality and study design rigor'
-    },
-    {
-      value: 'bias',
-      label: 'Bias Detection',
-      description: 'Identify potential sources of bias and methodological concerns'
-    }
-  ]
-}
-
   /**
    * Check if edge functions are available
    */
@@ -227,6 +195,38 @@ export function getAnalysisTypes(): Array<{
       }
     )
   }
+}
+
+/**
+ * Get available analysis types with descriptions
+ */
+export function getAnalysisTypes(): Array<{
+  value: AnalysisRequest['analysisType']
+  label: string
+  description: string
+}> {
+  return [
+    {
+      value: 'summary',
+      label: 'Article Summary',
+      description: 'Generate a structured summary with key findings, methodology, and conclusions'
+    },
+    {
+      value: 'extraction',
+      label: 'Data Extraction',
+      description: 'Extract specific data points according to your extraction template'
+    },
+    {
+      value: 'quality',
+      label: 'Quality Assessment',
+      description: 'Evaluate methodological quality and study design rigor'
+    },
+    {
+      value: 'bias',
+      label: 'Bias Detection',
+      description: 'Identify potential sources of bias and methodological concerns'
+    }
+  ]
 }
 
 // Create service instance

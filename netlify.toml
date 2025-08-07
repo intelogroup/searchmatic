@@ -25,6 +25,10 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    # Content Security Policy
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co https://*.supabase.io;"
+    # Strict Transport Security
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
 # Cache static assets
 [[headers]]
@@ -52,6 +56,23 @@
   for = "/*.svg"
   [headers.values]
     Cache-Control = "public, max-age=31536000"
+
+# Cache JavaScript and CSS with versioning
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Optimize index.html caching
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Environment-specific settings
 [context.production.environment]
