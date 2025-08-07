@@ -1,4 +1,7 @@
 import { errorLogger } from '@/lib/error-logger'
+import type { Database } from '@/types/database'
+
+type Protocol = Database['public']['Tables']['protocols']['Row']
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system'
@@ -153,7 +156,7 @@ class OpenAIService {
               if (content) {
                 onChunk(content)
               }
-            } catch (parseError) {
+            } catch {
               // Ignore parse errors for malformed chunks
               console.warn('Failed to parse SSE chunk:', data)
             }
@@ -177,7 +180,7 @@ class OpenAIService {
   // Specialized method for research protocol guidance
   async getProtocolGuidance(
     researchQuestion: string,
-    currentProtocol?: any,
+    currentProtocol?: Protocol,
     options: {
       focusArea?: 'pico' | 'spider' | 'inclusion' | 'exclusion' | 'search_strategy'
     } = {}

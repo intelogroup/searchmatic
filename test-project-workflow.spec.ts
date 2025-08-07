@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 
 test.describe('Searchmatic Project-Centric Workflow Test', () => {
   test.beforeEach(async ({ page }) => {
@@ -78,7 +78,7 @@ test.describe('Searchmatic Project-Centric Workflow Test', () => {
     if (isDashboard) {
       // Look for dashboard elements
       const startNewReviewButton = page.locator('text=Start New Review');
-      const projectCards = page.locator('[data-testid="project-card"]');
+      // const projectCards = page.locator('[data-testid="project-card"]');
       
       // Check for error messages
       const errorMessages = page.locator('[role="alert"], .error, .text-red');

@@ -6,6 +6,15 @@
 import { baseSupabaseClient as supabase } from '@/lib/supabase'
 import { logSupabaseError, logInfo, logPerformance } from '@/lib/error-logger'
 
+// Type for project statistics from RPC function
+interface ProjectStats {
+  total_studies: number
+  pending_studies: number
+  included_studies: number
+  excluded_studies: number
+  last_updated: string | null
+}
+
 // Type definitions matching the enhanced database schema
 export interface Project {
   id: string
@@ -101,11 +110,11 @@ class ProjectService {
           } else {
             projectsWithStats.push({
               ...project,
-              total_studies: (stats as any).total_studies || 0,
-              pending_studies: (stats as any).pending_studies || 0,
-              included_studies: (stats as any).included_studies || 0,
-              excluded_studies: (stats as any).excluded_studies || 0,
-              studies_last_updated: (stats as any).last_updated || null
+              total_studies: (stats as ProjectStats).total_studies || 0,
+              pending_studies: (stats as ProjectStats).pending_studies || 0,
+              included_studies: (stats as ProjectStats).included_studies || 0,
+              excluded_studies: (stats as ProjectStats).excluded_studies || 0,
+              studies_last_updated: (stats as ProjectStats).last_updated || null
             })
           }
         } catch (error) {
@@ -213,11 +222,11 @@ class ProjectService {
         })
       } else {
         projectStats = {
-          total_studies: (stats as any).total_studies || 0,
-          pending_studies: (stats as any).pending_studies || 0,
-          included_studies: (stats as any).included_studies || 0,
-          excluded_studies: (stats as any).excluded_studies || 0,
-          studies_last_updated: (stats as any).last_updated || null
+          total_studies: (stats as ProjectStats).total_studies || 0,
+          pending_studies: (stats as ProjectStats).pending_studies || 0,
+          included_studies: (stats as ProjectStats).included_studies || 0,
+          excluded_studies: (stats as ProjectStats).excluded_studies || 0,
+          studies_last_updated: (stats as ProjectStats).last_updated || null
         }
       }
 

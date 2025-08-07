@@ -311,7 +311,7 @@ export const NewProject = () => {
                       <Label htmlFor="project_type">Review Type *</Label>
                       <Select
                         value={form.watch('project_type')}
-                        onValueChange={(value) => form.setValue('project_type', value as any)}
+                        onValueChange={(value) => form.setValue('project_type', value as 'systematic_review' | 'meta_analysis' | 'scoping_review' | 'narrative_review' | 'umbrella_review' | 'custom')}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select review type" />

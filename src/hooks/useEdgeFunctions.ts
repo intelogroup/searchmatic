@@ -14,6 +14,7 @@ import {
   type AnalysisRequest,
   type AnalysisResponse 
 } from '@/services/edgeFunctionService'
+import type { Json } from '@/types/database'
 import { errorLogger } from '@/lib/error-logger'
 
 /**
@@ -159,7 +160,7 @@ export function useAnalysisWorkflow(projectId: string) {
   const analyzeText = useCallback(async (
     text: string, 
     analysisType: AnalysisRequest['analysisType'],
-    extractionTemplate?: any
+    extractionTemplate?: Json
   ) => {
     try {
       setCurrentStep('analyzing')

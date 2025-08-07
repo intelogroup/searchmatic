@@ -3,8 +3,8 @@
  * Ensures users must be in a project to use the app
  */
 
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import React, { createContext, useState, useEffect, type ReactNode } from 'react'
+import { useParams, useLocation } from 'react-router-dom'
 import { useProject } from '@/hooks/useProjects'
 import { logInfo, logError } from '@/lib/error-logger'
 import type { ProjectWithStats } from '@/services/projectService'
@@ -128,57 +128,4 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
       {children}
     </ProjectContext.Provider>
   )
-}
-
-// Hook to use the project context
-export const useProjectContext = () => {
-  const context = useContext(ProjectContext)
-  if (context === undefined) {
-    throw new Error('useProjectContext must be used within a ProjectProvider')
-  }
-  return context
-}
-
-// Hook to ensure we're in a project (throws if not)
-export const useRequireProject = () => {
-  const { currentProject, isLoading, requireProject } = useProjectContext()
-  
-  if (requireProject && !isLoading && !currentProject) {
-    throw new Error('This component requires an active project')
-  }
-  
-  return currentProject
-}
-
-// Hook for project switching
-export const useProjectSwitcher = () => {
-  const navigate = useNavigate()
-  const { setCurrentProject } = useProjectContext()
-  
-  const switchToProject = (project: ProjectWithStats) => {
-    logInfo('Switching to project', {
-      feature: 'project-context',
-      action: 'switch-project',
-      metadata: { 
-        fromProject: null, // Could track previous project
-        toProject: project.id,
-        title: project.title 
-      }
-    })
-    
-    setCurrentProject(project)
-    navigate(`/projects/${project.id}`)
-  }
-  
-  const exitProject = () => {
-    logInfo('Exiting project', {
-      feature: 'project-context',
-      action: 'exit-project'
-    })
-    
-    setCurrentProject(null)
-    navigate('/dashboard')
-  }
-  
-  return { switchToProject, exitProject }
 }

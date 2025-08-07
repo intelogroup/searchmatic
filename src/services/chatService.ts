@@ -1,6 +1,6 @@
 import { baseSupabaseClient as supabase } from '@/lib/supabase'
 import { errorLogger } from '@/lib/error-logger'
-import type { Database } from '@/types/database'
+import type { Database, Json } from '@/types/database'
 
 type Conversation = Database['public']['Tables']['conversations']['Row']
 type ConversationInsert = Database['public']['Tables']['conversations']['Insert']
@@ -23,7 +23,7 @@ export interface CreateMessageData {
   conversation_id: string
   role: 'user' | 'assistant' | 'system'
   content: string
-  metadata?: any
+  metadata?: Json
 }
 
 class ChatService {

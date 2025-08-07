@@ -1,4 +1,4 @@
-import { test, expect, Page, BrowserContext } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
 test.describe('Searchmatic Authentication Edge Cases', () => {
   const baseURL = 'http://localhost:5174'
@@ -55,7 +55,7 @@ test.describe('Searchmatic Authentication Edge Cases', () => {
         // Look for logout button or user menu
         try {
           await page1.click('button:has-text("Logout"), button:has-text("Sign out"), [data-testid="user-menu"]', { timeout: 5000 })
-        } catch (e) {
+        } catch {
           console.log('No logout button found, checking for user menu or profile')
         }
         
@@ -462,7 +462,7 @@ test.describe('Searchmatic Authentication Edge Cases', () => {
         /auth_token/g
       ]
       
-      let exposedKeys = []
+      const exposedKeys: string[] = []
       for (const pattern of dangerousPatterns) {
         const matches = content.match(pattern)
         if (matches) {

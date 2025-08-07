@@ -99,7 +99,7 @@ test.describe('Security-Focused Authentication Tests', () => {
       /secret/g
     ]
     
-    let exposedKeys = []
+    const exposedKeys: string[] = []
     for (const pattern of dangerousPatterns) {
       const matches = content.match(pattern)
       if (matches) {

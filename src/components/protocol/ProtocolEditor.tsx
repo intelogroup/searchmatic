@@ -17,13 +17,15 @@ import {
 import { protocolService } from '@/services/protocolService'
 import { cn } from '@/lib/utils'
 import type { Database } from '@/types/database'
+import type { CreateProtocolData } from '@/services/protocolService'
 
 type Protocol = Database['public']['Tables']['protocols']['Row']
+type ProtocolUpdate = Database['public']['Tables']['protocols']['Update']
 
 interface ProtocolEditorProps {
   protocol?: Protocol | null
-  onSave?: (protocolId: string, updates: any) => Promise<void>
-  onCreate?: (data: any) => Promise<void>
+  onSave?: (protocolId: string, updates: ProtocolUpdate) => Promise<void>
+  onCreate?: (data: CreateProtocolData) => Promise<void>
   onCancel?: () => void
   className?: string
 }
@@ -157,7 +159,7 @@ export const ProtocolEditor: React.FC<ProtocolEditorProps> = ({
   const currentFramework = formData.framework_type === 'pico' ? picoFramework : 
                            formData.framework_type === 'spider' ? spiderFramework : []
 
-  const handleInputChange = (key: string, value: any) => {
+  const handleInputChange = (key: string, value: string | string[] | number | boolean) => {
     setFormData(prev => ({ ...prev, [key]: value }))
     setError(null)
   }
@@ -432,7 +434,7 @@ export const ProtocolEditor: React.FC<ProtocolEditorProps> = ({
                       {section.label}
                     </label>
                     <Textarea
-                      value={(formData as any)[section.key] as string || ''}
+                      value={((formData as Record<string, unknown>)[section.key] as string) || ''}
                       onChange={(e) => handleInputChange(section.key, e.target.value)}
                       disabled={isLocked}
                       placeholder={section.placeholder}

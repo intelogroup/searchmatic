@@ -102,7 +102,7 @@ describe('Authentication Integration Tests', () => {
         data: {
           user: { id: 'user-123', email: 'test@example.com' },
           session: { access_token: 'token-123' }
-        } as any,
+        } as unknown,
         error: null
       })
 
@@ -135,7 +135,7 @@ describe('Authentication Integration Tests', () => {
       mockSignIn.mockResolvedValueOnce({
         data: { user: null, session: null },
         error
-      } as any)
+      } as unknown)
 
       render(
         <TestWrapper>
@@ -162,7 +162,7 @@ describe('Authentication Integration Tests', () => {
         data: {
           user: { id: 'user-123', email: 'test@example.com', email_confirmed_at: null },
           session: null
-        } as any,
+        } as unknown,
         error: null
       })
 
@@ -203,7 +203,7 @@ describe('Authentication Integration Tests', () => {
       mockSignUp.mockResolvedValueOnce({
         data: { user: null, session: null },
         error
-      } as any)
+      } as unknown)
 
       render(
         <TestWrapper>
@@ -236,11 +236,11 @@ describe('Authentication Integration Tests', () => {
       const mockSignIn = vi.mocked(supabase.auth.signInWithPassword)
       
       // Create a promise that we can control
-      let resolvePromise: (value: any) => void
+      let resolvePromise: (value: unknown) => void
       const promise = new Promise((resolve) => {
         resolvePromise = resolve
       })
-      mockSignIn.mockReturnValueOnce(promise as any)
+      mockSignIn.mockReturnValueOnce(promise as unknown)
 
       render(
         <TestWrapper>
@@ -293,7 +293,7 @@ describe('Authentication Integration Tests', () => {
       mockSignIn.mockResolvedValueOnce({
         data: { user: null, session: null },
         error: new Error('Invalid credentials')
-      } as any)
+      } as unknown)
 
       render(
         <TestWrapper>

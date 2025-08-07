@@ -3,14 +3,15 @@
  * Provides frontend integration with deployed Supabase edge functions
  */
 
-import { supabase } from '@/lib/supabase'
+import { supabase, baseSupabaseClient } from '@/lib/supabase'
 import { errorLogger } from '@/lib/error-logger'
+import type { Json } from '@/types/database'
 
 export interface AnalysisRequest {
   articleText: string
   analysisType: 'summary' | 'extraction' | 'quality' | 'bias'
   projectId: string
-  extractionTemplate?: any
+  extractionTemplate?: Json
 }
 
 export interface AnalysisResponse {
@@ -41,7 +42,7 @@ export async function testConnection(): Promise<{ message: string; timestamp: st
       throw new Error('Authentication required')
     }
 
-    const { data, error } = await (supabase as any).functions.invoke('hello-world', {
+    const { data, error } = await baseSupabaseClient.functions.invoke('hello-world', {
       body: { name: 'Frontend Test' },
       headers: {
         Authorization: `Bearer ${session.access_token}`,
@@ -87,7 +88,7 @@ export async function analyzeLiterature(request: AnalysisRequest): Promise<Analy
       }
     })
 
-    const { data, error } = await (supabase as any).functions.invoke('analyze-literature', {
+    const { data, error } = await baseSupabaseClient.functions.invoke('analyze-literature', {
       body: request,
       headers: {
         Authorization: `Bearer ${session.access_token}`,

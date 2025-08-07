@@ -383,7 +383,7 @@ class ProtocolService {
       const updatedProtocol = await this.updateProtocol(protocolId, {
         ...refinements,
         ai_guidance_used: {
-          ...((existingProtocol.ai_guidance_used as Record<string, any>) || {}),
+          ...((existingProtocol.ai_guidance_used as Record<string, unknown>) || {}),
           [focusArea]: {
             timestamp: new Date().toISOString(),
             guidance: aiGuidance,
@@ -437,19 +437,19 @@ class ProtocolService {
       }
 
       // Extract inclusion/exclusion criteria
-      const inclusionMatch = guidance.match(/Inclusion Criteria[:\-\s]*([\s\S]*?)(?=Exclusion Criteria|Search Strategy|$)/i)
-      const exclusionMatch = guidance.match(/Exclusion Criteria[:\-\s]*([\s\S]*?)(?=Search Strategy|$)/i)
+      const inclusionMatch = guidance.match(/Inclusion Criteria[:-\s]*([\s\S]*?)(?=Exclusion Criteria|Search Strategy|$)/i)
+      const exclusionMatch = guidance.match(/Exclusion Criteria[:-\s]*([\s\S]*?)(?=Search Strategy|$)/i)
 
       if (inclusionMatch) {
         components.inclusion_criteria = inclusionMatch[1]
-          .split(/\n|\*|\-/)
+          .split(/\n|\*|-/)
           .map(item => item.trim())
           .filter(item => item.length > 0)
       }
 
       if (exclusionMatch) {
         components.exclusion_criteria = exclusionMatch[1]
-          .split(/\n|\*|\-/)
+          .split(/\n|\*|-/)
           .map(item => item.trim())
           .filter(item => item.length > 0)
       }
@@ -492,31 +492,33 @@ class ProtocolService {
 
     try {
       switch (focusArea) {
-        case 'inclusion':
-          const inclusionMatch = guidance.match(/(?:Inclusion|Include)[:\-\s]*([\s\S]*?)(?=Exclusion|$)/i)
+        case 'inclusion': {
+          const inclusionMatch = guidance.match(/(?:Inclusion|Include)[:-\s]*([\s\S]*?)(?=Exclusion|$)/i)
           if (inclusionMatch) {
             updates.inclusion_criteria = inclusionMatch[1]
-              .split(/\n|\*|\-/)
+              .split(/\n|\*|-/)
               .map(item => item.trim())
               .filter(item => item.length > 0)
           }
           break
+        }
 
-        case 'exclusion':
-          const exclusionMatch = guidance.match(/(?:Exclusion|Exclude)[:\-\s]*([\s\S]*?)$/i)
+        case 'exclusion': {
+          const exclusionMatch = guidance.match(/(?:Exclusion|Exclude)[:-\s]*([\s\S]*?)$/i)
           if (exclusionMatch) {
             updates.exclusion_criteria = exclusionMatch[1]
-              .split(/\n|\*|\-/)
+              .split(/\n|\*|-/)
               .map(item => item.trim())
               .filter(item => item.length > 0)
           }
           break
+        }
 
-        case 'search_strategy':
+        case 'search_strategy': {
           // Extract search strategy components
-          const strategy: any = { ...((existingProtocol.search_strategy as Record<string, any>) || {}) }
+          const strategy: Record<string, unknown> = { ...((existingProtocol.search_strategy as Record<string, unknown>) || {}) }
           
-          const keywordsMatch = guidance.match(/Keywords?[:\-\s]*(.*?)(?=\n|Database|$)/i)
+          const keywordsMatch = guidance.match(/Keywords?[:-\s]*(.*?)(?=\n|Database|$)/i)
           if (keywordsMatch) {
             updates.keywords = keywordsMatch[1]
               .split(/,|;/)
@@ -524,7 +526,7 @@ class ProtocolService {
               .filter(keyword => keyword.length > 0)
           }
 
-          const databasesMatch = guidance.match(/Databases?[:\-\s]*(.*?)(?=\n|$)/i)
+          const databasesMatch = guidance.match(/Databases?[:-\s]*(.*?)(?=\n|$)/i)
           if (databasesMatch) {
             updates.databases = databasesMatch[1]
               .split(/,|;/)
@@ -534,14 +536,15 @@ class ProtocolService {
 
           updates.search_strategy = strategy
           break
+        }
 
-        case 'framework':
+        case 'framework': {
           // Update framework-specific fields based on protocol type
           if (existingProtocol.framework_type === 'pico') {
-            const populationMatch = guidance.match(/Population[:\-\s]*(.*?)(?=\n|Intervention|$)/i)
-            const interventionMatch = guidance.match(/Intervention[:\-\s]*(.*?)(?=\n|Comparison|$)/i)
-            const comparisonMatch = guidance.match(/Comparison[:\-\s]*(.*?)(?=\n|Outcome|$)/i)
-            const outcomeMatch = guidance.match(/Outcome[:\-\s]*(.*?)(?=\n|$)/i)
+            const populationMatch = guidance.match(/Population[:-\s]*(.*?)(?=\n|Intervention|$)/i)
+            const interventionMatch = guidance.match(/Intervention[:-\s]*(.*?)(?=\n|Comparison|$)/i)
+            const comparisonMatch = guidance.match(/Comparison[:-\s]*(.*?)(?=\n|Outcome|$)/i)
+            const outcomeMatch = guidance.match(/Outcome[:-\s]*(.*?)(?=\n|$)/i)
 
             if (populationMatch) updates.population = populationMatch[1].trim()
             if (interventionMatch) updates.intervention = interventionMatch[1].trim()
@@ -549,6 +552,7 @@ class ProtocolService {
             if (outcomeMatch) updates.outcome = outcomeMatch[1].trim()
           }
           break
+        }
       }
     } catch (error) {
       errorLogger.logError((error as Error).message, {
