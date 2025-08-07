@@ -22,10 +22,13 @@ import type { CreateProtocolData } from '@/services/protocolService'
 type Protocol = Database['public']['Tables']['protocols']['Row']
 type ProtocolUpdate = Database['public']['Tables']['protocols']['Update']
 
+// Type for onCreate callback - excludes project_id as parent component provides it
+type CreateProtocolFormData = Omit<CreateProtocolData, 'project_id'>
+
 interface ProtocolEditorProps {
   protocol?: Protocol | null
   onSave?: (protocolId: string, updates: ProtocolUpdate) => Promise<void>
-  onCreate?: (data: CreateProtocolData) => Promise<void>
+  onCreate?: (data: CreateProtocolFormData) => Promise<void>
   onCancel?: () => void
   className?: string
 }

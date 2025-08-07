@@ -4,7 +4,7 @@
  */
 
 import React, { createContext, useState, useEffect, type ReactNode } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { useProject } from '@/hooks/useProjects'
 import { logInfo, logError } from '@/lib/error-logger'
 import type { ProjectWithStats } from '@/services/projectService'
@@ -129,3 +129,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
     </ProjectContext.Provider>
   )
 }
+
+// Export the context and types for use in hooks
+export { ProjectContext }
+export type { ProjectWithStats }

@@ -15,7 +15,7 @@ import {
   Loader2,
   AlertCircle
 } from 'lucide-react'
-import { useProjectContext } from '@/contexts/ProjectContext'
+import { useProjectContext } from '@/hooks/useProjectContext'
 import { formatDistanceToNow } from 'date-fns'
 
 export const ProjectView: React.FC = () => {

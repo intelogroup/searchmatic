@@ -280,7 +280,7 @@ class ProtocolService {
 
       const response = await openAIService.getProtocolGuidance(
         request.research_question,
-        request.current_protocol,
+        request.current_protocol as Protocol | undefined,
         { focusArea: focusAreaMap[request.focus_area || 'general'] }
       )
 
@@ -383,7 +383,7 @@ class ProtocolService {
       const updatedProtocol = await this.updateProtocol(protocolId, {
         ...refinements,
         ai_guidance_used: {
-          ...((existingProtocol.ai_guidance_used as Record<string, unknown>) || {}),
+          ...((existingProtocol.ai_guidance_used as { [key: string]: any }) || {}),
           [focusArea]: {
             timestamp: new Date().toISOString(),
             guidance: aiGuidance,
@@ -516,7 +516,7 @@ class ProtocolService {
 
         case 'search_strategy': {
           // Extract search strategy components
-          const strategy: Record<string, unknown> = { ...((existingProtocol.search_strategy as Record<string, unknown>) || {}) }
+          const strategy = { ...((existingProtocol.search_strategy as { [key: string]: any }) || {}) }
           
           const keywordsMatch = guidance.match(/Keywords?[:-\s]*(.*?)(?=\n|Database|$)/i)
           if (keywordsMatch) {

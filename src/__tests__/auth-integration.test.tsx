@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Login } from '@/pages/Login'
 import { supabase } from '@/lib/supabase'
+import type { AuthTokenResponsePassword, AuthResponse } from '@supabase/supabase-js'
 
 // Mock supabase
 vi.mock('@/lib/supabase', () => ({
@@ -102,9 +103,9 @@ describe('Authentication Integration Tests', () => {
         data: {
           user: { id: 'user-123', email: 'test@example.com' },
           session: { access_token: 'token-123' }
-        } as unknown,
+        },
         error: null
-      })
+      } as AuthTokenResponsePassword)
 
       render(
         <TestWrapper>
@@ -135,7 +136,7 @@ describe('Authentication Integration Tests', () => {
       mockSignIn.mockResolvedValueOnce({
         data: { user: null, session: null },
         error
-      } as unknown)
+      } as AuthTokenResponsePassword)
 
       render(
         <TestWrapper>
@@ -160,11 +161,19 @@ describe('Authentication Integration Tests', () => {
       const mockSignUp = vi.mocked(supabase.auth.signUp)
       mockSignUp.mockResolvedValueOnce({
         data: {
-          user: { id: 'user-123', email: 'test@example.com', email_confirmed_at: null },
+          user: { 
+            id: 'user-123', 
+            email: 'test@example.com', 
+            email_confirmed_at: undefined,
+            app_metadata: {},
+            user_metadata: {},
+            aud: 'authenticated',
+            created_at: new Date().toISOString()
+          },
           session: null
-        } as unknown,
+        },
         error: null
-      })
+      } as AuthResponse)
 
       render(
         <TestWrapper>
@@ -203,7 +212,7 @@ describe('Authentication Integration Tests', () => {
       mockSignUp.mockResolvedValueOnce({
         data: { user: null, session: null },
         error
-      } as unknown)
+      } as AuthResponse)
 
       render(
         <TestWrapper>
@@ -240,7 +249,7 @@ describe('Authentication Integration Tests', () => {
       const promise = new Promise((resolve) => {
         resolvePromise = resolve
       })
-      mockSignIn.mockReturnValueOnce(promise as unknown)
+      mockSignIn.mockReturnValueOnce(promise as Promise<AuthTokenResponsePassword>)
 
       render(
         <TestWrapper>
@@ -293,7 +302,7 @@ describe('Authentication Integration Tests', () => {
       mockSignIn.mockResolvedValueOnce({
         data: { user: null, session: null },
         error: new Error('Invalid credentials')
-      } as unknown)
+      } as AuthTokenResponsePassword)
 
       render(
         <TestWrapper>

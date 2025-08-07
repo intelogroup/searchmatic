@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ProjectContext, ProjectWithStats } from '@/contexts/ProjectContext'
+import { ProjectContext, type ProjectWithStats } from '@/contexts/ProjectContext'
 import { logInfo } from '@/lib/error-logger'
 
 // Hook to use the project context
