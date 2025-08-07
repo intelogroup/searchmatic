@@ -50,7 +50,7 @@ const testServer = spawn('npx', [
 ], {
   env: {
     ...process.env,
-    SUPABASE_ACCESS_TOKEN: 'sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337'
+    SUPABASE_ACCESS_TOKEN: process.env.SUPABASE_ACCESS_TOKEN
   },
   stdio: 'pipe'
 });

@@ -154,7 +154,7 @@ Expected tables:
 
 ## Security Notes
 
-- The service role key (`sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337`) has full database access
+- The service role key (stored in environment variables) has full database access
 - Never expose this key in client-side code
 - The `run_migration` function checks that it's being called with service role privileges
 - All tables have Row Level Security (RLS) enabled for production safety
