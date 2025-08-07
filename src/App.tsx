@@ -10,8 +10,8 @@ import { Dashboard } from '@/pages/Dashboard'
 import { NewProject } from '@/pages/NewProject'
 import { ProjectView } from '@/pages/ProjectView'
 import { Settings } from '@/pages/Settings'
+import { Migrations } from '@/pages/Migrations'
 import { NotFound } from '@/pages/NotFound'
-import VCTDemoSimple from '@/pages/VCTDemoSimple'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -81,8 +81,8 @@ function App() {
               element={session ? <Settings /> : <Navigate to="/login" replace />} 
             />
             <Route 
-              path="/vct-demo" 
-              element={<VCTDemoSimple />} 
+              path="/migrations" 
+              element={session ? <Migrations /> : <Navigate to="/login" replace />} 
             />
             <Route 
               path="*" 

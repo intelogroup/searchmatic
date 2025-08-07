@@ -2,10 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ThreePanelLayout } from '@/components/layout/ThreePanelLayout'
 import { ChatPanel } from '@/components/chat/ChatPanel'
-import { AIAnalysisPanel } from '@/components/ai/AIAnalysisPanel'
 import { ProtocolPanel } from '@/components/protocol/ProtocolPanel'
-import { StudiesList } from '@/components/studies/StudiesList'
-import { StudyForm } from '@/components/studies/StudyForm'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -13,30 +10,18 @@ import {
   ArrowLeft,
   FileText,
   MessageCircle,
-  Bot,
-  Search,
-  Filter,
-  Download,
   Settings,
   MoreHorizontal,
   Loader2,
-  AlertCircle,
-  Plus
+  AlertCircle
 } from 'lucide-react'
 import { useProjectContext } from '@/contexts/ProjectContext'
-import { useStudyStatusCounts } from '@/hooks/useStudies'
 import { formatDistanceToNow } from 'date-fns'
-import type { Study } from '@/services/studyService'
 
 export const ProjectView: React.FC = () => {
   const navigate = useNavigate()
   const { currentProject, isLoading, error } = useProjectContext()
-  const [showStudyForm, setShowStudyForm] = useState(false)
-  const [editingStudy, setEditingStudy] = useState<Study | null>(null)
-  const [activePanel, setActivePanel] = useState<'protocol' | 'chat' | 'analysis'>('protocol')
-  
-  // Get real-time study counts
-  const { data: studyCounts } = useStudyStatusCounts(currentProject?.id || '')
+  const [activePanel, setActivePanel] = useState<'protocol' | 'chat'>('protocol')
 
   // Loading state
   if (isLoading) {
@@ -108,14 +93,6 @@ export const ProjectView: React.FC = () => {
               {currentProject.description}
             </p>
           )}
-          {currentProject.research_domain && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Research Domain:</span>
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-50 text-blue-700">
-                {currentProject.research_domain}
-              </span>
-            </div>
-          )}
         </div>
         
         <div className="flex items-center gap-2">
@@ -129,31 +106,17 @@ export const ProjectView: React.FC = () => {
         </div>
       </div>
 
-      {/* Project Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Project Information */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Studies
+              Status
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold">{studyCounts?.total || currentProject.total_studies}</div>
-            <p className="text-xs text-muted-foreground">
-              {studyCounts?.pending || currentProject.pending_studies} pending, {studyCounts?.included || currentProject.included_studies} included
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Stage
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="text-lg font-bold">{currentProject.current_stage}</div>
-            <p className="text-xs text-muted-foreground">Current phase</p>
+            <div className="text-lg font-bold capitalize">{currentProject.status}</div>
+            <p className="text-xs text-muted-foreground">Current status</p>
           </CardContent>
         </Card>
 
@@ -165,259 +128,72 @@ export const ProjectView: React.FC = () => {
           </CardHeader>
           <CardContent className="pt-0">
             <div className="text-sm font-bold capitalize">
-              {currentProject.project_type.replace('_', ' ')}
+              systematic review
             </div>
-            <p className="text-xs text-muted-foreground">Review type</p>
+            <p className="text-xs text-muted-foreground">Project type</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Progress
+              Created
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold">{currentProject.progress_percentage}%</div>
-            <div className="w-full bg-secondary rounded-full h-1 mt-2">
-              <div 
-                className="bg-primary h-1 rounded-full transition-all" 
-                style={{ width: `${currentProject.progress_percentage}%` }}
-              />
+            <div className="text-sm font-bold">
+              {formatDistanceToNow(new Date(currentProject.created_at))} ago
             </div>
+            <p className="text-xs text-muted-foreground">Project age</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Quick Actions */}
+      {/* Main Project Content */}
       <Card>
         <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Project Overview
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
-              <Search className="h-6 w-6 text-primary" />
-              <span className="text-sm font-medium">Search Databases</span>
-              <span className="text-xs text-muted-foreground">PubMed, Scopus, etc.</span>
-            </Button>
-
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
-              <Filter className="h-6 w-6 text-primary" />
-              <span className="text-sm font-medium">Screen Articles</span>
-              <span className="text-xs text-muted-foreground">Review and filter</span>
-            </Button>
-
-            <Button 
-              variant="outline" 
-              className="h-auto p-4 flex flex-col items-center gap-2"
-              onClick={() => setActivePanel('analysis')}
+          <p className="text-muted-foreground">
+            Welcome to your project workspace. Use the protocol panel to define your research methodology 
+            and the chat panel to interact with the AI assistant for guidance.
+          </p>
+          
+          <div className="mt-4 flex gap-2">
+            <Button
+              variant={activePanel === 'protocol' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setActivePanel('protocol')}
             >
-              <Bot className="h-6 w-6 text-primary" />
-              <span className="text-sm font-medium">AI Analysis</span>
-              <span className="text-xs text-muted-foreground">Literature analysis</span>
+              <FileText className="h-4 w-4 mr-2" />
+              Protocol
             </Button>
-
-            <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
-              <Download className="h-6 w-6 text-primary" />
-              <span className="text-sm font-medium">Export Results</span>
-              <span className="text-xs text-muted-foreground">Multiple formats</span>
+            <Button
+              variant={activePanel === 'chat' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setActivePanel('chat')}
+            >
+              <MessageCircle className="h-4 w-4 mr-2" />
+              AI Assistant
             </Button>
           </div>
         </CardContent>
       </Card>
-
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-              <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
-                <FileText className="h-4 w-4 text-primary" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Project created</p>
-                <p className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(currentProject.created_at), { addSuffix: true })}
-                </p>
-              </div>
-            </div>
-            
-            {currentProject.last_activity_at !== currentProject.created_at && (
-              <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-                <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <MessageCircle className="h-4 w-4 text-green-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Last activity</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(currentProject.last_activity_at), { addSuffix: true })}
-                  </p>
-                </div>
-              </div>
-            )}
-            
-            <div className="text-center py-8 text-muted-foreground">
-              <MessageCircle className="h-8 w-8 mx-auto mb-2" />
-              <p className="text-sm">Start using the AI chat or create protocols to see activity here</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Studies Management */}
-      {showStudyForm ? (
-        <StudyForm
-          projectId={currentProject.id}
-          study={editingStudy || undefined}
-          onSuccess={() => {
-            setShowStudyForm(false)
-            setEditingStudy(null)
-          }}
-          onCancel={() => {
-            setShowStudyForm(false)
-            setEditingStudy(null)
-          }}
-        />
-      ) : (
-        <StudiesList
-          projectId={currentProject.id}
-          onCreateStudy={() => setShowStudyForm(true)}
-          onEditStudy={(study) => {
-            setEditingStudy(study)
-            setShowStudyForm(true)
-          }}
-        />
-      )}
-
-      {/* Getting Started Guide - Show only if no studies */}
-      {(!studyCounts || studyCounts.total === 0) && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-primary" />
-              Getting Started
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 border rounded-lg">
-                <div className="h-6 w-6 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-xs font-bold">
-                  1
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Create a research protocol</p>
-                  <p className="text-xs text-muted-foreground">
-                    Define your research question and methodology using the Protocol panel →
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 border rounded-lg">
-                <div className="h-6 w-6 bg-muted rounded-full flex items-center justify-center text-muted-foreground text-xs font-bold">
-                  2
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Add your first study</p>
-                  <p className="text-xs text-muted-foreground">
-                    Start by adding articles, theses, or other research materials
-                  </p>
-                </div>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => setShowStudyForm(true)}
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add Study
-                </Button>
-              </div>
-
-              <div className="flex items-center gap-3 p-3 border rounded-lg">
-                <div className="h-6 w-6 bg-muted rounded-full flex items-center justify-center text-muted-foreground text-xs font-bold">
-                  3
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Get AI assistance</p>
-                  <p className="text-xs text-muted-foreground">
-                    Chat with the AI assistant for guidance and methodology help →
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   )
 
-  // Dynamic right panel based on active selection
-  const getRightPanel = () => {
-    switch (activePanel) {
-      case 'protocol':
-        return <ProtocolPanel projectId={currentProject.id} />
-      case 'chat':
-        return <ChatPanel projectId={currentProject.id} />
-      case 'analysis':
-        return <AIAnalysisPanel projectId={currentProject.id} />
-      default:
-        return <ProtocolPanel projectId={currentProject.id} />
-    }
-  }
-
-  const protocolPanel = (
-    <div className="h-full flex flex-col">
-      {/* Panel Tabs */}
-      <div className="flex border-b mb-4">
-        <button
-          onClick={() => setActivePanel('protocol')}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activePanel === 'protocol' 
-              ? 'border-primary text-primary' 
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          Protocol
-        </button>
-        <button
-          onClick={() => setActivePanel('chat')}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activePanel === 'chat' 
-              ? 'border-primary text-primary' 
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          AI Chat
-        </button>
-        <button
-          onClick={() => setActivePanel('analysis')}
-          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activePanel === 'analysis' 
-              ? 'border-primary text-primary' 
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          AI Analysis
-        </button>
-      </div>
-      
-      {/* Panel Content */}
-      <div className="flex-1 overflow-hidden">
-        {getRightPanel()}
-      </div>
-    </div>
-  )
+  const protocolPanel = <ProtocolPanel projectId={currentProject.id} />
+  const chatPanel = <ChatPanel projectId={currentProject.id} />
 
   return (
     <ThreePanelLayout
       mainContent={mainContent}
-      protocolPanel={protocolPanel}
-      aiChatPanel={null} // Using unified right panel now
+      protocolPanel={activePanel === 'protocol' ? protocolPanel : undefined}
+      aiChatPanel={activePanel === 'chat' ? chatPanel : undefined}
     />
   )
 }
-
-export default ProjectView

@@ -3,13 +3,47 @@ import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { Settings } from 'lucide-react'
+import { logInfo, logSupabaseError } from '@/lib/error-logger'
 
 export const Header: React.FC = () => {
   const navigate = useNavigate()
   
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    navigate('/login')
+    try {
+      logInfo('User logout attempt', {
+        feature: 'authentication',
+        action: 'logout-attempt'
+      })
+
+      const { error } = await supabase.auth.signOut()
+      
+      if (error) {
+        logSupabaseError('logout', error, {
+          feature: 'authentication',
+          action: 'logout-error',
+          metadata: {
+            errorCode: error.code || 'UNKNOWN',
+            errorMessage: error.message
+          }
+        })
+      } else {
+        logInfo('User logout successful', {
+          feature: 'authentication',
+          action: 'logout-success'
+        })
+      }
+      
+      navigate('/login')
+    } catch (error) {
+      logSupabaseError('logout-unexpected', error, {
+        feature: 'authentication',
+        action: 'logout-unexpected-error',
+        metadata: {
+          error: String(error)
+        }
+      })
+      navigate('/login')
+    }
   }
 
   return (
@@ -36,10 +70,10 @@ export const Header: React.FC = () => {
               Projects
             </a>
             <a 
-              href="/vct-demo" 
+              href="/migrations" 
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              VCT Demo
+              Migrations
             </a>
           </nav>
         </div>
