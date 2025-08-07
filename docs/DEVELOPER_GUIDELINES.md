@@ -26,8 +26,9 @@
  - Use mock objects for external dependencies when necessary.
 
  ## 6. Documentation
- - Update or add `.md` files in `/docs` for any new features or changes.
- - Maintain CHANGELOG.md with notable updates.
+- Update or add `.md` files in `/docs` for any new features or changes.
+- Review `/docs/FUTURE_DEVELOPMENT_GAPS.md`, `/docs/SENIOR_ENGINEER_REVIEW.md`, and `/docs/UI_UX_DESIGN_RECOMMENDATIONS.md` before starting new feature work to understand technical risks and design guardrails.
+- Maintain CHANGELOG.md with notable updates.
 
  ## 7. CI/CD and Deployment
  - Ensure CI passes before merging (lint, tests, build).

@@ -63,3 +63,6 @@ Follow DEVELOPER_GUIDELINES.md:
 | Week 5 | Finalize a11y audit; polish theme tokens; release MVP‑1.0.                   |
 
 This roadmap transforms the current codebase “mess” into a clear, maintainable MVP aligned with PM and UI/UX guidance.
+
+## 7. Future Bottlenecks & Guardrails
+Cross-reference **FUTURE_DEVELOPMENT_GAPS.md** to monitor and prioritize fixes for scalability, observability, and security gaps. Enforce design and scope guardrails via regular reviews against the MVP spec (**MVP_SPECIFICATION.md**) and UI/UX docs (**UI_UX_DESIGN_RECOMMENDATIONS.md**).
