@@ -1,6 +1,6 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { useAppNavigation } from '@/hooks/useAppNavigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { 
@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 
 export const Landing: React.FC = () => {
-  const navigate = useNavigate()
+  const { goToLogin } = useAppNavigation()
 
   const features = [
     {
@@ -137,10 +137,10 @@ export const Landing: React.FC = () => {
             <a href="#features" className="text-sm hover:text-primary transition-colors">Features</a>
             <a href="#pricing" className="text-sm hover:text-primary transition-colors">Pricing</a>
             <a href="#testimonials" className="text-sm hover:text-primary transition-colors">Reviews</a>
-            <Button variant="ghost" onClick={() => navigate('/login')}>
+            <Button variant="ghost" onClick={goToLogin}>
               Sign In
             </Button>
-            <Button onClick={() => navigate('/login')}>
+            <Button onClick={goToLogin}>
               Get Started
             </Button>
           </div>
@@ -169,7 +169,7 @@ export const Landing: React.FC = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button size="lg" onClick={() => navigate('/login')} className="text-lg px-8" aria-label="Start your free trial of Searchmatic">
+              <Button size="lg" onClick={goToLogin} className="text-lg px-8" aria-label="Start your free trial of Searchmatic">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
               </Button>
@@ -349,7 +349,7 @@ export const Landing: React.FC = () => {
                   <Button 
                     className="w-full" 
                     variant={tier.popular ? "default" : "outline"}
-                    onClick={() => navigate('/login')}
+                    onClick={goToLogin}
                   >
                     {tier.cta}
                   </Button>
@@ -370,7 +370,7 @@ export const Landing: React.FC = () => {
             Join thousands of researchers who have accelerated their systematic reviews with Searchmatic
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" onClick={() => navigate('/login')}>
+            <Button size="lg" variant="secondary" onClick={goToLogin}>
               Start Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>

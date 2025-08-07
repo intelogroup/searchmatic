@@ -1,38 +1,31 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { ThreePanelLayout } from '@/components/layout/ThreePanelLayout'
 import { ChatPanel } from '@/components/chat/ChatPanel'
 import { ProtocolPanel } from '@/components/protocol/ProtocolPanel'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { LoadingPage } from '@/components/ui/loading'
 import { 
   ArrowLeft,
   FileText,
   MessageCircle,
   Settings,
   MoreHorizontal,
-  Loader2,
   AlertCircle
 } from 'lucide-react'
 import { useProjectContext } from '@/hooks/useProjectContext'
-import { formatDistanceToNow } from 'date-fns'
+import { useAppNavigation } from '@/hooks/useAppNavigation'
+import { formatCreatedAt } from '@/lib/date-utils'
 
 export const ProjectView: React.FC = () => {
-  const navigate = useNavigate()
+  const { goToDashboard } = useAppNavigation()
   const { currentProject, isLoading, error } = useProjectContext()
   const [activePanel, setActivePanel] = useState<'protocol' | 'chat'>('protocol')
 
   // Loading state
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="space-y-2 text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-          <p className="text-sm text-muted-foreground">Loading project...</p>
-        </div>
-      </div>
-    )
+    return <LoadingPage message="Loading project..." />
   }
 
   // Error state
@@ -49,7 +42,7 @@ export const ProjectView: React.FC = () => {
               {error?.message || 'The project you are looking for does not exist or you do not have access to it.'}
             </p>
           </div>
-          <Button onClick={() => navigate('/dashboard')}>
+          <Button onClick={goToDashboard}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
@@ -78,7 +71,7 @@ export const ProjectView: React.FC = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/dashboard')}
+              onClick={goToDashboard}
               className="h-8 w-8 p-0"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -142,7 +135,7 @@ export const ProjectView: React.FC = () => {
           </CardHeader>
           <CardContent className="pt-0">
             <div className="text-sm font-bold">
-              {formatDistanceToNow(new Date(currentProject.created_at))} ago
+              {formatCreatedAt(currentProject.created_at)}
             </div>
             <p className="text-xs text-muted-foreground">Project age</p>
           </CardContent>
