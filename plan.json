@@ -1,28 +1,24 @@
 {
   "steps": [
     {
-      "step": "Gather existing documentation by reading all .md files",
+      "step": "Inventory root-level .md and test artifacts for review",
       "status": "completed"
     },
     {
-      "step": "Review current implementation to identify core features",
+      "step": "Remove unnecessary .md files and test artifacts",
       "status": "completed"
     },
     {
-      "step": "Draft MVP specification document with scope and objectives",
-      "status": "completed"
+      "step": "Restructure src and tests according to docs guidelines",
+      "status": "in_progress"
     },
     {
-      "step": "Create guidance document for junior developers",
-      "status": "completed"
+      "step": "Update documentation index and developer guidelines",
+      "status": "pending"
     },
     {
-      "step": "Add MVP docs to /docs directory",
-      "status": "completed"
-    },
-    {
-      "step": "Review and finalize documentation",
-      "status": "completed"
+      "step": "Cleanup and commit changes",
+      "status": "pending"
     }
   ]
 }
