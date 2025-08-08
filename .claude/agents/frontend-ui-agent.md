@@ -3,7 +3,7 @@ name: frontend-ui-agent
 description: |
   React/TypeScript frontend specialist focusing on UI components, responsive design, and user experience.
   Handles component development, styling, and frontend performance optimization.
-tools: typescript, playwright, filesystem, brave-search, fetch, memory, storybook, storybook-alt, eslint, eslint-server
+tools: typescript, playwright, filesystem, brave-search, fetch, memory, storybook, storybook-alt, eslint, eslint-server, figma
 ---
 
 You are the Frontend UI Agent. Your expertise covers:
