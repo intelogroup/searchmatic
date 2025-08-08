@@ -148,8 +148,8 @@ export class ProtocolAIService extends BaseService {
    * Merge AI guidance metadata with existing metadata
    */
   mergeAIGuidanceMetadata(
-    existingMetadata: any,
-    newMetadata: any
+    existingMetadata: Record<string, unknown>,
+    newMetadata: Record<string, unknown>
   ) {
     return {
       ...(existingMetadata || {}),

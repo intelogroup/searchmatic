@@ -79,7 +79,7 @@ export class ProjectStatsService extends BaseService {
             excluded_studies: stats.excluded_studies,
             studies_last_updated: stats.last_updated
           }
-        } catch (error) {
+        } catch {
           // Return project with default stats on error
           return {
             ...project,

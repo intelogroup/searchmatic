@@ -5,7 +5,7 @@
  */
 
 import { errorLogger, logSupabaseError, logInfo, logPerformance } from '@/lib/error-logger'
-import { ensureAuthenticated, withAuth, createAuthSession, type AuthenticatedUser } from '@/lib/auth-utils'
+import { ensureAuthenticated, createAuthSession, type AuthenticatedUser } from '@/lib/auth-utils'
 
 /**
  * Standard service operation context for logging and debugging
@@ -13,7 +13,7 @@ import { ensureAuthenticated, withAuth, createAuthSession, type AuthenticatedUse
 export interface ServiceContext {
   service: string
   action: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 /**
@@ -103,7 +103,7 @@ export async function executeAuthenticatedServiceOperation<T>(
  */
 export async function executeSupabaseOperation<T>(
   context: ServiceContext & { table?: string },
-  operation: () => Promise<{ data: T | null; error: any }>
+  operation: () => Promise<{ data: T | null; error: Error | null }>
 ): Promise<T> {
   return executeServiceOperation(context, async () => {
     const { data, error } = await operation()
@@ -131,7 +131,7 @@ export async function executeSupabaseOperation<T>(
  */
 export async function executeAuthenticatedSupabaseOperation<T>(
   context: ServiceContext & { table?: string },
-  operation: (user: AuthenticatedUser) => Promise<{ data: T | null; error: any }>
+  operation: (user: AuthenticatedUser) => Promise<{ data: T | null; error: Error | null }>
 ): Promise<T> {
   return executeAuthenticatedServiceOperation(context, async (user) => {
     const { data, error } = await operation(user)
@@ -174,7 +174,7 @@ export abstract class BaseService {
   protected async execute<T>(
     action: string,
     operation: () => Promise<T>,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<T> {
     return executeServiceOperation(
       {
@@ -192,7 +192,7 @@ export abstract class BaseService {
   protected async executeAuthenticated<T>(
     action: string,
     operation: (user: AuthenticatedUser) => Promise<T>,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<T> {
     return executeAuthenticatedServiceOperation(
       {
@@ -209,9 +209,9 @@ export abstract class BaseService {
    */
   protected async executeSupabase<T>(
     action: string,
-    operation: () => Promise<{ data: T | null; error: any }>,
+    operation: () => Promise<{ data: T | null; error: Error | null }>,
     table?: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<T> {
     return executeSupabaseOperation(
       {
@@ -229,9 +229,9 @@ export abstract class BaseService {
    */
   protected async executeAuthenticatedSupabase<T>(
     action: string,
-    operation: (user: AuthenticatedUser) => Promise<{ data: T | null; error: any }>,
+    operation: (user: AuthenticatedUser) => Promise<{ data: T | null; error: Error | null }>,
     table?: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<T> {
     return executeAuthenticatedSupabaseOperation(
       {
@@ -258,7 +258,7 @@ export abstract class BaseService {
  */
 export class BatchServiceOperation {
   private authSession = createAuthSession()
-  private operations: Array<() => Promise<any>> = []
+  private operations: Array<() => Promise<unknown>> = []
   private context: Omit<ServiceContext, 'action'>
 
   constructor(context: Omit<ServiceContext, 'action'>) {
@@ -298,7 +298,7 @@ export class BatchServiceOperation {
   /**
    * Execute all operations in the batch
    */
-  async execute(): Promise<any[]> {
+  async execute(): Promise<unknown[]> {
     const results = []
     for (const operation of this.operations) {
       const result = await operation()
@@ -310,7 +310,7 @@ export class BatchServiceOperation {
   /**
    * Execute all operations in parallel (use with caution for database operations)
    */
-  async executeParallel(): Promise<any[]> {
+  async executeParallel(): Promise<unknown[]> {
     return Promise.all(this.operations.map(op => op()))
   }
 }
@@ -330,7 +330,7 @@ export class ServiceError extends Error {
     message: string,
     public readonly service: string,
     public readonly action: string,
-    public readonly originalError?: any
+    public readonly originalError?: Error
   ) {
     super(message)
     this.name = 'ServiceError'
@@ -343,7 +343,7 @@ export class DatabaseError extends ServiceError {
     service: string,
     action: string,
     public readonly table?: string,
-    originalError?: any
+    originalError?: Error
   ) {
     super(message, service, action, originalError)
     this.name = 'DatabaseError'

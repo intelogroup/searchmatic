@@ -44,7 +44,6 @@ export class ProtocolParsingService {
     // This is a simplified parser - in a real implementation, you might use more sophisticated NLP
     // or prompt the AI to return structured JSON
     
-    try {
       // Try to extract structured information from the AI guidance
       const components: Partial<ProtocolInsert> = {}
 
@@ -98,9 +97,6 @@ export class ProtocolParsingService {
       }
 
       return components
-    } catch (error) {
-      throw error
-    }
   }
 
   /**
@@ -114,7 +110,6 @@ export class ProtocolParsingService {
     // Parse refinements based on focus area
     const updates: Partial<ProtocolUpdate> = {}
 
-    try {
       switch (focusArea) {
         case 'inclusion': {
           const inclusionMatch = guidance.match(/(?:Inclusion|Include)[:-\s]*([\s\S]*?)(?=Exclusion|$)/i)
@@ -140,7 +135,7 @@ export class ProtocolParsingService {
 
         case 'search_strategy': {
           // Extract search strategy components
-          const strategy = { ...((existingProtocol.search_strategy as { [key: string]: any }) || {}) }
+          const strategy = { ...((existingProtocol.search_strategy as Record<string, unknown>) || {}) }
           
           const keywordsMatch = guidance.match(/Keywords?[:-\s]*(.*?)(?=\n|Database|$)/i)
           if (keywordsMatch) {
@@ -178,9 +173,6 @@ export class ProtocolParsingService {
           break
         }
       }
-    } catch (error) {
-      throw error
-    }
 
     return updates
   }

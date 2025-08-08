@@ -180,7 +180,7 @@ class EdgeFunctionService extends BaseService {
           // Test hello-world function
           await this.testConnection()
           functions[0].status = 'available'
-        } catch (error) {
+        } catch {
           // Error already logged by testConnection
         }
         

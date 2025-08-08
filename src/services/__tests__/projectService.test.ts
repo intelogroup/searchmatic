@@ -42,7 +42,9 @@ vi.mock('@/lib/supabase', () => ({
 vi.mock('../projectStatsService', () => ({
   projectStatsService: {
     getProjectStats: vi.fn(),
-    getDashboardStats: vi.fn()
+    getDashboardStats: vi.fn(),
+    enhanceProjectsWithStats: vi.fn(),
+    enhanceProjectWithStats: vi.fn()
   }
 }))
 
@@ -92,6 +94,12 @@ describe('ProjectService', () => {
       excluded_studies: 2,
       studies_last_updated: '2025-01-01T12:00:00Z'
     })
+    vi.mocked(projectStatsService.enhanceProjectsWithStats).mockImplementation(async (projects) => 
+      projects.map(project => ({ ...project, ...mockProjectWithStats }))
+    )
+    vi.mocked(projectStatsService.enhanceProjectWithStats).mockImplementation(async (project) => 
+      ({ ...project, ...mockProjectWithStats })
+    )
   })
 
   afterEach(() => {
@@ -149,9 +157,7 @@ describe('ProjectService', () => {
       
       const mockFrom = vi.fn(() => ({
         select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            order: vi.fn().mockResolvedValue({ data: mockProjects, error: null })
-          }))
+          order: vi.fn().mockResolvedValue({ data: mockProjects, error: null })
         }))
       }))
       vi.mocked(supabase.from).mockImplementation(mockFrom)
@@ -160,15 +166,13 @@ describe('ProjectService', () => {
 
       expect(result).toHaveLength(2)
       expect(result[0]).toEqual(mockProjectWithStats)
-      expect(projectStatsService.getProjectStats).toHaveBeenCalledWith(mockProject.id)
+      expect(projectStatsService.enhanceProjectsWithStats).toHaveBeenCalledWith(mockProjects)
     })
 
     it('should handle empty results', async () => {
       const mockFrom = vi.fn(() => ({
         select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            order: vi.fn().mockResolvedValue({ data: [], error: null })
-          }))
+          order: vi.fn().mockResolvedValue({ data: [], error: null })
         }))
       }))
       vi.mocked(supabase.from).mockImplementation(mockFrom)
@@ -183,9 +187,7 @@ describe('ProjectService', () => {
       
       const mockFrom = vi.fn(() => ({
         select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            order: vi.fn().mockResolvedValue({ data: mockProjects, error: null })
-          }))
+          order: vi.fn().mockResolvedValue({ data: mockProjects, error: null })
         }))
       }))
       vi.mocked(supabase.from).mockImplementation(mockFrom)
@@ -210,9 +212,7 @@ describe('ProjectService', () => {
       const mockFrom = vi.fn(() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            eq: vi.fn(() => ({
-              single: vi.fn().mockResolvedValue({ data: mockProject, error: null })
-            }))
+            single: vi.fn().mockResolvedValue({ data: mockProject, error: null })
           }))
         }))
       }))
@@ -222,16 +222,14 @@ describe('ProjectService', () => {
 
       expect(result).toEqual(mockProjectWithStats)
       expect(supabase.from).toHaveBeenCalledWith('projects')
-      expect(projectStatsService.getProjectStats).toHaveBeenCalledWith('project-123')
+      expect(projectStatsService.enhanceProjectWithStats).toHaveBeenCalledWith(mockProject)
     })
 
     it('should return null when project not found', async () => {
       const mockFrom = vi.fn(() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            eq: vi.fn(() => ({
-              single: vi.fn().mockResolvedValue({ data: null, error: { code: 'PGRST116' } })
-            }))
+            single: vi.fn().mockResolvedValue({ data: null, error: { code: 'PGRST116' } })
           }))
         }))
       }))

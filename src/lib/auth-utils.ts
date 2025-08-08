@@ -9,8 +9,8 @@ import { baseSupabaseClient as supabase } from '@/lib/supabase'
 export interface AuthenticatedUser {
   id: string
   email?: string
-  user_metadata?: Record<string, any>
-  app_metadata?: Record<string, any>
+  user_metadata?: Record<string, unknown>
+  app_metadata?: Record<string, unknown>
 }
 
 /**
@@ -73,7 +73,7 @@ export function isUserAuthenticated(): boolean {
  * Higher-order function to wrap service methods with authentication
  * Automatically ensures authentication before executing the wrapped function
  */
-export function withAuth<TArgs extends any[], TReturn>(
+export function withAuth<TArgs extends unknown[], TReturn>(
   fn: (user: AuthenticatedUser, ...args: TArgs) => Promise<TReturn>
 ) {
   return async (...args: TArgs): Promise<TReturn> => {
@@ -86,7 +86,7 @@ export function withAuth<TArgs extends any[], TReturn>(
  * Higher-order function for optional authentication
  * Passes null if user is not authenticated, user object if authenticated
  */
-export function withOptionalAuth<TArgs extends any[], TReturn>(
+export function withOptionalAuth<TArgs extends unknown[], TReturn>(
   fn: (user: AuthenticatedUser | null, ...args: TArgs) => Promise<TReturn>
 ) {
   return async (...args: TArgs): Promise<TReturn> => {
@@ -176,10 +176,7 @@ export class AuthorizationError extends Error {
 /**
  * Enhanced authentication check with custom error handling
  */
-export async function ensureAuthenticatedWithContext(
-  operation: string,
-  metadata?: Record<string, any>
-): Promise<AuthenticatedUser> {
+export async function ensureAuthenticatedWithContext(): Promise<AuthenticatedUser> {
   try {
     return await ensureAuthenticated()
   } catch (error) {

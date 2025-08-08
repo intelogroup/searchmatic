@@ -1,5 +1,5 @@
 import React from 'react'
-import { useForm, UseFormReturn } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -196,5 +196,3 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
     </div>
   )
 }
-
-export { projectSchema }

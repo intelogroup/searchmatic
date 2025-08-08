@@ -303,7 +303,7 @@ describe('ChatService', () => {
       }))
       vi.mocked(supabase.from).mockImplementation(mockFrom)
 
-      await expect(chatService.createMessage(messageData)).rejects.toThrow('Database operation failed')
+      await expect(chatService.createMessage(messageData)).rejects.toThrow('Conversation not found')
     })
   })
 

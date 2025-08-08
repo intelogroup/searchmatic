@@ -9,7 +9,7 @@ import { vi } from 'vitest'
  * Creates a chainable Supabase mock that properly handles method chaining
  */
 export function createSupabaseMock() {
-  const createChainableMock = (finalValue: any = { data: null, error: null }) => {
+  const createChainableMock = (finalValue: { data: unknown; error: unknown } = { data: null, error: null }) => {
     const chainable = {
       select: vi.fn().mockReturnThis(),
       insert: vi.fn().mockReturnThis(),
@@ -76,7 +76,7 @@ export const mockUser = {
 /**
  * Helper to setup a Supabase mock with specific return value
  */
-export function mockSupabaseOperation(returnValue: any, error: any = null) {
+export function mockSupabaseOperation(returnValue: unknown, error: unknown = null) {
   const finalValue = error ? { data: null, error } : { data: returnValue, error: null }
   return createChainableMock(finalValue)
 }
@@ -84,8 +84,8 @@ export function mockSupabaseOperation(returnValue: any, error: any = null) {
 /**
  * Helper to create a chainable mock for complex operations
  */
-function createChainableMock(finalValue: any) {
-  const chainable: any = {}
+function createChainableMock(finalValue: { data: unknown; error: unknown }) {
+  const chainable: Record<string, unknown> = {}
   
   const methods = ['select', 'insert', 'update', 'delete', 'eq', 'order', 'limit']
   methods.forEach(method => {
@@ -101,7 +101,7 @@ function createChainableMock(finalValue: any) {
 /**
  * Helper to verify service method calls
  */
-export function expectServiceMethodCalled(mockFrom: any, table: string, method: string) {
+export function expectServiceMethodCalled(mockFrom: unknown, table: string, method: string) {
   expect(mockFrom).toHaveBeenCalledWith(table)
   const mockChain = mockFrom.mock.results[0].value
   expect(mockChain[method]).toHaveBeenCalled()

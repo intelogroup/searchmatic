@@ -3,7 +3,7 @@ import { protocolAIService } from './protocolAIService'
 import { protocolParsingService } from './protocolParsingService'
 import type { Database } from '@/types/database'
 import { BaseService } from '@/lib/service-wrapper'
-import { ensureAuthenticated, type AuthenticatedUser } from '@/lib/auth-utils'
+import { type AuthenticatedUser } from '@/lib/auth-utils'
 
 type Protocol = Database['public']['Tables']['protocols']['Row']
 type ProtocolInsert = Database['public']['Tables']['protocols']['Insert']
@@ -293,7 +293,7 @@ class ProtocolService extends BaseService {
   async duplicateProtocol(id: string, newTitle?: string): Promise<Protocol> {
     return this.executeAuthenticatedSupabase(
       'duplicate-protocol',
-      async (user: AuthenticatedUser) => {
+      async () => {
         const existingProtocol = await this.getProtocol(id)
         if (!existingProtocol) throw new Error('Protocol not found')
 
@@ -322,7 +322,7 @@ class ProtocolService extends BaseService {
   async getProtocolHistory(id: string): Promise<Protocol[]> {
     return this.executeAuthenticated(
       'get-protocol-history',
-      async (user: AuthenticatedUser) => {
+      async () => {
         // This would require a separate protocol_versions table in a real implementation
         // For now, just return the current protocol
         const protocol = await this.getProtocol(id)
