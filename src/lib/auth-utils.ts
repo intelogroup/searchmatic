@@ -5,7 +5,6 @@
  */
 
 import { baseSupabaseClient as supabase } from '@/lib/supabase'
-import { User } from '@supabase/supabase-js'
 
 export interface AuthenticatedUser {
   id: string
