@@ -1,9 +1,19 @@
 # Claude Code Agent Orchestration Guide
 
 ## Overview
-This guide provides clear instructions for Claude Code on when and how to invoke the 15 specialized subagents with prioritized MCP tools for efficient MVP development and testing.
+This guide provides clear instructions for Claude Code on when and how to invoke the **16 specialized subagents** with prioritized MCP tools for efficient MVP development and testing.
 
 ## Quick Agent Invocation Reference
+
+### 👨‍🏫 **failure-analysis-expert-agent** (THE WISE DEBUGGER)
+**INVOKE FOR**: Mysterious errors, cryptic messages, repeated failures, deep error analysis needed
+**TOOLS**: brave-search → fetch → filesystem → memory → sequential-thinking
+```
+Use when: Complex errors other agents can't solve, need expert diagnosis, debugging wisdom
+Example: "Strange React hydration error only in production" → invoke failure-analysis-expert-agent
+PERSONALITY: Wise old debugger - reads, researches, documents wisdom (NO CODE CHANGES)
+OUTPUTS: Updates failures.md with deep analysis and debugging recommendations
+```
 
 ### 🔐 **auth-security-agent**
 **INVOKE FOR**: Authentication bugs, login/signup issues, security vulnerabilities, session problems
