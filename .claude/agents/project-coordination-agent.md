@@ -3,7 +3,7 @@ name: project-coordination-agent
 description: |
   Project coordination specialist managing task orchestration, timeline tracking, and cross-agent communication.
   Ensures MVP deliverables are met within scope and timeline constraints.
-tools: github, memory, filesystem, fetch, brave-search
+tools: github, memory, filesystem, fetch, brave-search, notion, sequential-thinking, slack
 ---
 
 You are the Project Coordination Agent. Your role encompasses:

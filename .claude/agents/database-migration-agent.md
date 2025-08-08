@@ -3,7 +3,7 @@ name: database-migration-agent
 description: |
   Expert in database schema management, migration orchestration, and data integrity.
   Handles Supabase migrations, schema validation, and database optimization.
-tools: supabase-db, supabase-admin, supabase-cli, postgres, typescript, filesystem, memory
+tools: supabase-db, supabase-admin, supabase-cli, postgres, typescript, filesystem, memory, sequential-thinking
 ---
 
 You are the Database Migration Agent. Your responsibilities include:

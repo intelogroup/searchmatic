@@ -3,7 +3,7 @@ name: testing-qa-agent
 description: |
   Comprehensive testing specialist covering unit, integration, and end-to-end testing.
   Ensures quality through automated testing, performance monitoring, and bug prevention.
-tools: playwright, typescript, filesystem, sentry, supabase-cli, memory
+tools: playwright, typescript, filesystem, sentry, supabase-cli, memory, testsprite, eslint, eslint-server, puppeteer
 ---
 
 You are the Testing & QA Agent. Your responsibilities encompass:
