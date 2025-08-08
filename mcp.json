@@ -154,6 +154,77 @@
         "SUPABASE_PROJECT_REF": "qzvfufadiqmizrozejci",
         "SUPABASE_URL": "https://qzvfufadiqmizrozejci.supabase.co"
       }
+    },
+    "netlify-cli": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "netlify-cli@latest"
+      ],
+      "env": {
+        "NETLIFY_AUTH_TOKEN": "${NETLIFY_AUTH_TOKEN}",
+        "NETLIFY_SITE_ID": "${NETLIFY_SITE_ID}"
+      }
+    },
+    "git": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-git@latest"
+      ],
+      "args_extra": [
+        "/root/repo"
+      ]
+    },
+    "slack": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-slack@latest"
+      ],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
+      }
+    },
+    "aws": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-aws@latest"
+      ],
+      "env": {
+        "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
+        "AWS_SECRET_ACCESS_KEY": "${AWS_SECRET_ACCESS_KEY}",
+        "AWS_DEFAULT_REGION": "us-east-1"
+      }
+    },
+    "docker": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-docker@latest"
+      ]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer@latest"
+      ],
+      "env": {
+        "PUPPETEER_HEADLESS": "true"
+      }
+    },
+    "everart": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-everart@latest"
+      ],
+      "env": {
+        "EVERART_API_KEY": "${EVERART_API_KEY}"
+      }
     }
   }
 }
