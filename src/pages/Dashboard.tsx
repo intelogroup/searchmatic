@@ -1,13 +1,14 @@
-import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Header } from '@/components/layout/Header'
-import { Plus, BookOpen, Clock, CheckCircle2, BarChart3, AlertCircle, Loader2, RefreshCw } from 'lucide-react'
+import { LoadingCard } from '@/components/ui/loading'
+import { Plus, BookOpen, Clock, CheckCircle2, BarChart3, AlertCircle, RefreshCw } from 'lucide-react'
 import { useProjects, useDashboardStats } from '@/hooks/useProjects'
-import { formatDistanceToNow } from 'date-fns'
+import { useAppNavigation } from '@/hooks/useAppNavigation'
+import { formatTimeAgo } from '@/lib/date-utils'
 
 export const Dashboard = () => {
-  const navigate = useNavigate()
+  const { goToNewProject, goToProject } = useAppNavigation()
   
   // Use real data from Supabase
   const { data: projects, isLoading: projectsLoading, error: projectsError, refetch: refetchProjects } = useProjects()
@@ -25,14 +26,6 @@ export const Dashboard = () => {
     return statusMap[status as keyof typeof statusMap] || statusMap.draft
   }
 
-  // Format time ago helper
-  const formatTimeAgo = (dateString: string) => {
-    try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true })
-    } catch {
-      return 'Unknown'
-    }
-  }
 
   // Loading state
   if (projectsLoading || statsLoading) {
@@ -40,12 +33,7 @@ export const Dashboard = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <main className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center h-64">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Loader2 className="h-5 w-5 animate-spin" />
-              <span>Loading your projects...</span>
-            </div>
-          </div>
+          <LoadingCard message="Loading your projects..." className="h-64" />
         </main>
       </div>
     )
@@ -160,7 +148,7 @@ export const Dashboard = () => {
             <CardContent>
               <Button 
                 className="w-full"
-                onClick={() => navigate('/projects/new')}
+                onClick={goToNewProject}
               >
                 Begin Project
               </Button>
@@ -220,7 +208,7 @@ export const Dashboard = () => {
                       <Button 
                         variant="outline" 
                         className="w-full mt-4"
-                        onClick={() => navigate(`/projects/${project.id}`)}
+                        onClick={() => goToProject(project.id)}
                       >
                         Open Project
                       </Button>
@@ -240,7 +228,7 @@ export const Dashboard = () => {
                 <p className="text-muted-foreground mb-4">
                   Create your first systematic literature review to get started
                 </p>
-                <Button onClick={() => navigate('/projects/new')}>
+                <Button onClick={goToNewProject}>
                   <Plus className="h-4 w-4 mr-2" />
                   Create Your First Project
                 </Button>
@@ -260,7 +248,7 @@ export const Dashboard = () => {
                   from research scoping to final export, making rigorous research accessible to everyone.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button onClick={() => navigate('/projects/new')}>
+                  <Button onClick={goToNewProject}>
                     Start Your First Review
                   </Button>
                   <Button variant="outline">

@@ -12,10 +12,27 @@ dist
 dist-ssr
 *.local
 
-# Environment variables
+# Environment variables - SECURITY CRITICAL
 .env
+.env.*
+!.env.example
 .env.local
+.env.development
+.env.staging
 .env.production
+.env.test
+
+# Security-sensitive files
+**/secrets.json
+**/*secret*
+**/*key*
+**/*token*
+**/credentials.json
+**/config/production.json
+
+# MCP configurations with tokens
+mcp-config.json
+claude-desktop-config.json
 
 # Editor directories and files
 .vscode/*

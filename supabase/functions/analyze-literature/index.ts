@@ -11,7 +11,7 @@ interface AnalysisRequest {
   articleText: string
   analysisType: 'summary' | 'extraction' | 'quality' | 'bias'
   projectId: string
-  extractionTemplate?: any
+  extractionTemplate?: Record<string, unknown>
 }
 
 serve(async (req) => {
@@ -141,13 +141,13 @@ serve(async (req) => {
     }
 
     // Store analysis results (optional - you might want to log these)
-    const analysisResult = {
-      projectId,
-      analysisType,
-      analysis,
-      timestamp: new Date().toISOString(),
-      userId: user.id,
-    }
+    // const analysisResult = {
+    //   projectId,
+    //   analysisType,
+    //   analysis,
+    //   timestamp: new Date().toISOString(),
+    //   userId: user.id,
+    // }
 
     return new Response(
       JSON.stringify({

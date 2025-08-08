@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react'
+import type { Json } from '@/types/database'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -32,7 +33,7 @@ interface MessageItemProps {
     role: 'user' | 'assistant' | 'system'
     content: string
     created_at: string
-    metadata?: any
+    metadata?: Json
   }
   onDelete: (messageId: string) => void
   isStreaming?: boolean

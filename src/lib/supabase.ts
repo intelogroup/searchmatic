@@ -6,7 +6,19 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+  // Log the error for debugging but provide fallback values for development
+  const errorMessage = `Missing Supabase environment variables: URL=${!supabaseUrl ? 'missing' : 'present'}, KEY=${!supabaseAnonKey ? 'missing' : 'present'}`
+  console.error(errorMessage)
+  
+  // In development, provide placeholder values to prevent complete failure
+  if (import.meta.env.DEV) {
+    console.warn('Using placeholder Supabase values in development. App may not function properly.')
+    // Still throw in development to make the problem obvious
+    throw new Error(errorMessage)
+  } else {
+    // In production, throw the error to trigger proper error handling
+    throw new Error('Application configuration error: Missing required Supabase credentials. Please contact support.')
+  }
 }
 
 // Create the base Supabase client

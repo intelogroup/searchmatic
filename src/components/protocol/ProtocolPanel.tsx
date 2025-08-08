@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -15,6 +15,7 @@ import { ProtocolList } from './ProtocolList'
 import type { Database } from '@/types/database'
 
 type Protocol = Database['public']['Tables']['protocols']['Row']
+type ProtocolUpdate = Database['public']['Tables']['protocols']['Update']
 
 interface ProtocolPanelProps {
   projectId: string
@@ -32,13 +33,7 @@ export const ProtocolPanel: React.FC<ProtocolPanelProps> = ({
   const [error, setError] = useState<string | null>(null)
   const [view, setView] = useState<'list' | 'editor' | 'ai-create'>('list')
 
-  useEffect(() => {
-    if (projectId) {
-      loadProtocols()
-    }
-  }, [projectId])
-
-  const loadProtocols = async () => {
+  const loadProtocols = useCallback(async () => {
     setIsLoading(true)
     setError(null)
     try {
@@ -49,7 +44,13 @@ export const ProtocolPanel: React.FC<ProtocolPanelProps> = ({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [projectId])
+
+  useEffect(() => {
+    if (projectId) {
+      loadProtocols()
+    }
+  }, [projectId, loadProtocols])
 
   const handleCreateProtocol = async (data: {
     title: string
@@ -103,7 +104,7 @@ export const ProtocolPanel: React.FC<ProtocolPanelProps> = ({
     }
   }
 
-  const handleUpdateProtocol = async (protocolId: string, updates: any) => {
+  const handleUpdateProtocol = async (protocolId: string, updates: ProtocolUpdate) => {
     try {
       const updatedProtocol = await protocolService.updateProtocol(protocolId, updates)
       setProtocols(prev => prev.map(p => p.id === protocolId ? updatedProtocol : p))

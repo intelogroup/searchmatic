@@ -6,7 +6,7 @@ const path = require('path');
 
 // Supabase configuration
 const SUPABASE_URL = 'https://qzvfufadiqmizrozejci.supabase.co';
-const SUPABASE_SERVICE_KEY = 'sbp_99c994d6970e1d4cb36d4cb8caae9e120e499337';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Create Supabase client with service role key
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useAppNavigation } from '@/hooks/useAppNavigation'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,7 +9,7 @@ import { ArrowLeft, Eye, EyeOff, Sparkles, CheckCircle2, Shield, Users } from 'l
 import { errorLogger, logInfo, logSupabaseError, logPerformance } from '@/lib/error-logger'
 
 export const Login: React.FC = () => {
-  const navigate = useNavigate()
+  const { goToDashboard } = useAppNavigation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -122,7 +123,7 @@ export const Login: React.FC = () => {
             action: 'redirect-to-dashboard'
           })
           
-          navigate('/dashboard')
+          goToDashboard()
         }
       }
     } catch (unexpectedError) {

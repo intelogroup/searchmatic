@@ -3,6 +3,17 @@
 ## Project Overview
 Searchmatic is an AI-powered systematic literature review tool that helps researchers streamline their review process. This guide contains specific instructions for development.
 
+## 📚 SUBAGENT COORDINATION
+**Before starting any work, subagents MUST read these files:**
+- **failures.md**: Recent subagent failures, errors, and known issues to understand troubleshooting items
+- **success.md**: Recent subagent successes and best practices to align on proven approaches
+- **devhandoff.md**: Current team coordination status and handoff information
+
+**Subagents MUST update these files after completing tasks:**
+- Update failures.md with any issues encountered
+- Update success.md with achieved milestones and working solutions
+- Update devhandoff.md with current status and next steps
+
 ## 🎉 DEVELOPMENT STATUS & CONTEXT (Updated: 2025-08-02)
 
 ### 🚀 MVP STATUS: 99% COMPLETE - AI FEATURES READY ⚡

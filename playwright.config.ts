@@ -71,10 +71,10 @@ export default defineConfig({
     trace: VCT_CONFIG.trace,
 
     /* VCT-enhanced screenshots */
-    screenshot: VCT_CONFIG.screenshot as any,
+    screenshot: VCT_CONFIG.screenshot as 'off' | 'on' | 'only-on-failure' | 'on-first-retry',
 
     /* Video recording */
-    video: VCT_CONFIG.video as any,
+    video: VCT_CONFIG.video as 'off' | 'on' | 'retain-on-failure' | 'on-first-retry',
     
     /* Headless mode */
     headless: VCT_CONFIG.headless,
