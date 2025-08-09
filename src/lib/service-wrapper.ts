@@ -24,12 +24,12 @@ export interface ServiceResult<T> {
   error?: never
 }
 
-export interface ServiceError {
+export interface ServiceErrorResult {
   data?: never
   error: Error
 }
 
-export type ServiceResponse<T> = ServiceResult<T> | ServiceError
+export type ServiceResponse<T> = ServiceResult<T> | ServiceErrorResult
 
 /**
  * High-level service wrapper that provides:
