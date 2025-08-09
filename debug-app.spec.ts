@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test'
+import { test } from '@playwright/test'
 
 test.describe('Debug SearchMatic App', () => {
   
@@ -76,8 +76,8 @@ test.describe('Debug SearchMatic App', () => {
     // Check if environment variables are loaded
     const envCheck = await page.evaluate(() => {
       return {
-        supabaseUrl: !!(window as any).VITE_SUPABASE_URL || !!import.meta.env.VITE_SUPABASE_URL,
-        supabaseKey: !!(window as any).VITE_SUPABASE_ANON_KEY || !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+        supabaseUrl: !!(window as Record<string, unknown>).VITE_SUPABASE_URL || !!import.meta.env.VITE_SUPABASE_URL,
+        supabaseKey: !!(window as Record<string, unknown>).VITE_SUPABASE_ANON_KEY || !!import.meta.env.VITE_SUPABASE_ANON_KEY,
         mode: import.meta.env.MODE,
         dev: import.meta.env.DEV
       }

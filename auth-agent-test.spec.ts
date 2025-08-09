@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
 // Test credentials as provided
 const TEST_EMAIL = 'jayveedz19@gmail.com'
@@ -44,7 +44,7 @@ test.describe('SearchMatic Authentication Flow - AuthAgent Comprehensive Testing
           console.log(`Found login button with selector: ${selector}`)
           break
         }
-      } catch (e) {
+      } catch {
         console.log(`Selector ${selector} not found`)
         continue
       }
@@ -126,7 +126,7 @@ test.describe('SearchMatic Authentication Flow - AuthAgent Comprehensive Testing
       })
       
       console.log('✅ Successfully logged in and redirected to dashboard')
-    } catch (error) {
+    } catch {
       // If not redirected, check for error messages
       const errorMessage = await page.locator('[class*="error"], [class*="destructive"], .text-red-500, .text-destructive').first().textContent()
       console.log('❌ Login failed with error:', errorMessage || 'No specific error message found')
@@ -241,7 +241,7 @@ test.describe('SearchMatic Authentication Flow - AuthAgent Comprehensive Testing
           console.log(`Found logout button with selector: ${selector}`)
           break
         }
-      } catch (e) {
+      } catch {
         continue
       }
     }

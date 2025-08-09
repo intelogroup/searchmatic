@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, Page, Locator } from '@playwright/test'
 
 /**
  * Critical Path Button Testing Suite
@@ -15,12 +15,12 @@ const MIN_TOUCH_TARGET_SIZE = 40
 const RECOMMENDED_TOUCH_TARGET_SIZE = 44
 
 // Helper functions
-async function measureElementSize(element: any): Promise<{ width: number; height: number }> {
+async function measureElementSize(element: Locator): Promise<{ width: number; height: number }> {
   const box = await element.boundingBox()
   return box ? { width: box.width, height: box.height } : { width: 0, height: 0 }
 }
 
-async function validateButtonAccessibility(element: any, elementName: string): Promise<void> {
+async function validateButtonAccessibility(element: Locator, elementName: string): Promise<void> {
   const size = await measureElementSize(element)
   
   // Ensure minimum touch target (fail test if below minimum)
@@ -33,7 +33,7 @@ async function validateButtonAccessibility(element: any, elementName: string): P
   }
 }
 
-async function testBasicButtonFunctionality(page: any, button: any, buttonName: string): Promise<void> {
+async function testBasicButtonFunctionality(page: Page, button: Locator, buttonName: string): Promise<void> {
   // Test button visibility
   await expect(button, `${buttonName} should be visible`).toBeVisible()
   
