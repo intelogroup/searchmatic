@@ -36,8 +36,9 @@ export default function Login() {
         })
         if (error) throw error
       }
-    } catch (error: any) {
-      setMessage(error.message || 'An error occurred')
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      setMessage(errorMessage)
     }
     setLoading(false)
   }

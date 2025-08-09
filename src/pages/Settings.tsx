@@ -1,119 +1,235 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, User, Bell, Shield, CreditCard, Zap } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import type { UserPreferences } from '@/types/database'
+import { ArrowLeft } from 'lucide-react'
 
-export const Settings: React.FC = () => {
+export default function Settings() {
   const navigate = useNavigate()
+  const [preferences, setPreferences] = useState<UserPreferences | null>(null)
+  const [message, setMessage] = useState('')
 
-  const settingSections = [
-    {
-      id: 'profile',
-      title: 'Profile & Account',
-      description: 'Manage your personal information and account settings',
-      icon: <User className="h-5 w-5" />,
-      features: ['Update profile information', 'Change password', 'Account preferences']
-    },
-    {
-      id: 'notifications',
-      title: 'Notifications',
-      description: 'Control how and when you receive notifications',
-      icon: <Bell className="h-5 w-5" />,
-      features: ['Email notifications', 'Push notifications', 'Research updates']
-    },
-    {
-      id: 'security',
-      title: 'Security & Privacy',
-      description: 'Manage your security settings and data privacy',
-      icon: <Shield className="h-5 w-5" />,
-      features: ['Two-factor authentication', 'Data export', 'Privacy controls']
-    },
-    {
-      id: 'billing',
-      title: 'Billing & Subscription',
-      description: 'Manage your subscription and billing information',
-      icon: <CreditCard className="h-5 w-5" />,
-      features: ['Current plan details', 'Usage statistics', 'Payment methods']
-    },
-    {
-      id: 'integrations',
-      title: 'Integrations & API',
-      description: 'Connect with external services and manage API access',
-      icon: <Zap className="h-5 w-5" />,
-      features: ['Database connections', 'API keys', 'Third-party integrations']
+  useEffect(() => {
+    loadPreferences()
+  }, [])
+
+  const loadPreferences = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const { data, error } = await supabase
+      .from('user_preferences')
+      .select('*')
+      .eq('user_id', user.id)
+      .single()
+
+    if (!error && data) {
+      setPreferences(data)
+    } else {
+      // Create default preferences if none exist
+      const { data: newPrefs } = await supabase
+        .from('user_preferences')
+        .insert([{ user_id: user.id }])
+        .select()
+        .single()
+      
+      if (newPrefs) {
+        setPreferences(newPrefs)
+      }
     }
-  ]
+  }
+
+  const updatePreferences = async (updates: Partial<UserPreferences>) => {
+    if (!preferences) return
+
+    const { error } = await supabase
+      .from('user_preferences')
+      .update(updates)
+      .eq('id', preferences.id)
+
+    if (!error) {
+      setPreferences({ ...preferences, ...updates })
+      setMessage('Settings updated successfully!')
+      setTimeout(() => setMessage(''), 3000)
+    } else {
+      setMessage('Failed to update settings')
+    }
+  }
+
+  if (!preferences) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="animate-pulse text-gray-500">Loading settings...</div>
+      </div>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center gap-4 mb-8">
-          <Button variant="outline" onClick={() => navigate('/dashboard')}>
+    <div className="h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b p-4">
+        <div className="max-w-2xl mx-auto flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/chat')}
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+            Back to Chat
           </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Settings</h1>
-            <p className="text-muted-foreground">Manage your account and application preferences</p>
+          <h1 className="text-xl font-semibold">Settings</h1>
+        </div>
+      </div>
+
+      {/* Settings Content */}
+      <div className="max-w-2xl mx-auto p-6">
+        <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+          {/* Theme Settings */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-medium text-gray-900">Appearance</h3>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Theme
+              </label>
+              <Select
+                value={preferences.theme}
+                onValueChange={(value: 'light' | 'dark' | 'system') =>
+                  updatePreferences({ theme: value })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </div>
 
-        <div className="grid gap-6 max-w-4xl">
-          {settingSections.map((section) => (
-            <Card key={section.id} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                    {section.icon}
-                  </div>
-                  <div>
-                    <CardTitle>{section.title}</CardTitle>
-                    <CardDescription>{section.description}</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 mb-4">
-                  {section.features.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-muted-foreground rounded-full" />
-                      {feature}
-                    </div>
-                  ))}
-                </div>
-                <div className="flex items-center justify-between pt-2 border-t">
-                  <span className="text-sm text-muted-foreground">Coming Soon</span>
-                  <Button variant="ghost" size="sm" disabled>
-                    Configure
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+          {/* Language Settings */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-medium text-gray-900">Language</h3>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Language
+              </label>
+              <Select
+                value={preferences.language}
+                onValueChange={(value: 'en' | 'es' | 'fr' | 'de') =>
+                  updatePreferences({ language: value })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="es">Español</SelectItem>
+                  <SelectItem value="fr">Français</SelectItem>
+                  <SelectItem value="de">Deutsch</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
-        <Card className="mt-8 max-w-4xl">
-          <CardHeader>
-            <CardTitle className="text-lg">Need Help?</CardTitle>
-            <CardDescription>
-              Our support team is here to help you get the most out of Searchmatic
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="outline" className="flex-1">
-                View Documentation
+          {/* Notification Settings */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-medium text-gray-900">Notifications</h3>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Push Notifications
+                </label>
+                <p className="text-sm text-gray-500">
+                  Receive notifications for new messages
+                </p>
+              </div>
+              <button
+                onClick={() =>
+                  updatePreferences({ 
+                    notifications_enabled: !preferences.notifications_enabled 
+                  })
+                }
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  preferences.notifications_enabled ? 'bg-blue-600' : 'bg-gray-200'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    preferences.notifications_enabled ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Email Notifications
+                </label>
+                <p className="text-sm text-gray-500">
+                  Receive email updates about your conversations
+                </p>
+              </div>
+              <button
+                onClick={() =>
+                  updatePreferences({ 
+                    email_notifications: !preferences.email_notifications 
+                  })
+                }
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  preferences.email_notifications ? 'bg-blue-600' : 'bg-gray-200'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    preferences.email_notifications ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* Success Message */}
+          {message && (
+            <div className={`text-sm p-3 rounded ${
+              message.includes('Failed')
+                ? 'bg-red-50 text-red-700 border border-red-200'
+                : 'bg-green-50 text-green-700 border border-green-200'
+            }`}>
+              {message}
+            </div>
+          )}
+
+          {/* Account Actions */}
+          <div className="pt-6 border-t space-y-4">
+            <h3 className="text-lg font-medium text-gray-900">Account</h3>
+            <div className="space-y-3">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/profile')}
+                className="w-full justify-start"
+              >
+                Manage Profile
               </Button>
-              <Button variant="outline" className="flex-1">
-                Contact Support
-              </Button>
-              <Button variant="outline" className="flex-1">
-                Schedule Demo
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  await supabase.auth.signOut()
+                }}
+                className="w-full justify-start text-red-600 border-red-200 hover:bg-red-50"
+              >
+                Sign Out
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   )
