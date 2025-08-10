@@ -130,6 +130,8 @@ export interface Database {
       theme_type: 'light' | 'dark' | 'system'
       language_type: 'en' | 'es' | 'fr' | 'de'
       message_role: 'user' | 'assistant' | 'system'
+      protocol_status: 'draft' | 'active' | 'archived' | 'locked'
+      framework_type: 'pico' | 'spider' | 'other'
     }
   }
 }
@@ -148,3 +150,47 @@ export type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
 export type UserPreferencesUpdate = Database['public']['Tables']['user_preferences']['Update']
 export type ConversationUpdate = Database['public']['Tables']['conversations']['Update']
 export type MessageUpdate = Database['public']['Tables']['messages']['Update']
+
+// Protocol types
+export interface Protocol {
+  id: string
+  user_id: string
+  project_id: string
+  title: string
+  description: string | null
+  research_question: string
+  framework_type: 'pico' | 'spider' | 'other'
+  status: 'draft' | 'active' | 'archived' | 'locked'
+  version: number
+  population: string | null
+  intervention: string | null
+  comparison: string | null
+  outcome: string | null
+  sample: string | null
+  phenomenon: string | null
+  design: string | null
+  evaluation: string | null
+  research_type: string | null
+  inclusion_criteria: string[]
+  exclusion_criteria: string[]
+  keywords: string[]
+  databases: string[]
+  is_locked: boolean
+  metadata: Json
+  created_at: string
+  updated_at: string
+}
+
+export interface ProtocolVersion {
+  id: string
+  protocol_id: string
+  version_number: number
+  title: string
+  description: string | null
+  research_question: string
+  framework_type: 'pico' | 'spider' | 'other'
+  changes_summary: string
+  snapshot_data: Json
+  created_by: string
+  created_at: string
+}

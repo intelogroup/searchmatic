@@ -7,6 +7,7 @@ import './App.css'
 const Login = lazy(() => import('@/pages/Login'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const Chat = lazy(() => import('@/pages/Chat'))
+const Protocols = lazy(() => import('@/pages/Protocols'))
 const Settings = lazy(() => import('@/pages/Settings'))
 const Profile = lazy(() => import('@/pages/Profile'))
 const Conversations = lazy(() => import('@/pages/Conversations'))
@@ -73,6 +74,10 @@ function App() {
             <Route 
               path="/chat/:conversationId" 
               element={session ? <Chat /> : <Navigate to="/login" replace />} 
+            />
+            <Route 
+              path="/protocols" 
+              element={session ? <Protocols /> : <Navigate to="/login" replace />} 
             />
             <Route 
               path="/conversations" 
