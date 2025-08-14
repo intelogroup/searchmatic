@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
-import { AuthProvider, useAuth } from '@/contexts/AuthContext'
+import { AuthProvider } from '@/contexts/AuthContext'
+import { useAuth } from '@/hooks/useAuth'
 import { MemoryRouter } from 'react-router-dom'
 
 // Mock the supabase client
@@ -59,7 +60,7 @@ describe('AuthContext', () => {
         session: {
           user: { id: 'test-user-id', email: 'test@example.com' },
           access_token: 'test-token'
-        } as any
+        } as unknown
       },
       error: null
     })

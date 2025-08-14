@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ProtectedRoute, PublicOnlyRoute } from '@/components/auth/ProtectedRoute'
+import { LoadingScreen } from '@/components/LoadingSpinner'
 import './App.css'
 
 const Login = lazy(() => import('@/pages/Login'))
@@ -22,11 +23,7 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="h-screen bg-gray-50">
-          <Suspense fallback={
-            <div className="h-screen flex items-center justify-center bg-gray-50">
-              <div className="animate-pulse text-gray-500">Loading...</div>
-            </div>
-          }>
+          <Suspense fallback={<LoadingScreen message="Loading page..." />}>
             <Routes>
               <Route 
                 path="/" 

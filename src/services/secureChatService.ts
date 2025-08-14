@@ -1,7 +1,5 @@
 import { baseSupabaseClient as supabase } from '@/lib/supabase'
-import type { Database } from '@/types/database'
 import { BaseService } from '@/lib/service-wrapper'
-import type { AuthenticatedUser } from '@/lib/auth-utils'
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system'
@@ -44,7 +42,7 @@ class SecureChatService extends BaseService {
   ): Promise<ChatCompletionResponse> {
     return this.executeAuthenticated(
       'create-chat-completion',
-      async (user: AuthenticatedUser) => {
+      async () => {
         const session = await supabase.auth.getSession()
         if (!session.data.session?.access_token) {
           throw new Error('No valid session token')
@@ -100,7 +98,7 @@ class SecureChatService extends BaseService {
   ): Promise<void> {
     return this.executeAuthenticated(
       'create-streaming-chat-completion',
-      async (user: AuthenticatedUser) => {
+      async () => {
         const session = await supabase.auth.getSession()
         if (!session.data.session?.access_token) {
           throw new Error('No valid session token')
@@ -166,7 +164,7 @@ class SecureChatService extends BaseService {
                   if (content) {
                     onChunk(content)
                   }
-                } catch (error) {
+                } catch {
                   // Ignore parse errors for malformed chunks
                   console.warn('Failed to parse SSE chunk:', data)
                 }
@@ -191,7 +189,7 @@ class SecureChatService extends BaseService {
   async getProtocolGuidance(
     conversationId: string,
     researchQuestion: string,
-    currentProtocol?: any,
+    currentProtocol?: Record<string, unknown>,
     options: {
       focusArea?: 'pico' | 'spider' | 'inclusion' | 'exclusion' | 'search_strategy'
     } = {}

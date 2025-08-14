@@ -1,6 +1,7 @@
 import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/hooks/useAuth'
+import { LoadingScreen } from '@/components/LoadingSpinner'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -16,11 +17,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Show loading state while auth is being determined
   if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-pulse text-gray-500">Loading...</div>
-      </div>
-    )
+    return <LoadingScreen message="Authenticating..." />
   }
 
   // Redirect to login if not authenticated
@@ -51,11 +48,7 @@ export const PublicOnlyRoute: React.FC<PublicOnlyRouteProps> = ({
 
   // Show loading state while auth is being determined
   if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-pulse text-gray-500">Loading...</div>
-      </div>
-    )
+    return <LoadingScreen message="Checking authentication..." />
   }
 
   // Redirect authenticated users away from public-only pages (like login)

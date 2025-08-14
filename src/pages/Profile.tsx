@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { LoadingScreen } from '@/components/LoadingSpinner'
 import type { Profile } from '@/types/database'
 import { ArrowLeft, Upload } from 'lucide-react'
 
 export default function Profile() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -17,11 +20,12 @@ export default function Profile() {
   })
 
   useEffect(() => {
-    loadProfile()
-  }, [])
+    if (user) {
+      loadProfile()
+    }
+  }, [user])
 
   const loadProfile = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
     const { data, error } = await supabase
@@ -63,11 +67,7 @@ export default function Profile() {
   }
 
   if (!profile) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">Loading profile...</div>
-      </div>
-    )
+    return <LoadingScreen message="Loading profile..." />
   }
 
   return (

@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { LoadingScreen } from '@/components/LoadingSpinner'
 import type { Conversation, Message } from '@/types/database'
 import { Plus, Send, Settings, User as UserIcon, LogOut } from 'lucide-react'
 
@@ -148,11 +149,12 @@ export default function Chat() {
   }
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    await signOut()
+    navigate('/login')
   }
 
   if (!user) {
-    return <div className="h-screen flex items-center justify-center">Loading...</div>
+    return <LoadingScreen message="Loading chat..." />
   }
 
   return (

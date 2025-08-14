@@ -2,7 +2,7 @@
  * Hook that bridges AuthContext with auth-utils for better integration
  */
 
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/hooks/useAuth'
 import type { AuthenticatedUser } from '@/lib/auth-utils'
 import { AuthenticationError } from '@/lib/auth-utils'
 
