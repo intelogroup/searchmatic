@@ -1,32 +1,31 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { Conversation, Message } from '@/types/database'
-import type { User } from '@supabase/supabase-js'
 import { Plus, Send, Settings, User as UserIcon, LogOut } from 'lucide-react'
 
 export default function Chat() {
   const { conversationId } = useParams()
   const navigate = useNavigate()
+  const { user, signOut } = useAuth()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(false)
-  const [user, setUser] = useState<User | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const loadConversationsCallback = useCallback(() => {
-    loadConversations()
-  }, [])
+    if (user) {
+      loadConversations()
+    }
+  }, [user])
 
   useEffect(() => {
-    // Get current user
-    supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
-    
-    // Load conversations
+    // Load conversations when user is available
     loadConversationsCallback()
   }, [loadConversationsCallback])
 
