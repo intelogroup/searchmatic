@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import type { Conversation, Profile } from '@/types/database'
@@ -7,6 +8,7 @@ import { MessageSquare, Plus, Settings, User, LogOut, Clock, TrendingUp } from '
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const { user, signOut } = useAuth()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [profile, setProfile] = useState<Profile | null>(null)
   const [stats, setStats] = useState({
@@ -16,12 +18,12 @@ export default function Dashboard() {
   })
 
   useEffect(() => {
-    loadDashboardData()
-  }, [])
+    if (user) {
+      loadDashboardData()
+    }
+  }, [user])
 
   const loadDashboardData = async () => {
-    // Get current user and profile
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
     const { data: profileData } = await supabase
@@ -55,7 +57,6 @@ export default function Dashboard() {
   }
 
   const createNewConversation = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
     const { data, error } = await supabase
@@ -73,7 +74,8 @@ export default function Dashboard() {
   }
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    await signOut()
+    navigate('/login')
   }
 
   return (

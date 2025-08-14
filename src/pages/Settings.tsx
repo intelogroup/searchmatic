@@ -1,22 +1,26 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { LoadingScreen } from '@/components/LoadingSpinner'
 import type { UserPreferences } from '@/types/database'
 import { ArrowLeft } from 'lucide-react'
 
 export default function Settings() {
   const navigate = useNavigate()
+  const { user, signOut } = useAuth()
   const [preferences, setPreferences] = useState<UserPreferences | null>(null)
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    loadPreferences()
-  }, [])
+    if (user) {
+      loadPreferences()
+    }
+  }, [user])
 
   const loadPreferences = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
     const { data, error } = await supabase
@@ -59,11 +63,7 @@ export default function Settings() {
   }
 
   if (!preferences) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">Loading settings...</div>
-      </div>
-    )
+    return <LoadingScreen message="Loading settings..." />
   }
 
   return (
@@ -221,7 +221,8 @@ export default function Settings() {
               <Button
                 variant="outline"
                 onClick={async () => {
-                  await supabase.auth.signOut()
+                  await signOut()
+                  navigate('/login')
                 }}
                 className="w-full justify-start text-red-600 border-red-200 hover:bg-red-50"
               >

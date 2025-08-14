@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,6 +20,7 @@ import {
 
 export default function Conversations() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [filteredConversations, setFilteredConversations] = useState<Conversation[]>([])
   const [searchQuery, setSearchQuery] = useState('')
@@ -28,8 +30,10 @@ export default function Conversations() {
   const [editTitle, setEditTitle] = useState('')
 
   useEffect(() => {
-    loadConversations()
-  }, [])
+    if (user) {
+      loadConversations()
+    }
+  }, [user])
 
   useEffect(() => {
     filterAndSearchConversations()
@@ -72,7 +76,6 @@ export default function Conversations() {
   }
 
   const createNewConversation = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
     const { data, error } = await supabase

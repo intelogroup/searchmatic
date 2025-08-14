@@ -176,7 +176,7 @@ export class AuthorizationError extends Error {
 /**
  * Enhanced authentication check with custom error handling
  */
-export async function ensureAuthenticatedWithContext(): Promise<AuthenticatedUser> {
+export async function ensureAuthenticatedWithContext(operation = 'this operation'): Promise<AuthenticatedUser> {
   try {
     return await ensureAuthenticated()
   } catch (error) {

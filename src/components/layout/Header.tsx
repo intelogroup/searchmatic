@@ -1,47 +1,37 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
 import { Settings } from 'lucide-react'
-import { logInfo, logSupabaseError } from '@/lib/error-logger'
+import { logInfo, logError } from '@/lib/error-logger'
 
 export const Header: React.FC = () => {
   const navigate = useNavigate()
+  const { signOut, user } = useAuth()
   
   const handleSignOut = async () => {
     try {
       logInfo('User logout attempt', {
         feature: 'authentication',
-        action: 'logout-attempt'
+        action: 'logout-attempt',
+        metadata: { userId: user?.id }
       })
 
-      const { error } = await supabase.auth.signOut()
+      await signOut()
       
-      if (error) {
-        logSupabaseError('logout', error, {
-          feature: 'authentication',
-          action: 'logout-error',
-          metadata: {
-            errorCode: error.code || 'UNKNOWN',
-            errorMessage: error.message
-          }
-        })
-      } else {
-        logInfo('User logout successful', {
-          feature: 'authentication',
-          action: 'logout-success'
-        })
-      }
+      logInfo('User logout successful', {
+        feature: 'authentication',
+        action: 'logout-success'
+      })
       
       navigate('/login')
     } catch (error) {
-      logSupabaseError('logout-unexpected', error, {
+      logError('Logout failed', {
         feature: 'authentication',
-        action: 'logout-unexpected-error',
-        metadata: {
-          error: String(error)
-        }
+        action: 'logout-error',
+        metadata: { error: String(error) }
       })
+      // Still navigate to login even on error
       navigate('/login')
     }
   }
