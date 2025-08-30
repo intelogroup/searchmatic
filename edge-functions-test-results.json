@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-08-30T08:06:45.448Z",
+  "supabase_url": "https://qzvfufadiqmizrozejci.supabase.co",
+  "jwt_keys": {
+    "active": {
+      "kid": "ee8e6058-6e20-48ff-b3df-5229b6f97809",
+      "x": "RVEQ9uGlchYQLvzJNvcT1j1pgYjfky0l0IA3m4wuNp4",
+      "y": "wNoZzJM81WM8Y5GT6Gj26MnvkhdlmTlEg3X3-Bep_9w"
+    },
+    "standby": {
+      "kid": "92028fb7-7a2d-4314-9f84-ce5ab7293bcb",
+      "x": "REGKht3ZRqTrOlWHVsEQIRrTfjbQ0FIL4pckW5m9YDs",
+      "y": "fRRBc8h5ykvrw5o4VWo5I4TT0LnAzL3obdw68ciAN-M"
+    }
+  },
+  "results": {
+    "deployed": [],
+    "not_deployed": [],
+    "requires_auth": [
+      "analyze-literature",
+      "chat-completion",
+      "duplicate-detection",
+      "export-data",
+      "hello-world",
+      "process-document",
+      "protocol-guidance",
+      "search-articles",
+      "test-simple"
+    ],
+    "errors": []
+  }
+}
