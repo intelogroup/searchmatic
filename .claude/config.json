@@ -1,0 +1,140 @@
+{
+  "project": {
+    "name": "Searchmatic MVP",
+    "type": "Systematic Literature Review Platform",
+    "version": "1.0.0",
+    "environment": "development"
+  },
+  "agents": {
+    "main": {
+      "name": "Terry",
+      "organization": "Terragon Labs",
+      "role": "Senior Full-Stack Developer",
+      "capabilities": [
+        "full-stack-development",
+        "database-management",
+        "api-development",
+        "deployment",
+        "testing"
+      ]
+    },
+    "subagents": [
+      {
+        "id": "database-agent",
+        "name": "DB Specialist",
+        "specialization": "Database & ORM",
+        "tools": ["drizzle-orm", "postgres", "supabase"],
+        "responsibilities": [
+          "Schema design and migrations",
+          "Query optimization",
+          "RLS policies",
+          "Database performance",
+          "Data integrity"
+        ]
+      },
+      {
+        "id": "frontend-agent",
+        "name": "UI Developer",
+        "specialization": "React & TypeScript",
+        "tools": ["react", "typescript", "vite", "tailwindcss"],
+        "responsibilities": [
+          "Component development",
+          "State management",
+          "UI/UX implementation",
+          "Client-side routing",
+          "Performance optimization"
+        ]
+      },
+      {
+        "id": "api-agent",
+        "name": "API Specialist",
+        "specialization": "Edge Functions & REST",
+        "tools": ["supabase-functions", "deno", "jwt"],
+        "responsibilities": [
+          "Edge function development",
+          "Authentication flows",
+          "API endpoint design",
+          "Rate limiting",
+          "Error handling"
+        ]
+      },
+      {
+        "id": "testing-agent",
+        "name": "QA Engineer",
+        "specialization": "Testing & Quality",
+        "tools": ["playwright", "vitest", "cypress"],
+        "responsibilities": [
+          "E2E test automation",
+          "Unit testing",
+          "Integration testing",
+          "Performance testing",
+          "Coverage reporting"
+        ]
+      },
+      {
+        "id": "documentation-agent",
+        "name": "Tech Writer",
+        "specialization": "Documentation",
+        "tools": ["markdown", "jsdoc", "swagger"],
+        "responsibilities": [
+          "API documentation",
+          "User guides",
+          "Developer handoff docs",
+          "Troubleshooting guides",
+          "Architecture documentation"
+        ]
+      }
+    ]
+  },
+  "communication": {
+    "protocol": "async-message-passing",
+    "state_files": [
+      "CLAUDE.md",
+      "failures.md",
+      "success.md",
+      "developerhandoff.md"
+    ],
+    "todo_tracking": true,
+    "commit_strategy": "feature-based"
+  },
+  "environment": {
+    "supabase": {
+      "url": "https://qzvfufadiqmizrozejci.supabase.co",
+      "key_type": "new_format",
+      "jwt_keys": {
+        "active": "ee8e6058-6e20-48ff-b3df-5229b6f97809",
+        "standby": "92028fb7-7a2d-4314-9f84-ce5ab7293bcb"
+      }
+    },
+    "database": {
+      "orm": "drizzle",
+      "driver": "postgres",
+      "schema_location": "/src/db/schema.ts"
+    },
+    "edge_functions": {
+      "deployed": [
+        "test-simple",
+        "hello-world",
+        "analyze-literature",
+        "chat-completion",
+        "duplicate-detection",
+        "export-data",
+        "process-document",
+        "protocol-guidance",
+        "search-articles"
+      ],
+      "auth_required": true
+    }
+  },
+  "rules": {
+    "mandatory_reading": [
+      "https://github.com/orgs/supabase/discussions/29260",
+      "IMPORTANT_KEY_MIGRATION.md",
+      "CLAUDE.md"
+    ],
+    "key_format": "new_supabase_format",
+    "testing_required": true,
+    "documentation_required": true,
+    "code_style": "typescript-strict"
+  }
+}
