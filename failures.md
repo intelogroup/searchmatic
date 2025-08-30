@@ -58,6 +58,18 @@ CREATE TYPE enum_name AS ENUM(...);
 **Root Cause**: Edge functions validate user sessions, not service keys
 **Solution**: Authenticate users first, use their JWT tokens
 
+#### ❌ Edge Functions JWT Validation Issue (2025-08-30)
+**Error**: "Invalid JWT" for all edge function calls, even with valid user tokens
+**Root Cause**: Unknown - possibly Supabase platform-level JWT validation changes
+**Symptoms**: 
+- User JWT tokens work for REST API calls (✅)
+- Same tokens fail for edge functions (❌)
+- JWT structure and timing are correct
+- Key ID matches JWKS endpoint
+- JWT_SECRET is configured correctly
+**Status**: UNRESOLVED - Requires Supabase support investigation
+**Workaround**: Use REST API endpoints instead of edge functions
+
 ---
 
 ## 🧠 **COMMON ERROR PATTERNS**

@@ -15,15 +15,18 @@
 - Migrations applied successfully
 - Connection string: `DATABASE_URL` in .env
 
-#### ✅ Authentication
-- JWT token generation working
+#### ✅ Authentication & REST API
+- User authentication flow working perfectly
+- JWT tokens valid and properly signed
+- REST API calls work with user tokens
 - Test scripts available: `generate-jwt-token.mjs`
-- Edge functions require user JWT tokens
 
-#### ✅ Edge Functions
-- All 9 functions deployed
-- Test functions working: `test-simple`, `hello-world`
-- Other functions require authenticated user context
+#### ⚠️ Edge Functions (PARTIAL)
+- All 9 functions deployed successfully
+- Functions reject ALL JWT tokens with "Invalid JWT"
+- Issue affects even valid user authentication tokens
+- Database integration works (projects, conversations creation)
+- **Status**: Functions deployed but authentication blocked
 
 ### Key Files to Know
 
