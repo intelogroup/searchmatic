@@ -3,19 +3,16 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import * as schema from './schema'
 
-// Get connection string from environment
-// For Supabase, we need to use the pooler connection with proper settings
-const supabaseUrl = process.env.VITE_SUPABASE_URL || ''
-const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || 'qzvfufadiqmizrozejci'
-
-// Use the pooler connection string for Drizzle
-// Note: You'll need to get the database password from Supabase dashboard
-const DATABASE_URL = process.env.DATABASE_URL || 
-  `postgresql://postgres.${projectRef}:[YOUR-DB-PASSWORD]@aws-0-us-west-1.pooler.supabase.com:5432/postgres`
-
-// Create the connection with transaction pool mode settings
-export const client = postgres(DATABASE_URL, { 
-  prepare: false // Required for transaction pool mode
+// Create the connection with session pooler settings (working configuration)
+export const client = postgres({
+  host: 'aws-0-us-east-1.pooler.supabase.com',
+  port: 6543,
+  database: 'postgres',
+  username: 'postgres.qzvfufadiqmizrozejci',
+  password: 'Goldyear2023#$25',
+  ssl: 'require',
+  prepare: false, // Required for pooled connections
+  max: 10 // Connection pool size
 })
 
 // Create the drizzle instance with schema
