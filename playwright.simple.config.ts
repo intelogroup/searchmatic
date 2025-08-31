@@ -32,8 +32,11 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. */
     trace: 'on-first-retry',
 
-    /* Screenshots */
-    screenshot: 'only-on-failure',
+    /* Screenshots - always take for UI testing */
+    screenshot: 'always',
+
+    /* Headless mode */
+    headless: true,
 
     /* Action timeout */
     actionTimeout: 10000,
