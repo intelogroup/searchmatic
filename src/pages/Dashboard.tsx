@@ -87,11 +87,11 @@ export default function Dashboard() {
           <div className="bg-white p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-100 rounded-lg">
-                <MessageSquare className="h-6 w-6 text-blue-600" />
+                <BookOpen className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Total Conversations</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalConversations}</p>
+                <p className="text-sm text-gray-600">Active Projects</p>
+                <p className="text-2xl font-bold text-gray-900">0</p>
               </div>
             </div>
           </div>
@@ -99,11 +99,11 @@ export default function Dashboard() {
           <div className="bg-white p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-green-100 rounded-lg">
-                <Clock className="h-6 w-6 text-green-600" />
+                <FileSearch className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Messages Today</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.todayMessages}</p>
+                <p className="text-sm text-gray-600">Articles Screened</p>
+                <p className="text-2xl font-bold text-gray-900">0</p>
               </div>
             </div>
           </div>
@@ -111,11 +111,11 @@ export default function Dashboard() {
           <div className="bg-white p-6 rounded-lg shadow-sm border">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-purple-100 rounded-lg">
-                <TrendingUp className="h-6 w-6 text-purple-600" />
+                <BarChart3 className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">This Week</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.thisWeekConversations}</p>
+                <p className="text-sm text-gray-600">Completed Reviews</p>
+                <p className="text-2xl font-bold text-gray-900">0</p>
               </div>
             </div>
           </div>
