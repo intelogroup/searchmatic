@@ -161,7 +161,7 @@ export default function DocumentProcessing() {
                       <li>PDF files work best for academic papers and research documents</li>
                       <li>Use "Full Analysis" for comprehensive AI-powered extraction</li>
                       <li>Create extraction templates for consistent data structure</li>
-                      <li>Large files (>10MB) may take longer to process</li>
+                      <li>Large files (&gt;10MB) may take longer to process</li>
                     </ul>
                   </div>
                 </div>

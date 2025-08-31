@@ -1,203 +1,264 @@
-import React, { useState, lazy, Suspense } from 'react'
-import { ThreePanelLayout } from '@/components/layout/ThreePanelLayout'
+import React, { useState, lazy, Suspense, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { useAuth } from '@/hooks/useAuth'
+import { supabase } from '@/lib/supabase'
+import { AppLayout } from '@/components/layout/AppLayout'
+import { ArticleSearch } from '@/components/ArticleSearch'
+import ArticleScreening from '@/components/ArticleScreening'
 
-// Lazy load heavy components
+// Lazy load heavy components  
 const ChatPanel = lazy(() => import('@/components/chat/ChatPanel').then(module => ({ default: module.ChatPanel })))
 const ProtocolPanel = lazy(() => import('@/components/protocol/ProtocolPanel').then(module => ({ default: module.ProtocolPanel })))
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { LoadingPage } from '@/components/ui/loading'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { 
   ArrowLeft,
-  FileText,
+  FileSearch,
+  Filter,
+  BarChart3,
   MessageCircle,
   Settings,
-  MoreHorizontal,
+  BookOpen,
+  Download,
   AlertCircle
 } from 'lucide-react'
-import { useProjectContext } from '@/hooks/useProjectContext'
-import { useAppNavigation } from '@/hooks/useAppNavigation'
-import { formatCreatedAt } from '@/lib/date-utils'
 
-export const ProjectView: React.FC = () => {
-  const { goToDashboard } = useAppNavigation()
-  const { currentProject, isLoading, error } = useProjectContext()
-  const [activePanel, setActivePanel] = useState<'protocol' | 'chat'>('protocol')
+interface Project {
+  id: string
+  title: string
+  description: string | null
+  status: string
+  created_at: string
+  project_type: string
+  research_domain: string | null
+}
 
-  // Loading state
-  if (isLoading) {
-    return <LoadingPage message="Loading project..." />
-  }
+export default function ProjectView() {
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  const [project, setProject] = useState<Project | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState('protocol')
 
-  // Error state
-  if (error || !currentProject) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center space-y-4">
-          <div className="h-16 w-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
-            <AlertCircle className="h-8 w-8 text-destructive" />
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold">Project Not Found</h2>
-            <p className="text-sm text-muted-foreground">
-              {error?.message || 'The project you are looking for does not exist or you do not have access to it.'}
-            </p>
-          </div>
-          <Button onClick={goToDashboard}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Button>
-        </div>
-      </div>
-    )
+  useEffect(() => {
+    if (id && user) {
+      loadProject()
+    }
+  }, [id, user])
+
+  const loadProject = async () => {
+    if (!id || !user) return
+
+    try {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .single()
+
+      if (error) throw error
+      setProject(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load project')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-800'
-      case 'completed': return 'bg-blue-100 text-blue-800'
+      case 'completed': return 'bg-blue-100 text-blue-800' 
       case 'archived': return 'bg-gray-100 text-gray-800'
-      case 'draft': return 'bg-gray-100 text-gray-800'
-      case 'review': return 'bg-yellow-100 text-yellow-800'
       default: return 'bg-yellow-100 text-yellow-800'
     }
   }
 
-  const mainContent = (
-    <div className="space-y-6">
-      {/* Project Header */}
-      <div className="flex items-start justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={goToDashboard}
-              className="h-8 w-8 p-0"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h1 className="text-2xl font-bold">{currentProject.title}</h1>
-            <Badge className={getStatusColor(currentProject.status)}>
-              {currentProject.status}
-            </Badge>
-          </div>
-          {currentProject.description && (
-            <p className="text-muted-foreground max-w-2xl">
-              {currentProject.description}
-            </p>
-          )}
+  // Loading state
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
         </div>
-        
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </Button>
-          <Button variant="outline" size="sm">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      </AppLayout>
+    )
+  }
 
-      {/* Project Information */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Status
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="text-lg font-bold capitalize">{currentProject.status}</div>
-            <p className="text-xs text-muted-foreground">Current status</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Type
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="text-sm font-bold capitalize">
-              systematic review
+  // Error state
+  if (error || !project) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center space-y-4">
+            <div className="h-16 w-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+              <AlertCircle className="h-8 w-8 text-red-600" />
             </div>
-            <p className="text-xs text-muted-foreground">Project type</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Created
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="text-sm font-bold">
-              {formatCreatedAt(currentProject.created_at)}
+            <div>
+              <h2 className="text-lg font-semibold">Project Not Found</h2>
+              <p className="text-sm text-gray-600">
+                {error || 'The project you are looking for does not exist or you do not have access to it.'}
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">Project age</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Project Content */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Project Overview
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Welcome to your project workspace. Use the protocol panel to define your research methodology 
-            and the chat panel to interact with the AI assistant for guidance.
-          </p>
-          
-          <div className="mt-4 flex gap-2">
-            <Button
-              variant={activePanel === 'protocol' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setActivePanel('protocol')}
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              Protocol
-            </Button>
-            <Button
-              variant={activePanel === 'chat' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setActivePanel('chat')}
-            >
-              <MessageCircle className="h-4 w-4 mr-2" />
-              AI Assistant
+            <Button onClick={() => navigate('/projects')}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Projects
             </Button>
           </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-
-  const protocolPanel = activePanel === 'protocol' ? (
-    <Suspense fallback={<div className="flex items-center justify-center p-8"><p>Loading protocol...</p></div>}>
-      <ProtocolPanel projectId={currentProject.id} />
-    </Suspense>
-  ) : undefined
-
-  const chatPanel = activePanel === 'chat' ? (
-    <Suspense fallback={<div className="flex items-center justify-center p-8"><p>Loading chat...</p></div>}>
-      <ChatPanel projectId={currentProject.id} />
-    </Suspense>
-  ) : undefined
+        </div>
+      </AppLayout>
+    )
+  }
 
   return (
-    <ThreePanelLayout
-      mainContent={mainContent}
-      protocolPanel={protocolPanel}
-      aiChatPanel={chatPanel}
-    />
+    <AppLayout>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Project Header */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
+          <div className="space-y-2 flex-1 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/projects')}
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back
+                </Button>
+                <Badge className={getStatusColor(project.status)}>
+                  {project.status}
+                </Badge>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold truncate">{project.title}</h1>
+            </div>
+            {project.description && (
+              <p className="text-gray-600 text-sm sm:text-base">
+                {project.description}
+              </p>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button variant="outline" size="sm" className="hidden sm:flex">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </Button>
+            <Button variant="outline" size="sm" className="sm:hidden">
+              <Settings className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="sm" className="hidden sm:flex">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+            <Button variant="outline" size="sm" className="sm:hidden">
+              <Download className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Systematic Review Workflow Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 h-auto">
+            <TabsTrigger value="protocol" className="flex items-center gap-1 md:gap-2 px-2 py-3 text-xs md:text-sm">
+              <BookOpen className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Protocol</span>
+              <span className="sm:hidden">P</span>
+            </TabsTrigger>
+            <TabsTrigger value="search" className="flex items-center gap-1 md:gap-2 px-2 py-3 text-xs md:text-sm">
+              <FileSearch className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Search</span>
+              <span className="sm:hidden">S</span>
+            </TabsTrigger>
+            <TabsTrigger value="screening" className="flex items-center gap-1 md:gap-2 px-2 py-3 text-xs md:text-sm">
+              <Filter className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Screening</span>
+              <span className="sm:hidden">Sc</span>
+            </TabsTrigger>
+            <TabsTrigger value="analysis" className="flex items-center gap-1 md:gap-2 px-2 py-3 text-xs md:text-sm">
+              <BarChart3 className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Analysis</span>
+              <span className="sm:hidden">A</span>
+            </TabsTrigger>
+            <TabsTrigger value="assistant" className="flex items-center gap-1 md:gap-2 px-2 py-3 text-xs md:text-sm">
+              <MessageCircle className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">AI Assistant</span>
+              <span className="sm:hidden">AI</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="protocol" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Research Protocol</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Suspense fallback={<div className="flex items-center justify-center p-8">Loading protocol...</div>}>
+                  <ProtocolPanel projectId={project.id} />
+                </Suspense>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="search" className="space-y-6">
+            <ArticleSearch 
+              projectId={project.id} 
+              onImportComplete={(count) => {
+                console.log(`Imported ${count} articles`)
+              }}
+            />
+          </TabsContent>
+
+          <TabsContent value="screening" className="space-y-6">
+            <ArticleScreening 
+              projectId={project.id}
+              onScreeningComplete={(articleId, decision, notes) => {
+                console.log(`Article ${articleId} screened: ${decision}`)
+              }}
+            />
+          </TabsContent>
+
+          <TabsContent value="analysis" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Data Analysis</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Analysis Coming Soon</h3>
+                  <p className="text-gray-600 mb-4">
+                    Data extraction and analysis features will be available here.
+                  </p>
+                  <Button variant="outline">
+                    View Analytics Dashboard
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="assistant" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>AI Research Assistant</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Suspense fallback={<div className="flex items-center justify-center p-8">Loading assistant...</div>}>
+                  <ChatPanel projectId={project.id} />
+                </Suspense>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </AppLayout>
   )
 }

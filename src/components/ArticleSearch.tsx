@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import { supabase } from '@/lib/supabase'
 import { pubmedAPI } from '../services/pubmedApi'
 import { SearchFilters, PubMedArticle, ArticleSearchResult, PublicationType, StudyType } from '../types/articles'
 import { 
@@ -68,7 +68,6 @@ export function ArticleSearch({ projectId, protocolId, onImportComplete }: Artic
   })
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
   const [protocol, setProtocol] = useState<any>(null)
-  const supabase = useSupabaseClient()
 
   useEffect(() => {
     if (protocolId) {

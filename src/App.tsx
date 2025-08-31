@@ -7,8 +7,12 @@ import './App.css'
 
 const Login = lazy(() => import('@/pages/Login'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
+const Projects = lazy(() => import('@/pages/Projects'))
+const NewProject = lazy(() => import('@/pages/NewProject'))
+const ProjectView = lazy(() => import('@/pages/ProjectView'))
 const Chat = lazy(() => import('@/pages/Chat'))
 const Protocols = lazy(() => import('@/pages/Protocols'))
+const Workflows = lazy(() => import('@/pages/Workflows'))
 const Settings = lazy(() => import('@/pages/Settings'))
 const Profile = lazy(() => import('@/pages/Profile'))
 const Conversations = lazy(() => import('@/pages/Conversations'))
@@ -44,6 +48,38 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects" 
+                element={
+                  <ProtectedRoute>
+                    <Projects />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/new" 
+                element={
+                  <ProtectedRoute>
+                    <NewProject />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:id" 
+                element={
+                  <ProtectedRoute>
+                    <ProjectView />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/workflows" 
+                element={
+                  <ProtectedRoute>
+                    <Workflows />
                   </ProtectedRoute>
                 } 
               />

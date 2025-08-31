@@ -1,12 +1,13 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { Settings } from 'lucide-react'
 import { logInfo, logError } from '@/lib/error-logger'
 
 export const Header: React.FC = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { signOut, user } = useAuth()
   
   const handleSignOut = async () => {
@@ -47,24 +48,46 @@ export const Header: React.FC = () => {
             Searchmatic
           </h1>
           <nav className="hidden md:flex items-center gap-4 text-sm">
-            <a 
-              href="/dashboard" 
-              className="text-muted-foreground hover:text-foreground transition-colors"
+            <Link 
+              to="/dashboard" 
+              className={`transition-colors ${
+                location.pathname === '/dashboard' 
+                  ? 'text-foreground font-medium' 
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
               Dashboard
-            </a>
-            <a 
-              href="/projects" 
-              className="text-muted-foreground hover:text-foreground transition-colors"
+            </Link>
+            <Link 
+              to="/projects" 
+              className={`transition-colors ${
+                location.pathname.startsWith('/projects') 
+                  ? 'text-foreground font-medium' 
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
               Projects
-            </a>
-            <a 
-              href="/migrations" 
-              className="text-muted-foreground hover:text-foreground transition-colors"
+            </Link>
+            <Link 
+              to="/protocols" 
+              className={`transition-colors ${
+                location.pathname === '/protocols' 
+                  ? 'text-foreground font-medium' 
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
-              Migrations
-            </a>
+              Protocols
+            </Link>
+            <Link 
+              to="/workflows" 
+              className={`transition-colors ${
+                location.pathname === '/workflows' 
+                  ? 'text-foreground font-medium' 
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Workflows
+            </Link>
           </nav>
         </div>
         
