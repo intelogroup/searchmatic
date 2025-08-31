@@ -1,9 +1,11 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ProtectedRoute, PublicOnlyRoute } from '@/components/auth/ProtectedRoute'
 import { LoadingScreen } from '@/components/LoadingSpinner'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { startCacheCleanup } from '@/lib/cache'
+import { backgroundJobs } from '@/lib/background-jobs'
 import './App.css'
 
 const Login = lazy(() => import('@/pages/Login'))
@@ -24,6 +26,20 @@ const Terms = lazy(() => import('@/pages/Terms'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 function App() {
+  // Initialize performance optimizations
+  useEffect(() => {
+    // Start cache cleanup system
+    startCacheCleanup()
+    
+    // Start background job processing (already starts automatically)
+    console.log('Performance optimizations initialized')
+    
+    return () => {
+      // Cleanup on unmount
+      backgroundJobs.stopProcessing()
+    }
+  }, [])
+
   return (
     <AuthProvider>
       <Router>

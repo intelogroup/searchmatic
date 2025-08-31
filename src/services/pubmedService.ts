@@ -5,6 +5,7 @@
 
 import { supabase, baseSupabaseClient } from '@/lib/supabase'
 import { BaseService } from '@/lib/service-wrapper'
+import { searchResultsCache, articleCache, cacheKeys, withCache } from '@/lib/cache'
 
 export interface PubMedSearchRequest {
   projectId: string
@@ -56,7 +57,7 @@ class PubMedService extends BaseService {
   }
 
   /**
-   * Search PubMed and import articles to project
+   * Search PubMed and import articles to project (with caching)
    */
   async searchAndImportArticles(request: PubMedSearchRequest): Promise<PubMedSearchResponse> {
     return this.execute(
@@ -73,24 +74,35 @@ class PubMedService extends BaseService {
           throw new Error('Missing required fields: projectId or query')
         }
 
-        const { data, error } = await baseSupabaseClient.functions.invoke('search-articles', {
-          body: {
-            ...request,
-            maxResults: request.maxResults || 20
+        // Create cache key for this search
+        const cacheKey = cacheKeys.searchResults(request.query, request.projectId, request.filters)
+
+        // Use cached result if available (only for read-only searches)
+        return withCache(
+          searchResultsCache,
+          cacheKey,
+          async () => {
+            const { data, error } = await baseSupabaseClient.functions.invoke('search-articles', {
+              body: {
+                ...request,
+                maxResults: request.maxResults || 20
+              },
+              headers: {
+                Authorization: `Bearer ${session.access_token}`,
+              }
+            })
+
+            if (error) throw error
+
+            if (!data.success) {
+              const errorMsg = data.error || 'PubMed search failed'
+              throw new Error(errorMsg)
+            }
+
+            return data
           },
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          }
-        })
-
-        if (error) throw error
-
-        if (!data.success) {
-          const errorMsg = data.error || 'PubMed search failed'
-          throw new Error(errorMsg)
-        }
-
-        return data
+          10 * 60 * 1000 // Cache for 10 minutes
+        )
       },
       {
         projectId: request.projectId,
@@ -101,7 +113,7 @@ class PubMedService extends BaseService {
   }
 
   /**
-   * Get articles for a project (for screening)
+   * Get articles for a project (for screening) with pagination and caching
    */
   async getProjectArticles(
     projectId: string,
@@ -109,10 +121,15 @@ class PubMedService extends BaseService {
       status?: 'pending' | 'included' | 'excluded' | 'maybe'
       limit?: number
       offset?: number
+      page?: number
     } = {}
   ): Promise<{
     articles: PubMedArticle[]
     totalCount: number
+    currentPage: number
+    totalPages: number
+    hasNextPage: boolean
+    hasPreviousPage: boolean
     statistics: {
       pending: number
       included: number
@@ -123,61 +140,103 @@ class PubMedService extends BaseService {
     return this.execute(
       'get-project-articles',
       async () => {
-        let query = supabase
-          .from('articles')
-          .select('*', { count: 'exact' })
-          .eq('project_id', projectId)
+        const limit = options.limit || 20
+        const page = options.page || 1
+        const offset = options.offset || (page - 1) * limit
 
-        if (options.status) {
-          query = query.eq('status', options.status)
-        }
+        // Create cache key for this query
+        const cacheKey = cacheKeys.projectArticles(projectId, options.status, page)
 
-        if (options.limit) {
-          query = query.limit(options.limit)
-        }
+        return withCache(
+          articleCache,
+          cacheKey,
+          async () => {
+            // Get articles with pagination
+            let query = supabase
+              .from('articles')
+              .select('*', { count: 'exact' })
+              .eq('project_id', projectId)
+              .order('created_at', { ascending: false })
 
-        if (options.offset) {
-          query = query.range(options.offset, (options.offset || 0) + (options.limit || 10) - 1)
-        }
+            if (options.status) {
+              query = query.eq('status', options.status)
+            }
 
-        const { data: articles, error, count } = await query
+            // Apply pagination
+            query = query.range(offset, offset + limit - 1)
 
-        if (error) throw error
+            const { data: articles, error, count } = await query
 
-        // Get statistics
-        const { data: stats } = await supabase
-          .from('articles')
-          .select('status')
-          .eq('project_id', projectId)
+            if (error) throw error
 
-        const statistics = {
-          pending: stats?.filter(a => a.status === 'pending').length || 0,
-          included: stats?.filter(a => a.status === 'included').length || 0,
-          excluded: stats?.filter(a => a.status === 'excluded').length || 0,
-          maybe: stats?.filter(a => a.status === 'maybe').length || 0
-        }
+            // Get statistics (cache separately)
+            const statsKey = cacheKeys.projectStats(projectId)
+            const statistics = await withCache(
+              articleCache,
+              statsKey,
+              async () => {
+                // Use optimized aggregation query
+                const { data: statsData, error: statsError } = await supabase
+                  .rpc('get_article_stats', { project_id: projectId })
 
-        return {
-          articles: articles || [],
-          totalCount: count || 0,
-          statistics
-        }
+                if (statsError) {
+                  // Fallback to manual counting if RPC doesn't exist
+                  const { data: fallbackStats } = await supabase
+                    .from('articles')
+                    .select('status')
+                    .eq('project_id', projectId)
+
+                  return {
+                    pending: fallbackStats?.filter(a => a.status === 'pending').length || 0,
+                    included: fallbackStats?.filter(a => a.status === 'included').length || 0,
+                    excluded: fallbackStats?.filter(a => a.status === 'excluded').length || 0,
+                    maybe: fallbackStats?.filter(a => a.status === 'maybe').length || 0
+                  }
+                }
+
+                return statsData || {
+                  pending: 0,
+                  included: 0,
+                  excluded: 0,
+                  maybe: 0
+                }
+              },
+              5 * 60 * 1000 // Cache stats for 5 minutes
+            )
+
+            const totalCount = count || 0
+            const totalPages = Math.ceil(totalCount / limit)
+
+            return {
+              articles: articles || [],
+              totalCount,
+              currentPage: page,
+              totalPages,
+              hasNextPage: page < totalPages,
+              hasPreviousPage: page > 1,
+              statistics
+            }
+          },
+          2 * 60 * 1000 // Cache for 2 minutes
+        )
       },
       {
         projectId,
         status: options.status,
-        limit: options.limit
+        limit,
+        page
       }
     )
   }
 
   /**
-   * Update article screening decision
+   * Update article screening decision with cache invalidation
    */
   async updateArticleScreening(
     articleId: string,
     decision: 'include' | 'exclude' | 'maybe',
-    notes?: string
+    notes?: string,
+    projectId?: string
   ): Promise<void> {
     return this.execute(
       'update-article-screening',
@@ -192,11 +251,34 @@ class PubMedService extends BaseService {
           .eq('id', articleId)
 
         if (error) throw error
+
+        // Invalidate relevant caches
+        if (projectId) {
+          // Clear project statistics cache
+          articleCache.delete(cacheKeys.projectStats(projectId))
+          
+          // Clear all article list caches for this project
+          const cacheKeysToDelete = [
+            cacheKeys.projectArticles(projectId, 'pending'),
+            cacheKeys.projectArticles(projectId, 'included'),
+            cacheKeys.projectArticles(projectId, 'excluded'),
+            cacheKeys.projectArticles(projectId, 'maybe'),
+            cacheKeys.projectArticles(projectId, undefined) // All articles
+          ]
+          
+          cacheKeysToDelete.forEach(key => {
+            // Delete all pages for this filter
+            for (let page = 1; page <= 10; page++) {
+              articleCache.delete(`${key}:${page}`)
+            }
+          })
+        }
       },
       {
         articleId,
         decision,
-        hasNotes: !!notes
+        hasNotes: !!notes,
+        projectId
       }
     )
   }
