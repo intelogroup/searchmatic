@@ -8,6 +8,9 @@ export const articleSourceEnum = pgEnum('article_source', ['pubmed', 'scopus', '
 export const screeningDecisionEnum = pgEnum('screening_decision', ['include', 'exclude', 'maybe'])
 export const protocolStatusEnum = pgEnum('protocol_status', ['draft', 'active', 'archived', 'locked'])
 export const frameworkTypeEnum = pgEnum('framework_type', ['pico', 'spider', 'other'])
+export const processingStatusEnum = pgEnum('processing_status', ['pending', 'processing', 'completed', 'failed'])
+export const queueStatusEnum = pgEnum('queue_status', ['queued', 'processing', 'completed', 'failed', 'retrying'])
+export const logLevelEnum = pgEnum('log_level', ['debug', 'info', 'warn', 'error'])
 
 // Tables
 export const profiles = pgTable('profiles', {
@@ -171,6 +174,56 @@ export const exportLogs = pgTable('export_logs', {
   createdAt: timestamp('created_at').defaultNow(),
 })
 
+export const pdfFiles = pgTable('pdf_files', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  articleId: uuid('article_id').notNull(),
+  storagePath: text('storage_path').notNull(),
+  fileName: text('file_name').notNull(),
+  fileSize: integer('file_size'),
+  mimeType: text('mime_type'),
+  uploadedAt: timestamp('uploaded_at').defaultNow(),
+  processedAt: timestamp('processed_at'),
+  ocrPerformed: boolean('ocr_performed').default(false),
+  processingStatus: processingStatusEnum('processing_status').default('pending'),
+  processingAttempts: integer('processing_attempts').default(0),
+  processingError: text('processing_error'),
+  extractedMetadata: jsonb('extracted_metadata'),
+  pageCount: integer('page_count'),
+  fileHash: text('file_hash'),
+  language: text('language').default('en'),
+  confidenceScore: real('confidence_score'),
+  needsOcr: boolean('needs_ocr').default(false),
+  ocrCompleted: boolean('ocr_completed').default(false),
+})
+
+export const pdfProcessingQueue = pgTable('pdf_processing_queue', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  pdfFileId: uuid('pdf_file_id').notNull(),
+  priority: integer('priority').default(5),
+  processingType: text('processing_type').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  startedAt: timestamp('started_at'),
+  completedAt: timestamp('completed_at'),
+  workerId: text('worker_id'),
+  status: queueStatusEnum('status').default('queued'),
+  errorMessage: text('error_message'),
+  retryCount: integer('retry_count').default(0),
+  maxRetries: integer('max_retries').default(3),
+  processingOptions: jsonb('processing_options'),
+  result: jsonb('result'),
+})
+
+export const pdfProcessingLogs = pgTable('pdf_processing_logs', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  pdfFileId: uuid('pdf_file_id'),
+  queueId: uuid('queue_id'),
+  timestamp: timestamp('timestamp').defaultNow(),
+  logLevel: logLevelEnum('log_level').default('info'),
+  message: text('message').notNull(),
+  metadata: jsonb('metadata'),
+  workerId: text('worker_id'),
+})
+
 // Relations
 export const profilesRelations = relations(profiles, ({ many }) => ({
   projects: many(projects),
@@ -203,7 +256,7 @@ export const protocolsRelations = relations(protocols, ({ one, many }) => ({
   versions: many(protocolVersions),
 }))
 
-export const articlesRelations = relations(articles, ({ one }) => ({
+export const articlesRelations = relations(articles, ({ one, many }) => ({
   project: one(projects, {
     fields: [articles.projectId],
     references: [projects.id],
@@ -212,6 +265,7 @@ export const articlesRelations = relations(articles, ({ one }) => ({
     fields: [articles.duplicateOf],
     references: [articles.id],
   }),
+  pdfFiles: many(pdfFiles),
 }))
 
 export const conversationsRelations = relations(conversations, ({ one, many }) => ({
@@ -230,5 +284,33 @@ export const messagesRelations = relations(messages, ({ one }) => ({
   conversation: one(conversations, {
     fields: [messages.conversationId],
     references: [conversations.id],
+  }),
+}))
+
+export const pdfFilesRelations = relations(pdfFiles, ({ one, many }) => ({
+  article: one(articles, {
+    fields: [pdfFiles.articleId],
+    references: [articles.id],
+  }),
+  processingQueue: many(pdfProcessingQueue),
+  processingLogs: many(pdfProcessingLogs),
+}))
+
+export const pdfProcessingQueueRelations = relations(pdfProcessingQueue, ({ one, many }) => ({
+  pdfFile: one(pdfFiles, {
+    fields: [pdfProcessingQueue.pdfFileId],
+    references: [pdfFiles.id],
+  }),
+  logs: many(pdfProcessingLogs),
+}))
+
+export const pdfProcessingLogsRelations = relations(pdfProcessingLogs, ({ one }) => ({
+  pdfFile: one(pdfFiles, {
+    fields: [pdfProcessingLogs.pdfFileId],
+    references: [pdfFiles.id],
+  }),
+  queue: one(pdfProcessingQueue, {
+    fields: [pdfProcessingLogs.queueId],
+    references: [pdfProcessingQueue.id],
   }),
 }))
