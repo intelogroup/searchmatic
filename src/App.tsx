@@ -3,12 +3,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ProtectedRoute, PublicOnlyRoute } from '@/components/auth/ProtectedRoute'
 import { LoadingScreen } from '@/components/LoadingSpinner'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 import './App.css'
 
 const Login = lazy(() => import('@/pages/Login'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
-const Projects = lazy(() => import('@/pages/Projects'))
-const NewProject = lazy(() => import('@/pages/NewProject'))
+const Projects = lazy(() => import('@/pages/ProjectsSimple'))
+const NewProject = lazy(() => import('@/pages/NewProjectSimple'))
 const ProjectView = lazy(() => import('@/pages/ProjectView'))
 const Chat = lazy(() => import('@/pages/Chat'))
 const Protocols = lazy(() => import('@/pages/Protocols'))
@@ -55,7 +56,9 @@ function App() {
                 path="/projects" 
                 element={
                   <ProtectedRoute>
-                    <Projects />
+                    <ErrorBoundary feature="projects-page">
+                      <Projects />
+                    </ErrorBoundary>
                   </ProtectedRoute>
                 } 
               />
@@ -63,7 +66,9 @@ function App() {
                 path="/projects/new" 
                 element={
                   <ProtectedRoute>
-                    <NewProject />
+                    <ErrorBoundary feature="new-project-page">
+                      <NewProject />
+                    </ErrorBoundary>
                   </ProtectedRoute>
                 } 
               />

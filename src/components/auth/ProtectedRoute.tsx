@@ -15,8 +15,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { isAuthenticated, loading } = useAuth()
   const location = useLocation()
 
-  // Development bypass for screenshots - check if we're in demo mode
-  const isDemoMode = typeof window !== 'undefined' && window.location.search.includes('demo=true')
+  // Development bypass for screenshots - only in development mode
+  const isDemoMode = import.meta.env.DEV && typeof window !== 'undefined' && window.location.search.includes('demo=true')
   
   if (isDemoMode) {
     return <>{children}</>
