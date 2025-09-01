@@ -202,7 +202,31 @@ export default function Dashboard() {
 
         {/* Workflow Guide */}
         <div className="mt-8 bg-white rounded-lg shadow-sm border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Systematic Review Workflow</h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Systematic Review Workflow</h3>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                // Navigate to workflow for first project or projects list
+                supabase
+                  .from('projects')
+                  .select('id')
+                  .eq('user_id', user?.id)
+                  .limit(1)
+                  .single()
+                  .then(({ data }) => {
+                    if (data) {
+                      navigate(`/projects/${data.id}/workflow`)
+                    } else {
+                      navigate('/projects/new')
+                    }
+                  })
+              }}
+            >
+              View Full Workflow
+            </Button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-4 bg-blue-50 rounded-lg">
               <div className="w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center mb-3">1</div>

@@ -18,6 +18,9 @@ const SearchDatabase = lazy(() => import('@/pages/SearchDatabase'))
 const Screening = lazy(() => import('@/pages/Screening'))
 const DataExtraction = lazy(() => import('@/pages/DataExtraction'))
 const ExportReports = lazy(() => import('@/pages/ExportReports'))
+const LiteratureReviewWorkflow = lazy(() => import('@/pages/LiteratureReviewWorkflow'))
+const ArticleImport = lazy(() => import('@/pages/ArticleImport'))
+const DuplicateDetection = lazy(() => import('@/pages/DuplicateDetection'))
 const Chat = lazy(() => import('@/pages/Chat'))
 const Protocols = lazy(() => import('@/pages/Protocols'))
 const Workflows = lazy(() => import('@/pages/Workflows'))
@@ -149,6 +152,36 @@ function App() {
                   <ProtectedRoute>
                     <ErrorBoundary feature="export-page">
                       <ExportReports />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/workflow" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="workflow-page">
+                      <LiteratureReviewWorkflow />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/articles/import" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="import-page">
+                      <ArticleImport />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/duplicates" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="duplicates-page">
+                      <DuplicateDetection />
                     </ErrorBoundary>
                   </ProtectedRoute>
                 } 
