@@ -1,0 +1,599 @@
+{
+  "success": true,
+  "articles": [
+    {
+      "pmid": "37493759",
+      "title": "Strength training is more effective than aerobic exercise for improving glycaemic control and body composition in people with normal-weight type 2 diabetes: a randomised controlled trial.",
+      "abstract": "Type 2 diabetes in people in the healthy weight BMI category (<25 kg/m2), herein defined as 'normal-weight type 2 diabetes', is associated with sarcopenia (low muscle mass). Given this unique body composition, the optimal exercise regimen for this population is unknown.\n\nWe conducted a parallel-group RCT in individuals with type 2 diabetes (age 18-80 years, HbA1c 47.5-118.56 mmol/mol [6.5-13.0%]) and BMI <25 kg/m2). Participants were recruited in outpatient clinics or through advertisements and randomly assigned to a 9 month exercise programme of strength training alone (ST), aerobic training alone (AER) or both interventions combined (COMB). We used stratified block randomisation with a randomly selected block size. Researchers and caregivers were blinded to participants' treatment group; however, participants themselves were not. Exercise interventions were conducted at community-based fitness centres. The primary outcome was absolute change in HbA1c level within and across the three groups at 3, 6 and 9 months. Secondary outcomes included changes in body composition at 9 months. Per adherence to recommended exercise protocol (PP) analysis included participants who completed at least 50% of the sessions.\n\nAmong 186 individuals (ST, n=63; AER, n=58; COMB, n=65) analysed, the median (IQR) age was 59 (53-66) years, 60% were men and 83% were Asian. The mean (SD) HbA1c level at baseline was 59.6 (13.1) mmol/mol (7.6% [1.2%]). In intention-to-treat analysis, the ST group showed a significant decrease in HbA1c levels (mean [95% CI] -0.44 percentage points [-0.78, -0.12], p=0.002), while no significant change was observed in either the COMB group (-0.35 percentage points, p=0.13) or the AER group (-0.24 percentage points, p=0.10). The ST group had a greater improvement in HbA1c levels than the AER group (p=0.01). Appendicular lean mass relative to fat mass increased only in the ST group (p=0.0008), which was an independent predictor of HbA1c change (beta coefficient -7.16, p=0.01). Similar results were observed in PP analysis. Only one adverse event, in the COMB group, was considered to be possibly associated with the exercise intervention.\n\nIn normal-weight type 2 diabetes, strength training was superior to aerobic training alone, while no significant difference was observed between strength training and combination training for HbA1c reduction. Increased lean mass relative to decreased fat mass was an independent predictor of reduction in HbA1c level.\n\nClinicalTrials.gov NCT02448498.\n\nThis study was funded by the National Institutes of Health (NIH; R01DK081371).",
+      "authors": [
+        {
+          "lastName": "Kobayashi",
+          "foreName": "Yukari",
+          "initials": "Y",
+          "affiliation": "Division of Cardiovascular Medicine, Stanford University School of Medicine, Stanford, CA, USA. yukariko@stanford.edu."
+        },
+        {
+          "lastName": "Long",
+          "foreName": "Jin",
+          "initials": "J",
+          "affiliation": "Department of Pediatrics, Stanford University School of Medicine, Stanford, CA, USA."
+        },
+        {
+          "lastName": "Dan",
+          "foreName": "Shozen",
+          "initials": "S",
+          "affiliation": "Center for Asian Health Research and Education, Stanford University School of Medicine, Stanford, CA, USA."
+        },
+        {
+          "lastName": "Johannsen",
+          "foreName": "Neil M",
+          "initials": "NM",
+          "affiliation": "Pennington Biomedical Research Center, Baton Rouge, LA, USA."
+        },
+        {
+          "lastName": "Talamoa",
+          "foreName": "Ruth",
+          "initials": "R",
+          "affiliation": "Division of Primary Care and Population Health, Stanford University School of Medicine, Stanford, CA, USA."
+        },
+        {
+          "lastName": "Raghuram",
+          "foreName": "Sonia",
+          "initials": "S",
+          "affiliation": "Division of Primary Care and Population Health, Stanford University School of Medicine, Stanford, CA, USA."
+        },
+        {
+          "lastName": "Chung",
+          "foreName": "Sukyung",
+          "initials": "S",
+          "affiliation": "Department of Medicine, Stanford University School of Medicine, Stanford, CA, USA."
+        },
+        {
+          "lastName": "Kent",
+          "foreName": "Kyla",
+          "initials": "K",
+          "affiliation": "Department of Pediatrics, Stanford University School of Medicine, Stanford, CA, USA."
+        },
+        {
+          "lastName": "Basina",
+          "foreName": "Marina",
+          "initials": "M",
+          "affiliation": "Division of Endocrinology, Gerontology, and Metabolism, Stanford University School of Medicine, Stanford, CA, USA."
+        },
+        {
+          "lastName": "Lamendola",
+          "foreName": "Cynthia",
+          "initials": "C",
+          "affiliation": "Division of Cardiovascular Medicine, Stanford University School of Medicine, Stanford, CA, USA."
+        },
+        {
+          "lastName": "Haddad",
+          "foreName": "Francois",
+          "initials": "F",
+          "affiliation": "Division of Cardiovascular Medicine, Stanford University School of Medicine, Stanford, CA, USA."
+        },
+        {
+          "lastName": "Leonard",
+          "foreName": "Mary B",
+          "initials": "MB",
+          "affiliation": "Department of Pediatrics, Stanford University School of Medicine, Stanford, CA, USA."
+        },
+        {
+          "lastName": "Church",
+          "foreName": "Timothy S",
+          "initials": "TS",
+          "affiliation": "Pennington Biomedical Research Center, Baton Rouge, LA, USA."
+        },
+        {
+          "lastName": "Palaniappan",
+          "foreName": "Latha",
+          "initials": "L",
+          "affiliation": "Department of Medicine, Stanford University School of Medicine, Stanford, CA, USA."
+        }
+      ],
+      "journal": {
+        "name": "Diabetologia",
+        "abbreviation": "Diabetologia",
+        "issn": "1432-0428",
+        "volume": "66",
+        "issue": "10",
+        "pages": "1897-1907"
+      },
+      "publicationDate": "2023-09-04",
+      "doi": "10.1007/s00125-023-05958-9",
+      "meshTerms": [
+        {
+          "descriptorName": "Male",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Adolescent",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Young Adult",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Adult",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Middle Aged",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Aged",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Aged, 80 and over",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Female",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Diabetes Mellitus, Type 2",
+          "qualifierNames": [
+            "therapy"
+          ]
+        },
+        {
+          "descriptorName": "Glycemic Control",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Resistance Training",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Blood Glucose",
+          "qualifierNames": [
+            "analysis"
+          ]
+        },
+        {
+          "descriptorName": "Glycated Hemoglobin",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Body Composition",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Randomized Controlled Trial",
+        "Journal Article",
+        "Research Support, N.I.H., Extramural"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "37120119",
+      "title": "Exercise and cardiovascular health: A state-of-the-art review.",
+      "abstract": "Cardiovascular (CV) disease (CVD) is the leading cause of global morbidity and mortality, and low levels of physical activity (PA) is a leading independent predictor of poor CV health and associated with an increased prevalence of risk factors that predispose to CVD development. In this review, we evaluate the benefits of exercise on CV health. We discuss the CV adaptations to exercise, focusing on the physiological changes in the heart and vasculature. We review the impact and benefits of exercise on specific CV prevention, including type II diabetes, hypertension, hyperlipidemia, coronary artery disease, and heart failure, in addition to CVD-related and all-cause mortality. Lastly, we evaluate the current PA guidelines and various modes of exercise, assessing the current literature for the effective regimens of PA that improve CVD outcomes.",
+      "authors": [
+        {
+          "lastName": "Isath",
+          "foreName": "Ameesh",
+          "initials": "A",
+          "affiliation": "Department of Cardiology, Westchester Medical Centre and New York Medical College, Valhalla, NY, United States of America."
+        },
+        {
+          "lastName": "Koziol",
+          "foreName": "Klaudia J",
+          "initials": "KJ",
+          "affiliation": "New York Medical College, School of Medicine, Valhalla, NY, United States of America."
+        },
+        {
+          "lastName": "Martinez",
+          "foreName": "Matthew W",
+          "initials": "MW",
+          "affiliation": "Department of Cardiovascular Medicine, Sports Cardiology and Hypertrophic Cardiomyopathy, Atlantic Health, Morristown Medical Center, Morristown, NJ, United States of America."
+        },
+        {
+          "lastName": "Garber",
+          "foreName": "Carol Ewing",
+          "initials": "CE",
+          "affiliation": "Department of Biobehavioral Sciences, Program in Applied Physiology, Teachers College, Columbia University, United States of America."
+        },
+        {
+          "lastName": "Martinez",
+          "foreName": "Matthew N",
+          "initials": "MN",
+          "affiliation": "Department of Pediatric Cardiology, NYU Grossman School of Medicine and Langone Medical Center, NYU Langone Health, New York, NY, United States of America."
+        },
+        {
+          "lastName": "Emery",
+          "foreName": "Michael S",
+          "initials": "MS",
+          "affiliation": "Vascular and Thoracic Institute, Section of Clinical Cardiology, Cleveland Clinic, Cleveland, OH, United States of America."
+        },
+        {
+          "lastName": "Baggish",
+          "foreName": "Aaron L",
+          "initials": "AL",
+          "affiliation": "Cardiovascular Performance Program, Harvard Medical School, Massachusetts General Hospital, Boston, MA, United States of America."
+        },
+        {
+          "lastName": "Naidu",
+          "foreName": "Srihari S",
+          "initials": "SS",
+          "affiliation": "Department of Cardiology, Westchester Medical Centre and New York Medical College, Valhalla, NY, United States of America."
+        },
+        {
+          "lastName": "Lavie",
+          "foreName": "Carl J",
+          "initials": "CJ",
+          "affiliation": "John Ochsner Heart and Vascular Institute, Ochsner Clinical School, The University of Queensland School of Medicine, New Orleans, LA, United States of America."
+        },
+        {
+          "lastName": "Arena",
+          "foreName": "Ross",
+          "initials": "R",
+          "affiliation": "Department of Physical Therapy, College of Applied Health Sciences, University of Illinois Chicago, Chicago, IL, United States of America."
+        },
+        {
+          "lastName": "Krittanawong",
+          "foreName": "Chayakrit",
+          "initials": "C",
+          "affiliation": "Cardiology Division, NYU Langone Health and NYU School of Medicine, New York, NY, USA. Electronic address: Chayakrit.Krittanawong@nyulangone.org."
+        }
+      ],
+      "journal": {
+        "name": "Progress in cardiovascular diseases",
+        "abbreviation": "Prog Cardiovasc Dis",
+        "issn": "1873-1740",
+        "volume": "79",
+        "issue": "",
+        "pages": "44-52"
+      },
+      "publicationDate": "2023-11-02",
+      "doi": "10.1016/j.pcad.2023.04.008",
+      "meshTerms": [
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Diabetes Mellitus, Type 2",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Exercise",
+          "qualifierNames": [
+            "physiology"
+          ]
+        },
+        {
+          "descriptorName": "Cardiovascular System",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Cardiovascular Diseases",
+          "qualifierNames": [
+            "diagnosis",
+            "epidemiology",
+            "prevention & control"
+          ]
+        },
+        {
+          "descriptorName": "Risk Factors",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Review"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "36716009",
+      "title": "Effect of Moderate and Vigorous Aerobic Exercise on Incident Diabetes in Adults With Obesity: A 10-Year Follow-up of a Randomized Clinical Trial.",
+      "abstract": "",
+      "authors": [
+        {
+          "lastName": "Chen",
+          "foreName": "Ying",
+          "initials": "Y",
+          "affiliation": "Ministry of Education Key Laboratory of Metabolism and Molecular Medicine, Department of Endocrinology and Metabolism, Zhongshan Hospital, Fudan University, Shanghai, China."
+        },
+        {
+          "lastName": "Chen",
+          "foreName": "Zheng",
+          "initials": "Z",
+          "affiliation": "Department of Endocrinology and Diabetes, Xiamen Diabetes Institute, The First Affiliated Hospital of Xiamen University, School of Medicine, Xiamen University, Xiamen, China."
+        },
+        {
+          "lastName": "Pan",
+          "foreName": "Lingling",
+          "initials": "L",
+          "affiliation": "Department of Endocrinology, Shanghai Tongji Hospital, Tongji University School of Medicine, Shanghai, China."
+        },
+        {
+          "lastName": "Ma",
+          "foreName": "Zhi-Min",
+          "initials": "ZM",
+          "affiliation": "Department of Endocrinology, The Affiliated Suzhou Science & Technology Town Hospital of Nanjing Medical University, Jiangsu, China."
+        },
+        {
+          "lastName": "Zhang",
+          "foreName": "Huijie",
+          "initials": "H",
+          "affiliation": "Department of Endocrinology and Metabolism, Nanfang Hospital, Southern Medical University, Guangzhou, China."
+        },
+        {
+          "lastName": "Li",
+          "foreName": "Xue-Jun",
+          "initials": "XJ",
+          "affiliation": "Department of Endocrinology and Diabetes, Xiamen Diabetes Institute, The First Affiliated Hospital of Xiamen University, School of Medicine, Xiamen University, Xiamen, China."
+        },
+        {
+          "lastName": "Li",
+          "foreName": "Xiaoying",
+          "initials": "X",
+          "affiliation": "Ministry of Education Key Laboratory of Metabolism and Molecular Medicine, Department of Endocrinology and Metabolism, Zhongshan Hospital, Fudan University, Shanghai, China."
+        }
+      ],
+      "journal": {
+        "name": "JAMA internal medicine",
+        "abbreviation": "JAMA Intern Med",
+        "issn": "2168-6114",
+        "volume": "183",
+        "issue": "3",
+        "pages": "272-275"
+      },
+      "publicationDate": "2023-03-08",
+      "doi": "10.1001/jamainternmed.2022.6291",
+      "meshTerms": [
+        {
+          "descriptorName": "Adult",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Follow-Up Studies",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Obesity",
+          "qualifierNames": [
+            "epidemiology",
+            "therapy"
+          ]
+        },
+        {
+          "descriptorName": "Exercise",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Diabetes Mellitus",
+          "qualifierNames": [
+            "epidemiology",
+            "therapy"
+          ]
+        },
+        {
+          "descriptorName": "Exercise Therapy",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Randomized Controlled Trial",
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "37156410",
+      "title": "Diet, exercise, and pharmacotherapy for sarcopenia in people with diabetes.",
+      "abstract": "Diabetes prevalence is increasing rapidly in older people, and sarcopenia is prevalent as a novel complication, particularly in patients with type 2 diabetes mellitus (T2DM). Therefore, sarcopenia prevention and treatment in these people is necessary. Diabetes accelerates sarcopenia through several mechanisms, such as hyperglycemia, chronic inflammation and oxidative stress. The effects of diet, exercise, and pharmacotherapy on sarcopenia in patients with T2DM need to be considered. In diet, low intake of energy, protein, vitamin D, and &#x3c9;-3 fatty acid are associated with sarcopenia risk. In exercises, although intervention studies in people, especially older and non-obese patients with diabetes, are few, accumulating evidence shows the usefulness of exercise, particularly resistance exercise for muscle mass and strength, and aerobic exercise for physical performance in sarcopenia. In pharmacotherapy, certain classes of anti-diabetes compounds have possibility of preventing sarcopenia. However, much data on diet, exercise, and pharmacotherapy were obtained in obese and non-elderly patients with T2DM, demanding actual clinical data on non-obese and older patients with diabetes.",
+      "authors": [
+        {
+          "lastName": "Hashimoto",
+          "foreName": "Yoshitaka",
+          "initials": "Y",
+          "affiliation": "Department of Endocrinology and Metabolism, Kyoto Prefectural University of Medicine, Graduate School of Medical Science, Kyoto, Japan; Department of Diabetes and Endocrinology, Matsushita Memorial Hospital, 5-55 Sotojima-cho, Moriguchi 570-8540, Japan. Electronic address: y-hashi@koto.kpu-m.ac.jp."
+        },
+        {
+          "lastName": "Takahashi",
+          "foreName": "Fuyuko",
+          "initials": "F",
+          "affiliation": "Department of Endocrinology and Metabolism, Kyoto Prefectural University of Medicine, Graduate School of Medical Science, Kyoto, Japan."
+        },
+        {
+          "lastName": "Okamura",
+          "foreName": "Takuro",
+          "initials": "T",
+          "affiliation": "Department of Endocrinology and Metabolism, Kyoto Prefectural University of Medicine, Graduate School of Medical Science, Kyoto, Japan."
+        },
+        {
+          "lastName": "Hamaguchi",
+          "foreName": "Masahide",
+          "initials": "M",
+          "affiliation": "Department of Endocrinology and Metabolism, Kyoto Prefectural University of Medicine, Graduate School of Medical Science, Kyoto, Japan."
+        },
+        {
+          "lastName": "Fukui",
+          "foreName": "Michiaki",
+          "initials": "M",
+          "affiliation": "Department of Endocrinology and Metabolism, Kyoto Prefectural University of Medicine, Graduate School of Medical Science, Kyoto, Japan."
+        }
+      ],
+      "journal": {
+        "name": "Metabolism: clinical and experimental",
+        "abbreviation": "Metabolism",
+        "issn": "1532-8600",
+        "volume": "144",
+        "issue": "",
+        "pages": "155585"
+      },
+      "publicationDate": "2023-06-20",
+      "doi": "10.1016/j.metabol.2023.155585",
+      "meshTerms": [
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Aged",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Middle Aged",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Sarcopenia",
+          "qualifierNames": [
+            "drug therapy",
+            "etiology"
+          ]
+        },
+        {
+          "descriptorName": "Diabetes Mellitus, Type 2",
+          "qualifierNames": [
+            "complications",
+            "therapy"
+          ]
+        },
+        {
+          "descriptorName": "Diet",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Exercise",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Vitamins",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Muscle Strength",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Muscle, Skeletal",
+          "qualifierNames": [
+            "physiology"
+          ]
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Review",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "36316391",
+      "title": "Exercise in adults with&#xa0;type&#xa0;1 diabetes mellitus.",
+      "abstract": "Regular physical activity improves cardiometabolic and musculoskeletal health, helps with weight management, improves cognitive and psychosocial functioning, and is associated with reduced mortality related to cancer and diabetes mellitus. However, turnover rates of glucose in the blood increase dramatically during exercise, which often results in either hypoglycaemia or hyperglycaemia as well as increased glycaemic variability in individuals with type 1 diabetes mellitus (T1DM). A complex neuroendocrine response to an acute exercise session helps to maintain circulating levels of glucose in a fairly tight range in healthy individuals, while several abnormal physiological processes and limitations of insulin therapy limit the capacity of people with T1DM to exercise in a normoglycaemic state. Knowledge of the acute and chronic effects of exercise and regular physical activity is critical for the formulation of clinical strategies for the management of insulin and nutrition for active patients with T1DM. Emerging diabetes-related technologies, such as continuous glucose monitors, automated insulin delivery systems and the administration of solubilized glucagon, are demonstrating efficacy for preserving glucose homeostasis during and after exercise in this population of patients. This Review highlights the beneficial effects of regular exercise and details the complex endocrine and metabolic responses to different types of exercise for adults with T1DM. An overview of basic clinical strategies for the preservation of glucose homeostasis using emerging technologies is also provided.",
+      "authors": [
+        {
+          "lastName": "Riddell",
+          "foreName": "Michael C",
+          "initials": "MC",
+          "affiliation": "Muscle Health Research Centre, School of Kinesiology and Health Science, York University, Toronto, Ontario, Canada. mriddell@yorku.ca."
+        },
+        {
+          "lastName": "Peters",
+          "foreName": "Anne L",
+          "initials": "AL",
+          "affiliation": "Keck School of Medicine, University of Southern California, Los Angeles, CA, USA."
+        }
+      ],
+      "journal": {
+        "name": "Nature reviews. Endocrinology",
+        "abbreviation": "Nat Rev Endocrinol",
+        "issn": "1759-5037",
+        "volume": "19",
+        "issue": "2",
+        "pages": "98-111"
+      },
+      "publicationDate": "2023-01-18",
+      "doi": "10.1038/s41574-022-00756-6",
+      "meshTerms": [
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Adult",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Diabetes Mellitus, Type 1",
+          "qualifierNames": [
+            "drug therapy"
+          ]
+        },
+        {
+          "descriptorName": "Exercise",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Insulin",
+          "qualifierNames": [
+            "metabolism"
+          ]
+        },
+        {
+          "descriptorName": "Blood Glucose",
+          "qualifierNames": [
+            "metabolism"
+          ]
+        },
+        {
+          "descriptorName": "Glucose",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Review"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    }
+  ],
+  "totalCount": 5311,
+  "retrievedCount": 5,
+  "query": "diabetes AND exercise AND (\"2023\"[Date - Publication] : \"2024\"[Date - Publication])",
+  "database": "PubMed",
+  "searchDate": "2025-09-01T02:57:51.314Z",
+  "user_id": "0ed49585-4df8-4c16-b9ae-6202b6e3b968",
+  "timestamp": "2025-09-01T02:57:51.315Z"
+}

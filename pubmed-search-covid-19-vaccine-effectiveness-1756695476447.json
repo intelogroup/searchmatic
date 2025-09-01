@@ -1,0 +1,357 @@
+{
+  "success": true,
+  "articles": [
+    {
+      "pmid": "35504917",
+      "title": "COVID-19 vaccine development: milestones, lessons and prospects.",
+      "abstract": "With the constantly mutating of SARS-CoV-2 and the emergence of Variants of Concern (VOC), the implementation of vaccination is critically important. Existing SARS-CoV-2 vaccines mainly include inactivated, live attenuated, viral vector, protein subunit, RNA, DNA, and virus-like particle (VLP) vaccines. Viral vector vaccines, protein subunit vaccines, and mRNA vaccines may induce additional cellular or humoral immune regulations, including Th cell responses and germinal center responses, and form relevant memory cells, greatly improving their efficiency. However, some viral vector or mRNA vaccines may be associated with complications like thrombocytopenia and myocarditis, raising concerns about the safety of these COVID-19 vaccines. Here, we systemically assess the safety and efficacy of COVID-19 vaccines, including the possible complications and different effects on pregnant women, the elderly, people with immune diseases and acquired immunodeficiency syndrome (AIDS), transplant recipients, and cancer patients. Based on the current analysis, governments and relevant agencies are recommended to continue to advance the vaccine immunization process. Simultaneously, special attention should be paid to the health status of the vaccines, timely treatment of complications, vaccine development, and ensuring the lives and health of patients. In addition, available measures such as mix-and-match vaccination, developing new vaccines like nanoparticle vaccines, and optimizing immune adjuvant to improve vaccine safety and efficacy could be considered.",
+      "authors": [
+        {
+          "lastName": "Li",
+          "foreName": "Maochen",
+          "initials": "M",
+          "affiliation": "College of Life Science and Technology, Beijing University of Chemical Technology, Beijing, China."
+        },
+        {
+          "lastName": "Wang",
+          "foreName": "Han",
+          "initials": "H",
+          "affiliation": "Laboratory for Clinical Immunology, Harbin Children's Hospital, Harbin, China."
+        },
+        {
+          "lastName": "Tian",
+          "foreName": "Lili",
+          "initials": "L",
+          "affiliation": "College of Life Science and Technology, Beijing University of Chemical Technology, Beijing, China."
+        },
+        {
+          "lastName": "Pang",
+          "foreName": "Zehan",
+          "initials": "Z",
+          "affiliation": "College of Life Science and Technology, Beijing University of Chemical Technology, Beijing, China."
+        },
+        {
+          "lastName": "Yang",
+          "foreName": "Qingkun",
+          "initials": "Q",
+          "affiliation": "College of Materials Science and Engineering, Beijing University of Chemical Technology, Beijing, China."
+        },
+        {
+          "lastName": "Huang",
+          "foreName": "Tianqi",
+          "initials": "T",
+          "affiliation": "College of Life Science and Technology, Beijing University of Chemical Technology, Beijing, China."
+        },
+        {
+          "lastName": "Fan",
+          "foreName": "Junfen",
+          "initials": "J",
+          "affiliation": "Institute of Cerebrovascular Disease Research and Department of Neurology, Xuanwu Hospital of Capital Medical University, Beijing, China."
+        },
+        {
+          "lastName": "Song",
+          "foreName": "Lihua",
+          "initials": "L",
+          "affiliation": "College of Life Science and Technology, Beijing University of Chemical Technology, Beijing, China. songlihua@mail.buct.edu.cn."
+        },
+        {
+          "lastName": "Tong",
+          "foreName": "Yigang",
+          "initials": "Y",
+          "affiliation": "College of Life Science and Technology, Beijing University of Chemical Technology, Beijing, China. tongyigang@mail.buct.edu.cn."
+        },
+        {
+          "lastName": "Fan",
+          "foreName": "Huahao",
+          "initials": "H",
+          "affiliation": "College of Life Science and Technology, Beijing University of Chemical Technology, Beijing, China. fanhuahao@mail.buct.edu.cn."
+        }
+      ],
+      "journal": {
+        "name": "Signal transduction and targeted therapy",
+        "abbreviation": "Signal Transduct Target Ther",
+        "issn": "2059-3635",
+        "volume": "7",
+        "issue": "1",
+        "pages": "146"
+      },
+      "publicationDate": "2022-05-05",
+      "doi": "10.1038/s41392-022-00996-y",
+      "meshTerms": [
+        {
+          "descriptorName": "Aged",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "COVID-19",
+          "qualifierNames": [
+            "prevention & control"
+          ]
+        },
+        {
+          "descriptorName": "COVID-19 Vaccines",
+          "qualifierNames": [
+            "adverse effects",
+            "immunology",
+            "therapeutic use"
+          ]
+        },
+        {
+          "descriptorName": "Female",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Pregnancy",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Protein Subunits",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "SARS-CoV-2",
+          "qualifierNames": [
+            "genetics"
+          ]
+        },
+        {
+          "descriptorName": "Vaccines, Virus-Like Particle",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Review",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "34373623",
+      "title": "Progress of the COVID-19 vaccine effort: viruses, vaccines and variants versus efficacy, effectiveness and escape.",
+      "abstract": "Where 2020 saw the development and testing of vaccines against severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) at an unprecedented pace, the first half of 2021 has seen vaccine rollout in many countries. In this Progress article, we provide a snapshot of ongoing vaccine efficacy studies, as well as real-world data on vaccine effectiveness and the impact of virus variants of concern. Where they have been deployed in a high proportion of the adult population, the currently approved vaccines have been extremely effective in preventing COVID-19, particularly severe disease. Nonetheless, there are still significant challenges in ensuring equitable vaccine access around the globe and lessons that can be learned for controlling this pandemic and for the next pandemic.",
+      "authors": [
+        {
+          "lastName": "Tregoning",
+          "foreName": "John S",
+          "initials": "JS",
+          "affiliation": "Department of Infectious Disease, St Mary's Campus, Imperial College London, London, UK. john.tregoning@imperial.ac.uk."
+        },
+        {
+          "lastName": "Flight",
+          "foreName": "Katie E",
+          "initials": "KE",
+          "affiliation": "Department of Infectious Disease, St Mary's Campus, Imperial College London, London, UK."
+        },
+        {
+          "lastName": "Higham",
+          "foreName": "Sophie L",
+          "initials": "SL",
+          "affiliation": "Department of Infectious Disease, St Mary's Campus, Imperial College London, London, UK."
+        },
+        {
+          "lastName": "Wang",
+          "foreName": "Ziyin",
+          "initials": "Z",
+          "affiliation": "Department of Infectious Disease, St Mary's Campus, Imperial College London, London, UK."
+        },
+        {
+          "lastName": "Pierce",
+          "foreName": "Benjamin F",
+          "initials": "BF",
+          "affiliation": "Department of Infectious Disease, St Mary's Campus, Imperial College London, London, UK."
+        }
+      ],
+      "journal": {
+        "name": "Nature reviews. Immunology",
+        "abbreviation": "Nat Rev Immunol",
+        "issn": "1474-1741",
+        "volume": "21",
+        "issue": "10",
+        "pages": "626-636"
+      },
+      "publicationDate": "2021-09-30",
+      "doi": "10.1038/s41577-021-00592-1",
+      "meshTerms": [
+        {
+          "descriptorName": "COVID-19 Vaccines",
+          "qualifierNames": [
+            "administration & dosage",
+            "adverse effects",
+            "classification",
+            "immunology"
+          ]
+        },
+        {
+          "descriptorName": "Clinical Trials as Topic",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Health Services Accessibility",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "SARS-CoV-2",
+          "qualifierNames": [
+            "classification",
+            "genetics",
+            "immunology"
+          ]
+        },
+        {
+          "descriptorName": "World Health Organization",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Review"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "35112973",
+      "title": "COVID-19 vaccine effectiveness among immunocompromised populations: a targeted literature review of real-world studies.",
+      "abstract": "From July through October of 2021, several countries issued recommendations for increased COVID-19 vaccine protection for individuals with one or more immunocompromised (IC) conditions. It is critically important to understand the vaccine effectiveness (VE) of COVID-19 vaccines among IC populations as recommendations are updated over time in response to the evolving COVID-19 pandemic.\n\nA targeted literature review was conducted to identify real-world studies that assessed COVID-19 VE in IC populations between December 2020 and September 2021. A total of 10 studies from four countries were identified and summarized in this review.\n\nVE of the widely available COVID-19 vaccines, including BNT162b2 (Pfizer/BioNTech), mRNA-1273 (Moderna), Ad26.COV2.S (Janssen), and ChAdOx1 nCoV-19 (Oxford/AstraZeneca), ranged from 64% to 90% against SARS-CoV-2 infection, 73% to 84% against symptomatic illness, 70% to 100% against severe illness, and 63% to 100% against COVID-19-related hospitalization among the fully vaccinated IC populations included in the studies. COVID-19 VE for most outcomes in the IC populations included in these studies were lower than in the general populations. These findings provide preliminary evidence that the IC population requires greater protective measures to prevent COVID-19 infection and associated illness, hence should be prioritized while implementing recommendations of additional COVID-19 vaccine doses.",
+      "authors": [
+        {
+          "lastName": "Di Fusco",
+          "foreName": "Manuela",
+          "initials": "M",
+          "affiliation": "Pfizer Inc., New York, NY, USA."
+        },
+        {
+          "lastName": "Lin",
+          "foreName": "Jay",
+          "initials": "J",
+          "affiliation": "Novosys Health, Green Brook, NJ, USA."
+        },
+        {
+          "lastName": "Vaghela",
+          "foreName": "Shailja",
+          "initials": "S",
+          "affiliation": "HealthEcon Consulting Inc., Ancaster, ON, Canada."
+        },
+        {
+          "lastName": "Lingohr-Smith",
+          "foreName": "Melissa",
+          "initials": "M",
+          "affiliation": "Novosys Health, Green Brook, NJ, USA."
+        },
+        {
+          "lastName": "Nguyen",
+          "foreName": "Jennifer L",
+          "initials": "JL",
+          "affiliation": "Pfizer Inc., New York, NY, USA."
+        },
+        {
+          "lastName": "Scassellati Sforzolini",
+          "foreName": "Thomas",
+          "initials": "T",
+          "affiliation": "Pfizer Inc., New York, NY, USA."
+        },
+        {
+          "lastName": "Judy",
+          "foreName": "Jennifer",
+          "initials": "J",
+          "affiliation": "Pfizer Inc., New York, NY, USA."
+        },
+        {
+          "lastName": "Cane",
+          "foreName": "Alejandro",
+          "initials": "A",
+          "affiliation": "Pfizer Inc., New York, NY, USA."
+        },
+        {
+          "lastName": "Moran",
+          "foreName": "Mary M",
+          "initials": "MM",
+          "affiliation": "Pfizer Inc., Collegeville, PA, USA."
+        }
+      ],
+      "journal": {
+        "name": "Expert review of vaccines",
+        "abbreviation": "Expert Rev Vaccines",
+        "issn": "1744-8395",
+        "volume": "21",
+        "issue": "4",
+        "pages": "435-451"
+      },
+      "publicationDate": "2022-04-01",
+      "doi": "10.1080/14760584.2022.2035222",
+      "meshTerms": [
+        {
+          "descriptorName": "Ad26COVS1",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "BNT162 Vaccine",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "COVID-19",
+          "qualifierNames": [
+            "prevention & control"
+          ]
+        },
+        {
+          "descriptorName": "COVID-19 Vaccines",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "ChAdOx1 nCoV-19",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Pandemics",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "SARS-CoV-2",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Vaccine Efficacy",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Research Support, Non-U.S. Gov't",
+        "Review"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    }
+  ],
+  "totalCount": 28640,
+  "retrievedCount": 3,
+  "query": "COVID-19 vaccine effectiveness",
+  "database": "PubMed",
+  "searchDate": "2025-09-01T02:57:56.431Z",
+  "user_id": "0ed49585-4df8-4c16-b9ae-6202b6e3b968",
+  "timestamp": "2025-09-01T02:57:56.431Z"
+}

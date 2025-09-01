@@ -1,0 +1,229 @@
+{
+  "success": true,
+  "articles": [
+    {
+      "pmid": "36988595",
+      "title": "Artificial Intelligence and Machine Learning in Clinical Medicine, 2023.",
+      "abstract": "",
+      "authors": [
+        {
+          "lastName": "Haug",
+          "foreName": "Charlotte J",
+          "initials": "CJ",
+          "affiliation": ""
+        },
+        {
+          "lastName": "Drazen",
+          "foreName": "Jeffrey M",
+          "initials": "JM",
+          "affiliation": ""
+        }
+      ],
+      "journal": {
+        "name": "The New England journal of medicine",
+        "abbreviation": "N Engl J Med",
+        "issn": "1533-4406",
+        "volume": "388",
+        "issue": "13",
+        "pages": "1201-1208"
+      },
+      "publicationDate": "2023-03-31",
+      "doi": "10.1056/NEJMra2302038",
+      "meshTerms": [
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Algorithms",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Artificial Intelligence",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Clinical Medicine",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Machine Learning",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Review"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "38613106",
+      "title": "Applications of Artificial Intelligence, Machine Learning, and Deep Learning in Nutrition: A Systematic Review.",
+      "abstract": "In industry 4.0, where the automation and digitalization of entities and processes are fundamental, artificial intelligence (AI) is increasingly becoming a pivotal tool offering innovative solutions in various domains. In this context, nutrition, a critical aspect of public health, is no exception to the fields influenced by the integration of AI technology. This study aims to comprehensively investigate the current landscape of AI in nutrition, providing a deep understanding of the potential of AI, machine learning (ML), and deep learning (DL) in nutrition sciences and highlighting eventual challenges and futuristic directions. A hybrid approach from the systematic literature review (SLR) guidelines and the preferred reporting items for systematic reviews and meta-analyses (PRISMA) guidelines was adopted to systematically analyze the scientific literature from a search of major databases on artificial intelligence in nutrition sciences. A rigorous study selection was conducted using the most appropriate eligibility criteria, followed by a methodological quality assessment ensuring the robustness of the included studies. This review identifies several AI applications in nutrition, spanning smart and personalized nutrition, dietary assessment, food recognition and tracking, predictive modeling for disease prevention, and disease diagnosis and monitoring. The selected studies demonstrated the versatility of machine learning and deep learning techniques in handling complex relationships within nutritional datasets. This study provides a comprehensive overview of the current state of AI applications in nutrition sciences and identifies challenges and opportunities. With the rapid advancement in AI, its integration into nutrition holds significant promise to enhance individual nutritional outcomes and optimize dietary recommendations. Researchers, policymakers, and healthcare professionals can utilize this research to design future projects and support evidence-based decision-making in AI for nutrition and dietary guidance.",
+      "authors": [
+        {
+          "lastName": "Theodore Armand",
+          "foreName": "Tagne Poupi",
+          "initials": "TP",
+          "affiliation": "Institute of Digital Anti-Aging Healthcare, Inje University, Gimhae 50834, Republic of Korea."
+        },
+        {
+          "lastName": "Nfor",
+          "foreName": "Kintoh Allen",
+          "initials": "KA",
+          "affiliation": "Department of Computer Engineering, Inje University, Gimhae 50834, Republic of Korea."
+        },
+        {
+          "lastName": "Kim",
+          "foreName": "Jung-In",
+          "initials": "JI",
+          "affiliation": "Institute of Digital Anti-Aging Healthcare, Inje University, Gimhae 50834, Republic of Korea."
+        },
+        {
+          "lastName": "Kim",
+          "foreName": "Hee-Cheol",
+          "initials": "HC",
+          "affiliation": "Institute of Digital Anti-Aging Healthcare, Inje University, Gimhae 50834, Republic of Korea."
+        }
+      ],
+      "journal": {
+        "name": "Nutrients",
+        "abbreviation": "Nutrients",
+        "issn": "2072-6643",
+        "volume": "16",
+        "issue": "7",
+        "pages": ""
+      },
+      "publicationDate": "2024-08-07",
+      "doi": "10.3390/nu16071073",
+      "meshTerms": [
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Artificial Intelligence",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Deep Learning",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Machine Learning",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Nutritional Sciences",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Nutritional Status",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Systematic Review"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "37208107",
+      "title": "Artificial intelligence, machine learning, and deep learning in liver transplantation.",
+      "abstract": "Liver transplantation (LT) is a life-saving treatment for individuals with end-stage liver disease. The management of LT recipients is complex, predominantly because of the need to consider demographic, clinical, laboratory, pathology, imaging, and omics data in the development of an appropriate treatment plan. Current methods to collate clinical information are susceptible to some degree of subjectivity; thus, clinical decision-making in LT could benefit from the data-driven approach offered by artificial intelligence (AI). Machine learning and deep learning could be applied in both the pre- and post-LT settings. Some examples of AI applications pre-transplant include optimising transplant candidacy decision-making and donor-recipient matching to reduce waitlist mortality and improve post-transplant outcomes. In the post-LT setting, AI could help guide the management of LT recipients, particularly by predicting patient and graft survival, along with identifying risk factors for disease recurrence and other associated complications. Although AI shows promise in medicine, there are limitations to its clinical deployment which include dataset imbalances for model training, data privacy issues, and a lack of available research practices to benchmark model performance in the real world. Overall, AI tools have the potential to enhance personalised clinical decision-making, especially in the context of liver transplant medicine.",
+      "authors": [
+        {
+          "lastName": "Bhat",
+          "foreName": "Mamatha",
+          "initials": "M",
+          "affiliation": "Ajmera Transplant Program, University Health Network, Toronto, ON, Canada; Toronto General Hospital Research Institute, University Health Network, Toronto, ON, Canada; Institute of Medical Science, University of Toronto, Toronto, ON, Canada; Division of Gastroenterology & Hepatology, Department of Medicine, University of Toronto, Toronto, ON, Canada. Electronic address: Mamatha.Bhat@uhn.ca."
+        },
+        {
+          "lastName": "Rabindranath",
+          "foreName": "Madhumitha",
+          "initials": "M",
+          "affiliation": "Ajmera Transplant Program, University Health Network, Toronto, ON, Canada; Toronto General Hospital Research Institute, University Health Network, Toronto, ON, Canada; Institute of Medical Science, University of Toronto, Toronto, ON, Canada."
+        },
+        {
+          "lastName": "Chara",
+          "foreName": "Beatriz Sordi",
+          "initials": "BS",
+          "affiliation": "Division of Gastroenterology and Hepatology, Mayo Clinic, Rochester, Minnesota, USA."
+        },
+        {
+          "lastName": "Simonetto",
+          "foreName": "Douglas A",
+          "initials": "DA",
+          "affiliation": "Division of Gastroenterology and Hepatology, Mayo Clinic, Rochester, Minnesota, USA."
+        }
+      ],
+      "journal": {
+        "name": "Journal of hepatology",
+        "abbreviation": "J Hepatol",
+        "issn": "1600-0641",
+        "volume": "78",
+        "issue": "6",
+        "pages": "1216-1233"
+      },
+      "publicationDate": "2023-05-22",
+      "doi": "10.1016/j.jhep.2023.01.006",
+      "meshTerms": [
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Liver Transplantation",
+          "qualifierNames": [
+            "methods"
+          ]
+        },
+        {
+          "descriptorName": "Artificial Intelligence",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Deep Learning",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "End Stage Liver Disease",
+          "qualifierNames": [
+            "etiology"
+          ]
+        },
+        {
+          "descriptorName": "Machine Learning",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Review",
+        "Research Support, Non-U.S. Gov't"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    }
+  ],
+  "totalCount": 3148,
+  "retrievedCount": 3,
+  "query": "(\"machine learning\"[Title/Abstract] OR \"healthcare\"[Title/Abstract]) AND (\"Machine Learning\"[MeSH Terms] OR \"Artificial Intelligence\"[MeSH Terms]) AND (\"Review\"[Publication Type]) AND (\"2023/01/01\"[Date - Publication] : \"2024/12/31\"[Date - Publication]) AND (english[Language]) AND humans[MeSH Terms]",
+  "database": "PubMed",
+  "searchDate": "2025-09-01T02:58:01.580Z",
+  "user_id": "0ed49585-4df8-4c16-b9ae-6202b6e3b968",
+  "timestamp": "2025-09-01T02:58:01.580Z"
+}

@@ -1,0 +1,334 @@
+{
+  "success": true,
+  "articles": [
+    {
+      "pmid": "34183469",
+      "title": "Systematic Reviews and Meta-Analysis: A Guide for Beginners.",
+      "abstract": "Systematic reviews involve the application of scientific methods to reduce bias in review of literature. The key components of a systematic review are a well-defined research question, comprehensive literature search to identify all studies that potentially address the question, systematic assembly of the studies that answer the question, critical appraisal of the methodological quality of the included studies, data extraction and analysis (with and without statistics), and considerations towards applicability of the evidence generated in a systematic review. These key features can be remembered as six 'A'; Ask, Access, Assimilate, Appraise, Analyze and Apply. Meta-analysis is a statistical tool that provides pooled estimates of effect from the data extracted from individual studies in the systematic review. The graphical output of meta-analysis is a forest plot which provides information on individual studies and the pooled effect. Systematic reviews of literature can be undertaken for all types of questions, and all types of study designs. This article highlights the key features of systematic reviews, and is designed to help readers understand and interpret them. It can also help to serve as a beginner's guide for both users and producers of systematic reviews and to appreciate some of the methodological issues.",
+      "authors": [
+        {
+          "lastName": "Mathew",
+          "foreName": "Joseph L",
+          "initials": "JL",
+          "affiliation": "Department of Pediatrics, Advanced Pediatrics Centre, PGIMER, Chandigarh. Correspondence to: Prof Joseph L Mathew, Department of Pediatrics, Advanced Pediatrics Centre, PGIMER Chandigarh. joseph.l.mathew@gmail.com."
+        }
+      ],
+      "journal": {
+        "name": "Indian pediatrics",
+        "abbreviation": "Indian Pediatr",
+        "issn": "0974-7559",
+        "volume": "59",
+        "issue": "4",
+        "pages": "320-330"
+      },
+      "publicationDate": "2022-04-13",
+      "doi": "10.1007/s13312-022-2500-y",
+      "meshTerms": [
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Meta-Analysis as Topic",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Research Design",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Systematic Reviews as Topic",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Meta-Analysis"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "29731270",
+      "title": "Methodology of a systematic review.",
+      "abstract": "The objective of evidence-based medicine is to employ the best scientific information available to apply to clinical practice. Understanding and interpreting the scientific evidence involves understanding the available levels of evidence, where systematic reviews and meta-analyses of clinical trials are at the top of the levels-of-evidence pyramid.\n\nThe review process should be well developed and planned to reduce biases and eliminate irrelevant and low-quality studies. The steps for implementing a systematic review include (i) correctly formulating the clinical question to answer (PICO), (ii) developing a protocol (inclusion and exclusion criteria), (iii) performing a detailed and broad literature search and (iv) screening the abstracts of the studies identified in the search and subsequently of the selected complete texts (PRISMA).\n\nOnce the studies have been selected, we need to (v) extract the necessary data into a form designed in the protocol to summarise the included studies, (vi) assess the biases of each study, identifying the quality of the available evidence, and (vii) develop tables and text that synthesise the evidence.\n\nA systematic review involves a critical and reproducible summary of the results of the available publications on a particular topic or clinical question. To improve scientific writing, the methodology is shown in a structured manner to implement a systematic review.",
+      "authors": [
+        {
+          "lastName": "Linares-Espin&#xf3;s",
+          "foreName": "E",
+          "initials": "E",
+          "affiliation": "Hospital Universitario La Paz, Madrid, Espa&#xf1;a. Electronic address: estefania.linares@salud.madrid.org."
+        },
+        {
+          "lastName": "Hern&#xe1;ndez",
+          "foreName": "V",
+          "initials": "V",
+          "affiliation": "Hospital Universitario Fundaci&#xf3;n Alcorc&#xf3;n, Madrid, Espa&#xf1;a."
+        },
+        {
+          "lastName": "Dom&#xed;nguez-Escrig",
+          "foreName": "J L",
+          "initials": "JL",
+          "affiliation": "Instituto Valenciano de Oncolog&#xed;a, Valencia, Espa&#xf1;a."
+        },
+        {
+          "lastName": "Fern&#xe1;ndez-Pello",
+          "foreName": "S",
+          "initials": "S",
+          "affiliation": "Hospital Universitario de Cabue&#xf1;es, Gij&#xf3;n, Asturias, Espa&#xf1;a."
+        },
+        {
+          "lastName": "Hevia",
+          "foreName": "V",
+          "initials": "V",
+          "affiliation": "Hospital Universitario Ram&#xf3;n y Cajal, Madrid, Espa&#xf1;a."
+        },
+        {
+          "lastName": "Mayor",
+          "foreName": "J",
+          "initials": "J",
+          "affiliation": "Hospital Universitario Gregorio Mara&#xf1;&#xf3;n, Madrid, Espa&#xf1;a."
+        },
+        {
+          "lastName": "Padilla-Fern&#xe1;ndez",
+          "foreName": "B",
+          "initials": "B",
+          "affiliation": "Hospital Universitario de Canarias, Tenerife, Espa&#xf1;a."
+        },
+        {
+          "lastName": "Ribal",
+          "foreName": "M J",
+          "initials": "MJ",
+          "affiliation": "Hospital Cl&#xed;nic, Barcelona, Espa&#xf1;a; EAU Guidelines Office Board Member."
+        }
+      ],
+      "journal": {
+        "name": "Actas urologicas espanolas",
+        "abbreviation": "Actas Urol Esp (Engl Ed)",
+        "issn": "2173-5786",
+        "volume": "42",
+        "issue": "8",
+        "pages": "499-506"
+      },
+      "publicationDate": "2019-09-19",
+      "doi": "10.1016/j.acuro.2018.01.010",
+      "meshTerms": [
+        {
+          "descriptorName": "Methods",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Systematic Reviews as Topic",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article"
+      ],
+      "language": [
+        "eng",
+        "spa"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "30946795",
+      "title": "[Stages for Undertaking a Systematic Review].",
+      "abstract": "There has been an increase in the use of systematic review as a research methodology to compile and analyze large datasets of existing studies. With this increase, the recommendations to conduct this type of research also increased. The aim of this article is to provide a guide for understanding and/or undertaking a systematic review for publication across all stages of the review process. When doing a systematic review of the literature the authors become knowledgeable of the subject and, although time-consuming, they can develop a set of skills including literature research and scientific writing. A systematic review, compared to primary research, requires relatively few resources, allowing clinicians not normally involved in research to produce clinically relevant, high-quality articles.",
+      "authors": [
+        {
+          "lastName": "Donato",
+          "foreName": "Helena",
+          "initials": "H",
+          "affiliation": "Servi&#xe7;o de Documenta&#xe7;&#xe3;o. Centro Hospitalar e Universit&#xe1;rio de Coimbra. Coimbra. Portugal."
+        },
+        {
+          "lastName": "Donato",
+          "foreName": "Mariana",
+          "initials": "M",
+          "affiliation": "Servi&#xe7;o de Otorrinolaringologia. Hospital de Egas Moniz. Centro Hospitalar de Lisboa Ocidental. Lisboa. Portugal."
+        }
+      ],
+      "journal": {
+        "name": "Acta medica portuguesa",
+        "abbreviation": "Acta Med Port",
+        "issn": "1646-0758",
+        "volume": "32",
+        "issue": "3",
+        "pages": "227-235"
+      },
+      "publicationDate": "2019-12-06",
+      "doi": "10.20344/amp.11923",
+      "meshTerms": [
+        {
+          "descriptorName": "Research Design",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Systematic Reviews as Topic",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Review"
+      ],
+      "language": [
+        "por"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "32364273",
+      "title": "Easy guide to conducting a systematic review.",
+      "abstract": "A systematic review is a type of study that synthesises research that has been conducted on a particular topic. Systematic reviews are considered to provide the highest level of evidence on the hierarchy of evidence pyramid. Systematic reviews are conducted following rigorous research methodology. To minimise bias, systematic reviews utilise a predefined search strategy to identify and appraise all available published literature on a specific topic. The meticulous nature of the systematic review research methodology differentiates a systematic review from a narrative review (literature review or authoritative review). This paper provides a brief step by step summary of how to conduct a systematic review, which may be of interest for clinicians and researchers.",
+      "authors": [
+        {
+          "lastName": "Caldwell",
+          "foreName": "Patrina Hy",
+          "initials": "PH",
+          "affiliation": "Discipline of Child and Adolescent Health, University of Sydney, Sydney, New South Wales, Australia."
+        },
+        {
+          "lastName": "Bennett",
+          "foreName": "Trish",
+          "initials": "T",
+          "affiliation": "Education Department, The Children's Hospital at Westmead, Sydney, New South Wales, Australia."
+        }
+      ],
+      "journal": {
+        "name": "Journal of paediatrics and child health",
+        "abbreviation": "J Paediatr Child Health",
+        "issn": "1440-1754",
+        "volume": "56",
+        "issue": "6",
+        "pages": "853-856"
+      },
+      "publicationDate": "2021-05-14",
+      "doi": "10.1111/jpc.14853",
+      "meshTerms": [
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Research Design",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Journal Article",
+        "Systematic Review"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    },
+    {
+      "pmid": "36879398",
+      "title": "A systematic review and meta-analysis of sample size methodology for traumatic hemorrhage trials.",
+      "abstract": "Trauma hemorrhage remains the most common cause of preventable mortality in trauma. To guide clinical practice, RCTs provide high-quality evidence to inform clinical decision making. The clinical relevance and inferences made by RCTs are dependent on assumptions made during sample size calculation.\n\nTo describe the quality of methodology for sample size determination, we conducted a systemic review RCTs evaluating interventions that aim to improve survival in adults with trauma-related hemorrhage. Estimated and actual outcome data are compared, including components of sample size determination.\n\nA total of 13 RCTs were included. We noted a high rate of negative trial results (11 of 13 studies). Most studies were multi-center and conducted in North America, evaluating patients with blunt and penetrating injuries. The criteria for hemorrhagic shock varied across studies. All studies did not accurately estimate the mortality rate during sample size calculation. All but one study overestimated the mortality reduction during sample size calculation; the median absolute mortality reduction was 3%, compared with a target of 10%. Only the CRASH-2 study used a minimal clinically important different for treatment effect target. No RCTs employed prognostic enrichment. Most studies were terminated (8 of 13), mainly for futility.\n\nTaken together, this review highlights that current clinical trial methodology is limited by imprecise control group risk estimates, overly optimistic treatment effect estimates, and lack of transparent justification for such targets. These limitations result in studies at high risk for futility and potentially premature abandonment of promising therapies. Given the high morbidity and mortality of trauma-related hemorrhage, we recommend that future conduct of trauma RCTs incorporate (1) prognostic enrichment to inform baseline risk, (2) justify target treatment differences based on clinical importance and realistic estimates of feasibility, and (3) be transparent and provide justification for the assumptions made.\n\nSystematic Review/Meta-Analysis; Level III.",
+      "authors": [
+        {
+          "lastName": "Ghossein",
+          "foreName": "Jamie",
+          "initials": "J",
+          "affiliation": "From the Faculty of Medicine (J.G.), University of Ottawa, Ottawa, Ontario, Canada; Department of Medicine (J.G.), The Ottawa Hospital, Ottawa, Ontario, Canada; Department of Critical Care (S.M.F.), Lakeridge Health Corporation, Oshawa, Canada; Division of Critical Care, Department of Medicine (B.R.), McMaster University, Hamilton, Canada; Department of Health Research Methods (B.R.), Evidence, and Impact, McMaster University, Hamilton, Canada; Division of Acute Care Surgery, Department of Surgery (K.I.), University of Southern California, Los Angeles, California; Division of General Surgery, Department of Surgery (J.L., A.T.), University of Ottawa, Ontario, Canada; and Division of Critical Care, Department of Medicine (A.T.), University of Ottawa, Ontario, Canada."
+        },
+        {
+          "lastName": "Fernando",
+          "foreName": "Shannon M",
+          "initials": "SM",
+          "affiliation": ""
+        },
+        {
+          "lastName": "Rochwerg",
+          "foreName": "Bram",
+          "initials": "B",
+          "affiliation": ""
+        },
+        {
+          "lastName": "Inaba",
+          "foreName": "Kenji",
+          "initials": "K",
+          "affiliation": ""
+        },
+        {
+          "lastName": "Lampron",
+          "foreName": "Jacinthe",
+          "initials": "J",
+          "affiliation": ""
+        },
+        {
+          "lastName": "Tran",
+          "foreName": "Alexandre",
+          "initials": "A",
+          "affiliation": ""
+        }
+      ],
+      "journal": {
+        "name": "The journal of trauma and acute care surgery",
+        "abbreviation": "J Trauma Acute Care Surg",
+        "issn": "2163-0763",
+        "volume": "94",
+        "issue": "6",
+        "pages": "870-876"
+      },
+      "publicationDate": "2023-05-24",
+      "doi": "10.1097/TA.0000000000003944",
+      "meshTerms": [
+        {
+          "descriptorName": "Adult",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Humans",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Sample Size",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "Hemorrhage",
+          "qualifierNames": [
+            "etiology",
+            "therapy"
+          ]
+        },
+        {
+          "descriptorName": "Prognosis",
+          "qualifierNames": []
+        },
+        {
+          "descriptorName": "North America",
+          "qualifierNames": []
+        }
+      ],
+      "publicationType": [
+        "Meta-Analysis",
+        "Systematic Review",
+        "Journal Article"
+      ],
+      "language": [
+        "eng"
+      ],
+      "keywords": [],
+      "source": "pubmed"
+    }
+  ],
+  "totalCount": 282077,
+  "retrievedCount": 5,
+  "query": "\"systematic review\" AND methodology",
+  "database": "PubMed",
+  "searchDate": "2025-09-01T02:58:06.522Z",
+  "user_id": "0ed49585-4df8-4c16-b9ae-6202b6e3b968",
+  "timestamp": "2025-09-01T02:58:06.522Z"
+}
