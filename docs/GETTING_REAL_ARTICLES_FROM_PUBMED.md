@@ -249,7 +249,7 @@ Each article includes:
 - Duplicate detection via PMID
 
 ### Rate Limiting
-- Respects NCBI's 3 requests/second limit (with API key)
+- Respects NCBI's rate limits: 10 requests/second with API key, 3 requests/second without
 - Automatic delays between requests
 - Batch processing for efficiency
 
@@ -301,7 +301,7 @@ From our real tests:
 
 - PubMed API has usage limits (handled automatically)
 - Some full-text articles require journal subscriptions
-- Rate limits: 3/sec with API key, 1/sec without
+- Rate limits (NCBI E-utilities): 10 requests/sec with API key, 3 requests/sec without
 
 ---
 

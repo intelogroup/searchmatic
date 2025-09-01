@@ -439,8 +439,8 @@ class PubMedAPI {
 
   constructor(apiKey?: string) {
     this.apiKey = apiKey || null
-    // Respect rate limits: 3/sec with key, 1/sec without
-    this.requestDelay = apiKey ? 334 : 1000
+    // Respect NCBI E-utilities rate limits: 10/sec with API key, 3/sec without
+    this.requestDelay = apiKey ? 100 : 334
   }
 
   async search(query: string): Promise<SearchResult> {
@@ -513,9 +513,9 @@ curl -X POST https://your-project.supabase.co/functions/v1/function-name \
   -H "Content-Type: application/json" \
   -d '{"message": "test"}'
 
-# Authenticated function
+# Authenticated function (set JWT_TOKEN environment variable first)
 curl -X POST https://your-project.supabase.co/functions/v1/function-name \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: Bearer $JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"projectId": "uuid"}'
 ```
@@ -547,9 +547,9 @@ const { data, error } = await supabase.functions.invoke('function-name', {
 # Run function locally
 supabase functions serve function-name --env-file .env.local
 
-# Test locally
+# Test locally  
 curl -X POST http://localhost:54321/functions/v1/function-name \
-  -H "Authorization: Bearer YOUR_JWT" \
+  -H "Authorization: Bearer $JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"test": true}'
 ```
@@ -896,7 +896,7 @@ import { createClient } from '@supabase/supabase-js'
 Deno.serve(async (req) => {
   const supabaseClient = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '' // ⚠️ WARNING: Service role key grants full DB access!
   )
   
   // Manual CORS handling
@@ -917,6 +917,8 @@ Deno.serve(async (req) => {
   // ... rest of function
 })
 ```
+
+> **⚠️ WARNING**: Avoid embedding SERVICE_ROLE keys in Edge Functions. The service role key grants full database access and bypasses Row Level Security. If absolutely necessary, constrain scope, perform strict authorization/ownership checks, and never expose privileged actions to untrusted inputs. Consider using the authenticated user's context instead.
 
 **New Pattern:**
 ```typescript

@@ -1,14 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 
-// Supabase configuration
-const SUPABASE_URL = 'https://qzvfufadiqmizrozejci.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_mzJORjzXGOboCWSdwDJPkw__LX9UgLS';
+// Supabase configuration from environment variables
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://qzvfufadiqmizrozejci.supabase.co';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_mzJORjzXGOboCWSdwDJPkw__LX9UgLS';
 
-// Test user credentials
+// Validate required environment variables
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error('❌ Missing required environment variables: SUPABASE_URL and SUPABASE_ANON_KEY');
+  console.error('   Please set them in your environment or .env file');
+  process.exit(1);
+}
+
+// Test user credentials from environment or defaults
 const TEST_USER = {
-  email: 'test.user@example.com',
-  password: 'TestPassword123!'
+  email: process.env.TEST_USER_EMAIL || 'test.user@example.com',
+  password: process.env.TEST_USER_PASSWORD || 'TestPassword123!'
 };
 
 // JWT Key Information for reference
@@ -84,7 +91,9 @@ async function authenticateAndTest() {
     console.log(`   Email: ${session.user.email}`);
     console.log(`   Token Type: ${session.token_type}`);
     console.log(`   Expires In: ${session.expires_in} seconds`);
-    console.log(`   Access Token (first 50 chars): ${session.access_token.substring(0, 50)}...`);
+    // Mask the token for security
+    const maskedToken = `${session.access_token.slice(0, 6)}...${session.access_token.slice(-6)}`;
+    console.log(`   Access Token: ${maskedToken}`);
 
     // Decode and display JWT claims
     const tokenParts = session.access_token.split('.');
@@ -106,7 +115,7 @@ async function authenticateAndTest() {
     // Save token for later use
     const tokenData = {
       access_token: session.access_token,
-      refresh_token: session.refresh_token,
+      // Don't persist refresh token for security
       user_id: session.user.id,
       email: session.user.email,
       expires_at: new Date(payload.exp * 1000).toISOString(),
@@ -114,7 +123,8 @@ async function authenticateAndTest() {
       jwt_claims: payload
     };
 
-    fs.writeFileSync('jwt-token.json', JSON.stringify(tokenData, null, 2));
+    // Write with secure permissions
+    fs.writeFileSync('jwt-token.json', JSON.stringify(tokenData, null, 2), { mode: 0o600 });
     console.log('\n💾 Token saved to jwt-token.json');
 
     // Step 3: Test edge functions

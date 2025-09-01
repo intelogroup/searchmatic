@@ -40,8 +40,9 @@ supabase functions deploy your-function-name --no-verify-jwt
 node generate-jwt-token.mjs
 
 # Test the function
+# Set JWT token environment variable first: export JWT_TOKEN='your-token-here'
 curl -X POST https://your-project.supabase.co/functions/v1/your-function-name \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: Bearer $JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"projectId": "test-uuid"}'
 ```
@@ -191,7 +192,7 @@ supabase functions serve your-function-name --env-file .env.local
 
 # Test locally
 curl -X POST http://localhost:54321/functions/v1/your-function-name \
-  -H "Authorization: Bearer LOCAL_JWT_TOKEN" \
+  -H "Authorization: Bearer $JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"test": true}'
 ```
