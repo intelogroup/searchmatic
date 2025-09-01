@@ -3,7 +3,7 @@ import fs from 'fs';
 
 // Supabase configuration
 const SUPABASE_URL = 'https://qzvfufadiqmizrozejci.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6dmZ1ZmFkaXFtaXpyb3plamNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUwMTMyMzUsImV4cCI6MjA0MDU4OTIzNX0.3U1tQxvcoKLOgu03I0df-_SAGcVYIROe6O_DFPQgQn8';
+const SUPABASE_ANON_KEY = 'sb_publishable_mzJORjzXGOboCWSdwDJPkw__LX9UgLS';
 
 // Test user credentials
 const TEST_USER = {
