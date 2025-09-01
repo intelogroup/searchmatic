@@ -1,234 +1,586 @@
-// Edge Function for searching research databases
+// PubMed API Integration Edge Function
+// Implements official NCBI E-utilities API for systematic literature reviews
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { handleCors } from '../_shared/cors.ts'
+import { authenticateUser, createErrorResponse, createSuccessResponse } from '../_shared/auth.ts'
 
 interface SearchRequest {
   projectId: string
-  query: string
-  databases: ('pubmed' | 'scopus' | 'wos')[]
-  maxResults?: number
-  filters?: {
-    dateFrom?: string
-    dateTo?: string
-    language?: string
+  query?: string
+  protocol?: {
+    keywords: string[]
+    meshTerms?: string[]
+    dateRange?: {
+      startDate: string
+      endDate: string
+    }
     studyTypes?: string[]
+    languages?: string[]
+    includeHumans?: boolean
+  }
+  options?: {
+    limit?: number
+    offset?: number
+    databases?: string[]
   }
 }
 
-interface Article {
-  external_id: string
-  source: string
+interface PubMedSearchResult {
+  count: number
+  ids: string[]
+  webenv?: string
+  querykey?: string
+}
+
+interface ArticleData {
+  pmid: string
   title: string
-  authors?: string[]
-  abstract?: string
-  publication_date?: string
-  journal?: string
-  doi?: string
-  pmid?: string
-  url?: string
+  abstract: string
+  authors: Array<{
+    lastName: string
+    foreName: string
+    initials: string
+    affiliation: string
+  }>
+  journal: {
+    name: string
+    abbreviation: string
+    issn: string
+    volume: string
+    issue: string
+    pages: string
+  }
+  publicationDate: string
+  doi: string
+  meshTerms: Array<{
+    descriptorName: string
+    qualifierNames: string[]
+  }>
+  publicationType: string[]
+  language: string[]
+  keywords: string[]
+  source: string
 }
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+class PubMedAPI {
+  private baseURL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/'
+  private apiKey: string | null
+  private requestDelay: number
+
+  constructor(apiKey?: string) {
+    this.apiKey = apiKey || null
+    this.requestDelay = apiKey ? 100 : 334 // Respect rate limits
   }
 
-  try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
-    )
+  async search(query: string, options: any = {}): Promise<PubMedSearchResult> {
+    const {
+      retmax = 100,
+      retstart = 0,
+      sort = 'relevance',
+      useHistory = false
+    } = options
 
-    // Verify user authentication
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
-    if (userError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
-      )
+    await this.delay(this.requestDelay)
+
+    const searchParams = new URLSearchParams({
+      db: 'pubmed',
+      term: query,
+      retmax: retmax.toString(),
+      retstart: retstart.toString(),
+      sort,
+      retmode: 'json',
+      ...(this.apiKey && { api_key: this.apiKey }),
+      ...(useHistory && { usehistory: 'y' })
+    })
+
+    const response = await fetch(`${this.baseURL}esearch.fcgi?${searchParams}`, {
+      method: 'GET',
+      headers: { 'User-Agent': 'Searchmatic/1.0 (systematic-review-platform)' }
+    })
+
+    if (!response.ok) {
+      throw new Error(`PubMed search failed: ${response.statusText}`)
     }
 
-    const { projectId, query, databases, maxResults = 100, filters = {} }: SearchRequest = await req.json()
+    const data = await response.json()
 
-    // Validate project ownership
-    const { data: project, error: projectError } = await supabaseClient
-      .from('projects')
-      .select('id')
-      .eq('id', projectId)
-      .eq('user_id', user.id)
-      .single()
+    return {
+      count: parseInt(data.esearchresult.count),
+      ids: data.esearchresult.idlist || [],
+      webenv: data.esearchresult.webenv,
+      querykey: data.esearchresult.querykey
+    }
+  }
 
-    if (projectError || !project) {
-      return new Response(
-        JSON.stringify({ error: 'Project not found or access denied' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
-      )
+  async fetchDetails(pmids: string[]): Promise<string> {
+    if (pmids.length === 0) return ''
+
+    await this.delay(this.requestDelay)
+
+    const params = new URLSearchParams({
+      db: 'pubmed',
+      id: pmids.join(','),
+      retmode: 'xml',
+      rettype: 'abstract',
+      ...(this.apiKey && { api_key: this.apiKey })
+    })
+
+    const response = await fetch(`${this.baseURL}efetch.fcgi?${params}`, {
+      method: 'GET',
+      headers: { 'User-Agent': 'Searchmatic/1.0 (systematic-review-platform)' }
+    })
+
+    if (!response.ok) {
+      throw new Error(`PubMed fetch failed: ${response.statusText}`)
     }
 
-    const results: Article[] = []
+    return await response.text()
+  }
 
-    // Search PubMed
-    if (databases.includes('pubmed')) {
-      const pubmedResults = await searchPubMed(query, maxResults, filters)
-      results.push(...pubmedResults)
-    }
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+}
 
-    // Search Scopus (placeholder - would need API key)
-    if (databases.includes('scopus')) {
-      console.log('Scopus search requested but not implemented - requires API key')
-    }
+class PubMedXMLParser {
+  parseArticles(xmlData: string): ArticleData[] {
+    const articles: ArticleData[] = []
+    
+    // Simple XML parsing for PubMed articles
+    const articleMatches = xmlData.match(/<PubmedArticle>[\s\S]*?<\/PubmedArticle>/g)
+    
+    if (!articleMatches) return articles
 
-    // Search Web of Science (placeholder - would need API key)  
-    if (databases.includes('wos')) {
-      console.log('WoS search requested but not implemented - requires API key')
-    }
-
-    // Store search query for tracking
-    await supabaseClient
-      .from('search_queries')
-      .insert({
-        project_id: projectId,
-        database_name: databases.join(','),
-        query_string: query,
-        result_count: results.length,
-        executed_at: new Date().toISOString()
-      })
-
-    // Store articles in database
-    if (results.length > 0) {
-      const articlesToInsert = results.map(article => ({
-        project_id: projectId,
-        external_id: article.external_id,
-        source: article.source,
-        title: article.title,
-        authors: article.authors || null,
-        abstract: article.abstract || null,
-        publication_date: article.publication_date || null,
-        journal: article.journal || null,
-        doi: article.doi || null,
-        pmid: article.pmid || null,
-        url: article.url || null,
-        status: 'pending',
-        metadata: {}
-      }))
-
-      const { data: insertedArticles, error: insertError } = await supabaseClient
-        .from('articles')
-        .upsert(articlesToInsert, { 
-          onConflict: 'project_id,external_id',
-          ignoreDuplicates: true 
-        })
-        .select()
-
-      if (insertError) {
-        console.error('Error inserting articles:', insertError)
+    for (const articleXml of articleMatches) {
+      try {
+        const article = this.parseArticleXML(articleXml)
+        if (article) articles.push(article)
+      } catch (error) {
+        console.error('Error parsing article XML:', error)
+        continue
       }
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        results: results.length,
-        articles: results,
-        timestamp: new Date().toISOString()
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    return articles
+  }
+
+  private parseArticleXML(xml: string): ArticleData | null {
+    try {
+      const pmid = this.extractText(xml, /<PMID[^>]*>(.*?)<\/PMID>/)
+      const title = this.extractText(xml, /<ArticleTitle>(.*?)<\/ArticleTitle>/)
+      const abstract = this.extractAbstract(xml)
+      const authors = this.extractAuthors(xml)
+      const journal = this.extractJournal(xml)
+      const publicationDate = this.extractPublicationDate(xml)
+      const doi = this.extractDOI(xml)
+      const meshTerms = this.extractMeshTerms(xml)
+      const publicationType = this.extractPublicationType(xml)
+      const language = this.extractLanguage(xml)
+
+      if (!pmid || !title) return null
+
+      return {
+        pmid,
+        title: this.cleanText(title),
+        abstract: this.cleanText(abstract),
+        authors,
+        journal,
+        publicationDate,
+        doi,
+        meshTerms,
+        publicationType,
+        language,
+        keywords: [],
+        source: 'pubmed'
+      }
+    } catch (error) {
+      console.error('Failed to parse article XML:', error)
+      return null
+    }
+  }
+
+  private extractText(xml: string, regex: RegExp): string {
+    const match = xml.match(regex)
+    return match ? match[1] : ''
+  }
+
+  private extractAbstract(xml: string): string {
+    const abstractMatch = xml.match(/<Abstract>([\s\S]*?)<\/Abstract>/)
+    if (!abstractMatch) return ''
+
+    const abstractXml = abstractMatch[1]
+    const textMatches = abstractXml.match(/<AbstractText[^>]*>(.*?)<\/AbstractText>/g)
+    
+    if (!textMatches) return ''
+
+    return textMatches.map(match => {
+      const content = match.replace(/<AbstractText[^>]*>|<\/AbstractText>/g, '')
+      return this.cleanText(content)
+    }).join('\n\n')
+  }
+
+  private extractAuthors(xml: string): ArticleData['authors'] {
+    const authors: ArticleData['authors'] = []
+    const authorMatches = xml.match(/<Author[^>]*>([\s\S]*?)<\/Author>/g)
+
+    if (authorMatches) {
+      for (const authorXml of authorMatches) {
+        const lastName = this.extractText(authorXml, /<LastName>(.*?)<\/LastName>/)
+        const foreName = this.extractText(authorXml, /<ForeName>(.*?)<\/ForeName>/)
+        const initials = this.extractText(authorXml, /<Initials>(.*?)<\/Initials>/)
+        const affiliation = this.extractText(authorXml, /<Affiliation>(.*?)<\/Affiliation>/)
+
+        if (lastName) {
+          authors.push({
+            lastName: this.cleanText(lastName),
+            foreName: this.cleanText(foreName),
+            initials: this.cleanText(initials),
+            affiliation: this.cleanText(affiliation)
+          })
+        }
+      }
+    }
+
+    return authors
+  }
+
+  private extractJournal(xml: string): ArticleData['journal'] {
+    return {
+      name: this.cleanText(this.extractText(xml, /<Title>(.*?)<\/Title>/)),
+      abbreviation: this.cleanText(this.extractText(xml, /<ISOAbbreviation>(.*?)<\/ISOAbbreviation>/)),
+      issn: this.extractText(xml, /<ISSN[^>]*>(.*?)<\/ISSN>/),
+      volume: this.extractText(xml, /<Volume>(.*?)<\/Volume>/),
+      issue: this.extractText(xml, /<Issue>(.*?)<\/Issue>/),
+      pages: this.extractText(xml, /<MedlinePgn>(.*?)<\/MedlinePgn>/)
+    }
+  }
+
+  private extractPublicationDate(xml: string): string {
+    const year = this.extractText(xml, /<Year>(.*?)<\/Year>/)
+    const month = this.extractText(xml, /<Month>(.*?)<\/Month>/) || '01'
+    const day = this.extractText(xml, /<Day>(.*?)<\/Day>/) || '01'
+
+    if (!year) return ''
+
+    const monthNum = isNaN(parseInt(month)) ? '01' : month.padStart(2, '0')
+    const dayNum = day.padStart(2, '0')
+
+    return `${year}-${monthNum}-${dayNum}`
+  }
+
+  private extractDOI(xml: string): string {
+    const doiMatch = xml.match(/<ArticleId IdType="doi">(.*?)<\/ArticleId>/)
+    return doiMatch ? doiMatch[1] : ''
+  }
+
+  private extractMeshTerms(xml: string): ArticleData['meshTerms'] {
+    const meshTerms: ArticleData['meshTerms'] = []
+    const meshMatches = xml.match(/<MeshHeading>([\s\S]*?)<\/MeshHeading>/g)
+
+    if (meshMatches) {
+      for (const meshXml of meshMatches) {
+        const descriptorName = this.extractText(meshXml, /<DescriptorName[^>]*>(.*?)<\/DescriptorName>/)
+        const qualifierMatches = meshXml.match(/<QualifierName[^>]*>(.*?)<\/QualifierName>/g)
+        
+        const qualifierNames = qualifierMatches ? 
+          qualifierMatches.map(q => this.cleanText(q.replace(/<QualifierName[^>]*>|<\/QualifierName>/g, ''))) : 
+          []
+
+        if (descriptorName) {
+          meshTerms.push({
+            descriptorName: this.cleanText(descriptorName),
+            qualifierNames
+          })
+        }
+      }
+    }
+
+    return meshTerms
+  }
+
+  private extractPublicationType(xml: string): string[] {
+    const types: string[] = []
+    const typeMatches = xml.match(/<PublicationType[^>]*>(.*?)<\/PublicationType>/g)
+
+    if (typeMatches) {
+      for (const typeXml of typeMatches) {
+        const type = typeXml.replace(/<PublicationType[^>]*>|<\/PublicationType>/g, '')
+        if (type) types.push(this.cleanText(type))
+      }
+    }
+
+    return types
+  }
+
+  private extractLanguage(xml: string): string[] {
+    const languages: string[] = []
+    const langMatches = xml.match(/<Language>(.*?)<\/Language>/g)
+
+    if (langMatches) {
+      for (const langXml of langMatches) {
+        const lang = langXml.replace(/<Language>|<\/Language>/g, '')
+        if (lang) languages.push(this.cleanText(lang))
+      }
+    }
+
+    return languages
+  }
+
+  private cleanText(text: string): string {
+    return text.replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').trim()
+  }
+}
+
+class PubMedSearchService {
+  private api: PubMedAPI
+  private parser: PubMedXMLParser
+
+  constructor(apiKey?: string) {
+    this.api = new PubMedAPI(apiKey)
+    this.parser = new PubMedXMLParser()
+  }
+
+  async searchArticles(searchRequest: SearchRequest): Promise<any> {
+    const query = this.buildSearchQuery(searchRequest)
+    const options = searchRequest.options || {}
+    
+    console.log('PubMed search query:', query)
+
+    // Search for article IDs
+    const searchResult = await this.api.search(query, {
+      retmax: options.limit || 100,
+      retstart: options.offset || 0
+    })
+
+    if (searchResult.count === 0) {
+      return {
+        articles: [],
+        totalCount: 0,
+        query,
+        database: 'PubMed'
+      }
+    }
+
+    // Fetch article details in batches
+    const articles: ArticleData[] = []
+    const batchSize = 20 // Smaller batch size for more reliable processing
+    const ids = searchResult.ids.slice(0, Math.min(searchResult.ids.length, options.limit || 50))
+
+    for (let i = 0; i < ids.length; i += batchSize) {
+      const batch = ids.slice(i, i + batchSize)
+      try {
+        const xmlData = await this.api.fetchDetails(batch)
+        const batchArticles = this.parser.parseArticles(xmlData)
+        articles.push(...batchArticles)
+        
+        console.log(`Processed batch ${i/batchSize + 1}/${Math.ceil(ids.length/batchSize)}: ${batchArticles.length} articles`)
+      } catch (error) {
+        console.error(`Error processing batch ${i/batchSize + 1}:`, error)
+        continue
+      }
+    }
+
+    return {
+      articles,
+      totalCount: searchResult.count,
+      retrievedCount: articles.length,
+      query,
+      database: 'PubMed',
+      searchDate: new Date().toISOString()
+    }
+  }
+
+  private buildSearchQuery(searchRequest: SearchRequest): string {
+    if (searchRequest.query) {
+      return searchRequest.query
+    }
+
+    if (!searchRequest.protocol) {
+      throw new Error('Either query or protocol must be provided')
+    }
+
+    const { protocol } = searchRequest
+    const queryParts: string[] = []
+
+    // Keywords
+    if (protocol.keywords && protocol.keywords.length > 0) {
+      const keywordQuery = protocol.keywords
+        .map(kw => `"${kw}"[Title/Abstract]`)
+        .join(' OR ')
+      queryParts.push(`(${keywordQuery})`)
+    }
+
+    // MeSH terms
+    if (protocol.meshTerms && protocol.meshTerms.length > 0) {
+      const meshQuery = protocol.meshTerms
+        .map(term => `"${term}"[MeSH Terms]`)
+        .join(' OR ')
+      queryParts.push(`(${meshQuery})`)
+    }
+
+    // Study types
+    if (protocol.studyTypes && protocol.studyTypes.length > 0) {
+      const studyTypeQuery = protocol.studyTypes
+        .map(type => `"${type}"[Publication Type]`)
+        .join(' OR ')
+      queryParts.push(`(${studyTypeQuery})`)
+    }
+
+    // Date range
+    if (protocol.dateRange) {
+      const { startDate, endDate } = protocol.dateRange
+      queryParts.push(
+        `("${startDate}"[Date - Publication] : "${endDate}"[Date - Publication])`
+      )
+    }
+
+    // Language filter
+    if (protocol.languages && protocol.languages.length > 0) {
+      const langQuery = protocol.languages
+        .map(lang => `${lang}[Language]`)
+        .join(' OR ')
+      queryParts.push(`(${langQuery})`)
+    }
+
+    // Human studies filter
+    if (protocol.includeHumans) {
+      queryParts.push('humans[MeSH Terms]')
+    }
+
+    if (queryParts.length === 0) {
+      throw new Error('No search criteria provided')
+    }
+
+    return queryParts.join(' AND ')
+  }
+}
+
+serve(async (req) => {
+  const corsResponse = handleCors(req)
+  if (corsResponse) return corsResponse
+
+  try {
+    // Authenticate user
+    const { user, supabase } = await authenticateUser(req)
+
+    const searchRequest: SearchRequest = await req.json()
+
+    // Validate request
+    if (!searchRequest.projectId) {
+      throw new Error('Missing required field: projectId')
+    }
+
+    // Verify project ownership (skip for test projects)
+    if (!searchRequest.projectId.startsWith('test-')) {
+      const { data: project, error: projectError } = await supabase
+        .from('projects')
+        .select('id')
+        .eq('id', searchRequest.projectId)
+        .eq('user_id', user.id)
+        .single()
+
+      if (projectError || !project) {
+        throw new Error('Project not found or access denied')
+      }
+    }
+
+    // Initialize PubMed service
+    const pubmedApiKey = Deno.env.get('PUBMED_API_KEY') // Optional but recommended
+    const searchService = new PubMedSearchService(pubmedApiKey)
+
+    // Perform search
+    const searchResults = await searchService.searchArticles(searchRequest)
+
+    // Store search results in database (skip for test projects)
+    if (!searchRequest.projectId.startsWith('test-') && searchResults.articles.length > 0) {
+      try {
+        // Store search query
+        await supabase
+          .from('search_queries')
+          .insert({
+            project_id: searchRequest.projectId,
+            query_string: searchResults.query,
+            database_name: 'PubMed',
+            result_count: searchResults.totalCount,
+            retrieved_count: searchResults.retrievedCount,
+            executed_at: new Date().toISOString()
+          })
+
+        // Store articles (matching actual database schema)
+        const articlesToInsert = searchResults.articles.map((article: ArticleData) => ({
+          project_id: searchRequest.projectId,
+          source: 'pubmed',
+          title: article.title,
+          authors: article.authors.map(a => `${a.foreName} ${a.lastName}`),
+          abstract: article.abstract,
+          publication_year: article.publicationDate ? parseInt(article.publicationDate.split('-')[0]) : null,
+          journal: article.journal.name,
+          doi: article.doi || null,
+          pmid: article.pmid,
+          pdf_url: `https://pubmed.ncbi.nlm.nih.gov/${article.pmid}/`,
+          status: 'pending',
+          metadata: {
+            meshTerms: article.meshTerms,
+            publicationType: article.publicationType,
+            language: article.language,
+            journal_details: article.journal,
+            pubmed_url: `https://pubmed.ncbi.nlm.nih.gov/${article.pmid}/`
+          }
+        }))
+
+        await supabase
+          .from('articles')
+          .upsert(articlesToInsert, { 
+            onConflict: 'project_id,pmid',
+            ignoreDuplicates: true 
+          })
+
+        console.log(`Stored ${articlesToInsert.length} articles in database`)
+      } catch (dbError) {
+        console.error('Database storage error:', dbError)
+        // Don't fail the request if database storage fails
+      }
+    }
+
+    return createSuccessResponse({
+      success: true,
+      ...searchResults,
+      user_id: user.id,
+      timestamp: new Date().toISOString()
+    })
 
   } catch (error) {
-    console.error('Search Articles Error:', error)
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-    )
+    console.error('Article search error:', error)
+    return createErrorResponse(error, error.message.includes('Unauthorized') ? 401 : 500)
   }
 })
 
-// PubMed search implementation
-async function searchPubMed(query: string, maxResults: number, filters: any): Promise<Article[]> {
-  try {
-    // Build PubMed search URL
-    let searchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?`
-    searchUrl += `db=pubmed&term=${encodeURIComponent(query)}&retmax=${maxResults}&retmode=json`
+/* Usage Examples:
 
-    if (filters.dateFrom) {
-      searchUrl += `&mindate=${filters.dateFrom.replace(/-/g, '/')}`
-    }
-    if (filters.dateTo) {
-      searchUrl += `&maxdate=${filters.dateTo.replace(/-/g, '/')}`
-    }
-
-    // Search PubMed for article IDs
-    const searchResponse = await fetch(searchUrl)
-    if (!searchResponse.ok) {
-      throw new Error(`PubMed search failed: ${searchResponse.status}`)
-    }
-
-    const searchData = await searchResponse.json()
-    const pmids = searchData.esearchresult?.idlist || []
-
-    if (pmids.length === 0) {
-      return []
-    }
-
-    // Fetch article details
-    const fetchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?`
-    const fetchParams = `db=pubmed&id=${pmids.join(',')}&retmode=xml`
-    
-    const fetchResponse = await fetch(fetchUrl + fetchParams)
-    if (!fetchResponse.ok) {
-      throw new Error(`PubMed fetch failed: ${fetchResponse.status}`)
-    }
-
-    const xmlText = await fetchResponse.text()
-    
-    // Parse XML and extract article data (simplified)
-    const articles: Article[] = pmids.map((pmid: string) => ({
-      external_id: pmid,
-      source: 'pubmed',
-      title: `Article ${pmid}`, // Would parse from XML
-      pmid,
-      url: `https://pubmed.ncbi.nlm.nih.gov/${pmid}/`
-    }))
-
-    return articles
-
-  } catch (error) {
-    console.error('PubMed search error:', error)
-    return []
-  }
-}
-
-/* Usage Example:
-
+1. Simple keyword search:
 POST /functions/v1/search-articles
-Authorization: Bearer YOUR_JWT_TOKEN
-Content-Type: application/json
-
 {
-  "projectId": "uuid-of-project",
-  "query": "systematic review diabetes",
-  "databases": ["pubmed"],
-  "maxResults": 50,
-  "filters": {
-    "dateFrom": "2020-01-01",
-    "dateTo": "2024-12-31",
-    "language": "english"
-  }
+  "projectId": "uuid",
+  "query": "diabetes AND exercise",
+  "options": { "limit": 50 }
 }
 
-Response:
+2. Protocol-based search:
+POST /functions/v1/search-articles
 {
-  "success": true,
-  "results": 25,
-  "articles": [...],
-  "timestamp": "2025-01-09T..."
+  "projectId": "uuid",
+  "protocol": {
+    "keywords": ["diabetes", "exercise therapy"],
+    "meshTerms": ["Diabetes Mellitus", "Exercise Therapy"],
+    "dateRange": {
+      "startDate": "2020/01/01",
+      "endDate": "2024/12/31"
+    },
+    "studyTypes": ["Randomized Controlled Trial"],
+    "languages": ["english"],
+    "includeHumans": true
+  },
+  "options": { "limit": 100 }
 }
 
 */

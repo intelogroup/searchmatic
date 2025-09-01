@@ -15,6 +15,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { isAuthenticated, loading } = useAuth()
   const location = useLocation()
 
+  // Development bypass for screenshots - only in development mode
+  const isDemoMode = import.meta.env.DEV && typeof window !== 'undefined' && window.location.search.includes('demo=true')
+  
+  if (isDemoMode) {
+    return <>{children}</>
+  }
+
   // Show loading state while auth is being determined
   if (loading) {
     return <LoadingScreen message="Authenticating..." />

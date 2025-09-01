@@ -9,7 +9,7 @@ import { ProjectTypeSelector } from '@/components/project/ProjectTypeSelector'
 import { FeaturePreview } from '@/components/project/FeaturePreview'
 import { ProjectForm, type ProjectFormData } from '@/components/project/ProjectForm'
 
-export const NewProject = () => {
+export default function NewProject() {
   const navigate = useNavigate()
   const [showForm, setShowForm] = useState(false)
   const [projectType, setProjectType] = useState<'guided' | 'upload' | null>(null)

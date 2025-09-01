@@ -48,6 +48,16 @@ claude-desktop-config.json
 
 # Testing
 coverage
+test-results/
+*.test-result.json
+edge-functions-test-results.json
+edge-functions-jwt-test-results.json
+generated-tokens.json
+jwt-token.json
+
+# PubMed search test results
+pubmed-search-*.json
+search-results-*.json
 .nyc_output
 
 # Temporary files

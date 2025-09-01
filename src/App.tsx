@@ -1,14 +1,29 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ProtectedRoute, PublicOnlyRoute } from '@/components/auth/ProtectedRoute'
 import { LoadingScreen } from '@/components/LoadingSpinner'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { startCacheCleanup } from '@/lib/cache'
+import { backgroundJobs } from '@/lib/background-jobs'
 import './App.css'
 
 const Login = lazy(() => import('@/pages/Login'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
+const Projects = lazy(() => import('@/pages/ProjectsSimple'))
+const NewProject = lazy(() => import('@/pages/NewProjectSimple'))
+const ProjectView = lazy(() => import('@/pages/ProjectView'))
+const Articles = lazy(() => import('@/pages/Articles'))
+const SearchDatabase = lazy(() => import('@/pages/SearchDatabase'))
+const Screening = lazy(() => import('@/pages/Screening'))
+const DataExtraction = lazy(() => import('@/pages/DataExtraction'))
+const ExportReports = lazy(() => import('@/pages/ExportReports'))
+const LiteratureReviewWorkflow = lazy(() => import('@/pages/LiteratureReviewWorkflow'))
+const ArticleImport = lazy(() => import('@/pages/ArticleImport'))
+const DuplicateDetection = lazy(() => import('@/pages/DuplicateDetection'))
 const Chat = lazy(() => import('@/pages/Chat'))
 const Protocols = lazy(() => import('@/pages/Protocols'))
+const Workflows = lazy(() => import('@/pages/Workflows'))
 const Settings = lazy(() => import('@/pages/Settings'))
 const Profile = lazy(() => import('@/pages/Profile'))
 const Conversations = lazy(() => import('@/pages/Conversations'))
@@ -19,6 +34,20 @@ const Terms = lazy(() => import('@/pages/Terms'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 function App() {
+  // Initialize performance optimizations
+  useEffect(() => {
+    // Start cache cleanup system
+    startCacheCleanup()
+    
+    // Start background job processing (already starts automatically)
+    console.log('Performance optimizations initialized')
+    
+    return () => {
+      // Cleanup on unmount
+      backgroundJobs.stopProcessing()
+    }
+  }, [])
+
   return (
     <AuthProvider>
       <Router>
@@ -44,6 +73,125 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="projects-page">
+                      <Projects />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/new" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="new-project-page">
+                      <NewProject />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:id" 
+                element={
+                  <ProtectedRoute>
+                    <ProjectView />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Literature Review Routes */}
+              <Route 
+                path="/projects/:projectId/articles" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="articles-page">
+                      <Articles />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/search" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="search-page">
+                      <SearchDatabase />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/screening" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="screening-page">
+                      <Screening />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/extraction" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="extraction-page">
+                      <DataExtraction />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/export" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="export-page">
+                      <ExportReports />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/workflow" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="workflow-page">
+                      <LiteratureReviewWorkflow />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/articles/import" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="import-page">
+                      <ArticleImport />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/duplicates" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="duplicates-page">
+                      <DuplicateDetection />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/workflows" 
+                element={
+                  <ProtectedRoute>
+                    <Workflows />
                   </ProtectedRoute>
                 } 
               />

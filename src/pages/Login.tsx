@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { BookOpen, Search, Filter, BarChart3 } from 'lucide-react'
 
 export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false)
@@ -44,15 +45,76 @@ export default function Login() {
   }
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md p-8">
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">AI Chat</h1>
-            <p className="text-gray-600 mt-2">
-              {isSignUp ? 'Create your account' : 'Welcome back'}
-            </p>
+    <div className="min-h-screen flex bg-gray-50">
+      {/* Left side - Branding and Features */}
+      <div className="hidden lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:px-8 bg-gradient-to-br from-blue-600 to-blue-800">
+        <div className="max-w-md mx-auto text-white">
+          <div className="flex items-center mb-8">
+            <BookOpen className="h-10 w-10 mr-3" />
+            <h1 className="text-3xl font-bold">Searchmatic</h1>
           </div>
+          
+          <h2 className="text-xl font-semibold mb-6">
+            AI-Powered Systematic Literature Reviews
+          </h2>
+          
+          <div className="space-y-6">
+            <div className="flex items-start">
+              <Search className="h-6 w-6 mt-1 mr-4 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold mb-1">Smart Literature Search</h3>
+                <p className="text-blue-100 text-sm">
+                  AI-powered search across multiple academic databases with PICO framework support
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start">
+              <Filter className="h-6 w-6 mt-1 mr-4 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold mb-1">Intelligent Screening</h3>
+                <p className="text-blue-100 text-sm">
+                  Automated article screening with AI assistance and customizable criteria
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start">
+              <BarChart3 className="h-6 w-6 mt-1 mr-4 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold mb-1">Data Analysis</h3>
+                <p className="text-blue-100 text-sm">
+                  Comprehensive data extraction and analysis tools for evidence synthesis
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right side - Login Form */}
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-sm">
+          {/* Mobile branding */}
+          <div className="lg:hidden text-center mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <BookOpen className="h-8 w-8 text-blue-600 mr-2" />
+              <h1 className="text-2xl font-bold text-gray-900">Searchmatic</h1>
+            </div>
+            <p className="text-gray-600">AI-Powered Systematic Literature Reviews</p>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="text-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">
+                {isSignUp ? 'Create your account' : 'Welcome back'}
+              </h2>
+              <p className="text-gray-600 mt-1 text-sm">
+                {isSignUp 
+                  ? 'Start your systematic literature review journey' 
+                  : 'Continue your research projects'}
+              </p>
+            </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {isSignUp && (
@@ -128,10 +190,19 @@ export default function Login() {
             </button>
           </div>
 
-          <div className="mt-6 p-3 bg-gray-50 rounded text-sm">
-            <p className="font-medium text-gray-700 mb-1">Demo Account:</p>
-            <p className="text-gray-600">Email: test@example.com</p>
-            <p className="text-gray-600">Password: password123</p>
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+            <p className="font-semibold text-blue-800 mb-2 flex items-center">
+              <BookOpen className="h-4 w-4 mr-1" />
+              Demo Account
+            </p>
+            <div className="space-y-1">
+              <p className="text-blue-700"><span className="font-medium">Email:</span> test@example.com</p>
+              <p className="text-blue-700"><span className="font-medium">Password:</span> password123</p>
+            </div>
+            <p className="text-xs text-blue-600 mt-2">
+              Try our platform with pre-loaded research projects and sample data
+            </p>
+          </div>
           </div>
         </div>
       </div>
