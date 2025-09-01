@@ -13,6 +13,11 @@ const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const Projects = lazy(() => import('@/pages/ProjectsSimple'))
 const NewProject = lazy(() => import('@/pages/NewProjectSimple'))
 const ProjectView = lazy(() => import('@/pages/ProjectView'))
+const Articles = lazy(() => import('@/pages/Articles'))
+const SearchDatabase = lazy(() => import('@/pages/SearchDatabase'))
+const Screening = lazy(() => import('@/pages/Screening'))
+const DataExtraction = lazy(() => import('@/pages/DataExtraction'))
+const ExportReports = lazy(() => import('@/pages/ExportReports'))
 const Chat = lazy(() => import('@/pages/Chat'))
 const Protocols = lazy(() => import('@/pages/Protocols'))
 const Workflows = lazy(() => import('@/pages/Workflows'))
@@ -96,6 +101,59 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              
+              {/* Literature Review Routes */}
+              <Route 
+                path="/projects/:projectId/articles" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="articles-page">
+                      <Articles />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/search" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="search-page">
+                      <SearchDatabase />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/screening" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="screening-page">
+                      <Screening />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/extraction" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="extraction-page">
+                      <DataExtraction />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/projects/:projectId/export" 
+                element={
+                  <ProtectedRoute>
+                    <ErrorBoundary feature="export-page">
+                      <ExportReports />
+                    </ErrorBoundary>
+                  </ProtectedRoute>
+                } 
+              />
+              
               <Route 
                 path="/workflows" 
                 element={

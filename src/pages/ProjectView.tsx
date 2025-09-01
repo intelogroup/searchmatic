@@ -226,23 +226,67 @@ export default function ProjectView() {
           </TabsContent>
 
           <TabsContent value="analysis" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Data Analysis</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Analysis Coming Soon</h3>
-                  <p className="text-gray-600 mb-4">
-                    Data extraction and analysis features will be available here.
-                  </p>
-                  <Button variant="outline">
-                    View Analytics Dashboard
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/projects/${id}/articles`)}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5" />
+                    Article Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600">View, import, and manage research articles</p>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/projects/${id}/search`)}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileSearch className="h-5 w-5" />
+                    Database Search
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600">Search PubMed, Scopus, and other databases</p>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/projects/${id}/screening`)}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Filter className="h-5 w-5" />
+                    Screening
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600">Screen articles for inclusion/exclusion</p>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/projects/${id}/extraction`)}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5" />
+                    Data Extraction
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600">Extract structured data from articles</p>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/projects/${id}/export`)}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Download className="h-5 w-5" />
+                    Export & Reports
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600">Generate reports and export data</p>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="assistant" className="space-y-6">
